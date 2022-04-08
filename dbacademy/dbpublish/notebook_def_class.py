@@ -75,7 +75,7 @@ class NotebookDef:
 
     def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} target in command #{i + 1}: \"{original_target}\" resolved as \"{target}\"".strip())
+            self.warn(lambda: False, f"Found unexpected, relative, {what} target in command #{i + 1}: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
         offset = -1
@@ -100,7 +100,16 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.warn(lambda: len(notebooks) != 0, message)
 
-    def test_run_cells(self, language, command, i, other_notebooks):
+    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
+        """
+        Validates %run cells meet specific requirements
+        :param language: The langage of the corresponding notebook
+        :param command: The %run command string to be evaluated
+        :param i: The zero-based index to the command within the notebook
+        :param other_notebooks: A complete list of notebooks for cross-validation
+        :return:
+        """
+
         # First verify that the specified command is a %run cell
         cm = self.get_comment_marker(language)
         prefix = f"{cm} MAGIC %run"
@@ -114,7 +123,7 @@ class NotebookDef:
             link = link[1:]
             pos = link.find("\"")
             if pos < 0:
-                self.warn(lambda: len(notebooks) != 0, f"Missing closing quote in %run target in command #{i+1}")
+                self.warn(lambda: False, f"Missing closing quote in %run target in command #{i+1}")
                 return
             else:
                 link = link[:pos]
@@ -133,7 +142,7 @@ class NotebookDef:
 
         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
             total += 1
-            self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
+            self.warn(lambda: False, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
         
         # if total > 0: 
         #     print(f"Validated {total} single-tick blocks in command #{i+1}")
@@ -151,7 +160,7 @@ class NotebookDef:
             match = re.search(r"\(\$.*\)", link)
 
             if not match:
-                self.warn(None, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
+                self.warn(lambda: False, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
@@ -168,7 +177,7 @@ class NotebookDef:
 
         for link in re.findall(r"<a .*?<\/a>", command):
             if "target=\"_blank\"" not in link:
-                self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
+                self.warn(lambda: False, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
         # if total > 0:
         #     print(f"Validated {total} HTML links in command #{i+1}")
@@ -189,12 +198,13 @@ class NotebookDef:
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
-            parts = lines[0].strip().split(" ")
+            line_0 = lines[0]
+            parts = line_0.strip().split(" ")
 
             passed = True
-            passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}")
-            passed = passed and self.warn(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}")
-            passed = passed and self.warn(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}")
+            passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}, {line_0}")
+            passed = passed and self.warn(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}, {line_0}")
+            passed = passed and self.warn(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}, {line_0}")
 
             return command
 
@@ -202,9 +212,8 @@ class NotebookDef:
 
     def create_resource_bundle(self, lang: str, source_dir: str, target_dir: str) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
-        lang = None if lange is None else lang.lower()
+        lang = None if lang is None else lang.lower()
 
         assert type(lang) == str, f"""Expected the parameter "lang" to be of type "str", found "{type(lang)}" """
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
@@ -245,7 +254,7 @@ class NotebookDef:
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+        # from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
