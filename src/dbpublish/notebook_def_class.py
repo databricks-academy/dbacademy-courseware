@@ -193,15 +193,15 @@ class NotebookDef:
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
-            line_0 = lines[0]
+            line_0 = lines[0][:8]
             parts = line_0.strip().split(" ")
 
             dash = "-"*20
             debug_info = line_0
-            debug_info = f"""\n{line_0}\n{dash}"""
-            for line in lines:
-                debug_info += "\n"
-                debug_info += line
+            # debug_info = f"""\n{line_0}\n{dash}"""
+            # for line in lines:
+            #     debug_info += "\n"
+            #     debug_info += line
 
             passed = True
             passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {debug_info}")
