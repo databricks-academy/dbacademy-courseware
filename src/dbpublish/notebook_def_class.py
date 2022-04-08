@@ -204,8 +204,6 @@ class NotebookDef:
             passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\", found {parts[0]}: {debug_info}")
             passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
 
-            assert passed
-
             return command
 
         return command
