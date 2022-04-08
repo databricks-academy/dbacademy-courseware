@@ -196,8 +196,9 @@ class NotebookDef:
             line_0 = lines[0]
             parts = line_0.strip().split(" ")
 
+            dash = "-"*20
             debug_info = line_0
-            debug_info = ("-"*20) + line_0 + ("-"*20) + command + ("-"*20)
+            debug_info = f"""\n{line_0}\n{dash}\n{command}\n{dash}"""
 
             passed = True
             passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {debug_info}")
