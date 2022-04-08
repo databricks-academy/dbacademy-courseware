@@ -189,7 +189,7 @@ class NotebookDef:
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
-            parts = lines[0].trim().split(" ")
+            parts = lines[0].strip().split(" ")
 
             passed = True
             passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}")
