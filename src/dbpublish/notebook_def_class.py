@@ -193,7 +193,7 @@ class NotebookDef:
         print(dash)
         print(f"Command #{i+1}")
 
-        lines = command.split("\n")
+        lines = command.strip().split("\n")
         print(f"Lines: {len(lines)}")
 
         line_0 = lines[0][:8]
