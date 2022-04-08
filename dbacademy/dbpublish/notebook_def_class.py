@@ -1,4 +1,5 @@
 from dbacademy.dbrest import DBAcademyRestClient
+from typing import Callable
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -48,7 +49,7 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion, message: str) -> bool:
+    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
             return False
@@ -186,15 +187,15 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         lines = command.strip("\n")
-        multiple_lines = self.warn(len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
+        multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
             parts = lines[0].trim().split(" ")
 
             passed = True
-            passed = passed and self.warn(len(parts), f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}")
-            passed = passed and self.warn(parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}")
-            passed = passed and self.warn(parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}")
+            passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}")
+            passed = passed and self.warn(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}")
+            passed = passed and self.warn(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}")
 
             return command
 
