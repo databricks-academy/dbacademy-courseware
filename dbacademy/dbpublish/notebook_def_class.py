@@ -1,5 +1,4 @@
 from dbacademy.dbrest import DBAcademyRestClient
-from typing import Callable
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -49,7 +48,7 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
+    def warn(self, assertion, message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
             return False
@@ -76,7 +75,7 @@ class NotebookDef:
 
     def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"".strip())
+            self.warn(None, f"Found unexpected, relative, {what} target in command #{i + 1}: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
         offset = -1
