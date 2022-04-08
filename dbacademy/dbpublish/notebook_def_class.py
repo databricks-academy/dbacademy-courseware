@@ -48,7 +48,7 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion: function, message: str) -> bool:
+    def warn(self, assertion: func, message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
             return False
