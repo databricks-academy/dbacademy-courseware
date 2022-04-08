@@ -22,24 +22,27 @@ def to_job_link(cloud, job_id, run_id, label):
 class TestConfig:
     def __init__(self,
                  name,
-                 version=0,
-                 spark_version=None,
-                 cloud=None,
-                 instance_pool=None,
-                 workers=None,
-                 libraries=None,
+                 version: str=0,
+                 spark_version: str=None,
+                 cloud: str=None,
+                 instance_pool: str=None,
+                 workers: int=None,
+                 libraries: list=None,
                  client=None,
-                 source_dir=None,
-                 source_repo=None,
-                 spark_conf=None,
-                 results_table=None,     # Deprecated
-                 results_database=None,  # Deprecated
-                 include_solutions=True,
+                 source_dir: str=None,
+                 source_repo: str=None,
+                 spark_conf: dict=None,
+                 results_table: str=None,       # Deprecated
+                 results_database: str=None,  # Deprecated
+                 include_solutions: bool=True,
+                 i18n: bool=False,
                  ):
 
         import uuid, re, time
         from dbacademy import dbrest
         from dbacademy import dbgems
+
+        self.i18n = i18n
 
         # Refactored away
         if results_table is not None:
@@ -132,7 +135,7 @@ class TestConfig:
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
+                self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i, i18n=self.i18n)
 
     def print(self):
         print("-" * 100)

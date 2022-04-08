@@ -1,4 +1,5 @@
 from dbacademy.dbrest import DBAcademyRestClient
+from collections.abc import Callable
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -20,7 +21,7 @@ class NotebookError:
 
 
 class NotebookDef:
-    def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int):
+    def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int, i18n: bool):
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
         assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
         assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
@@ -36,6 +37,8 @@ class NotebookDef:
         self.ignored = ignored
         self.order = order
 
+        self.i18n = i18n
+
     def __str__(self):
         result = self.path
         result += f"\n - include_solution = {self.include_solution}"
@@ -46,7 +49,7 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion, message: str) -> bool:
+    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
             return False
@@ -98,7 +101,6 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.warn(lambda: len(notebooks) != 0, message)
 
-
     def test_run_cells(self, language, command, i, other_notebooks):
         # First verify that the specified command is a %run cell
         cm = self.get_comment_marker(language)
@@ -125,7 +127,8 @@ class NotebookDef:
         self.test_notebook_exists(i, "%run", link, link, other_notebooks)
     
     def validate_single_tick(self, i, command):
-        "Test for usage of single-ticks that should also be bolded"
+        """Test for usage of single-ticks that should also be bolded"""
+
         import re
         total = 0
 
@@ -137,7 +140,8 @@ class NotebookDef:
         #     print(f"Validated {total} single-tick blocks in command #{i+1}")
 
     def validate_md_link(self, i, command, other_notebooks):
-        "Test for MD links to be replaced with html links"
+        """Test for MD links to be replaced with html links"""
+
         import re
         total = 0
 
@@ -145,7 +149,7 @@ class NotebookDef:
             total += 1
 
             # If this is a relative link, we can ignore it.
-            match = re.search(f"\(\$.*\)", link)
+            match = re.search(r"\(\$.*\)", link)
 
             if not match:
                 self.warn(None, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
@@ -158,7 +162,8 @@ class NotebookDef:
         #     print(f"Validated {total} MD links in command #{i+1}")
 
     def validate_html_link(self, i, command):
-        "Test all HTML links to ensure they have a target set to _blank"
+        """Test all HTML links to ensure they have a target set to _blank"""
+
         import re
         total = 0
 
@@ -169,7 +174,7 @@ class NotebookDef:
         # if total > 0:
         #     print(f"Validated {total} HTML links in command #{i+1}")
 
-    def test_md_cells(self, language, command, i, other_notebooks):
+    def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
         import re
 
         # First verify that the specified command is a mark-down cell
@@ -181,16 +186,29 @@ class NotebookDef:
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
+        lines = command.strip("\n")
+        multiple_lines = self.warn(len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
+
+        if self.i18n and multiple_lines:
+            parts = lines[0].trim().split(" ")
+
+            passed = True
+            passed = passed and self.warn(len(parts), f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}")
+            passed = passed and self.warn(parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}")
+            passed = passed and self.warn(parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}")
+
+            return command
+
         return command
 
-    def create_resource_bundle(self, lang:str, source_dir:str, target_dir:str) -> None:
+    def create_resource_bundle(self, lang: str, source_dir: str, target_dir: str) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
+
+        lang = None if lange is None else lang.lower()
 
         assert type(lang) == str, f"""Expected the parameter "lang" to be of type "str", found "{type(lang)}" """
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
-
-        lang = lang.lower()
 
         print("-" * 80)
         print(f".../{self.path}")
@@ -225,8 +243,7 @@ class NotebookDef:
 
             self.publish_notebook(language, comments, resource_path, print_warnings=True)
 
-
-    def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
+    def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
@@ -327,7 +344,7 @@ class NotebookDef:
             elif D_INCLUDE_FOOTER_FALSE in directives: skipped += self.skipping(i, None)
 
             elif D_TODO in directives:
-                # This is a TODO cell, exclude from solution notebooks
+                # This is a TO-DO cell, exclude from solution notebooks
                 todo_count += 1
                 command = self.clean_todo_cell(language, command, i)
                 students_commands.append(command)
@@ -343,7 +360,7 @@ class NotebookDef:
                                                           "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
 
             else:
-                # Not a TODO or ANSWER, just append to both
+                # Not a TO-DO or ANSWER, just append to both
                 students_commands.append(command)
                 solutions_commands.append(command)
 
@@ -358,7 +375,7 @@ class NotebookDef:
                 self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
 
             cm = self.get_comment_marker(language)
-            if command.startswith(f"{cm} MAGIC %md") == False:
+            if not command.startswith(f"{cm} MAGIC %md"):
                 if language.lower() == "python":
                     self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook""")
                 elif language.lower() == "sql":
@@ -389,8 +406,8 @@ class NotebookDef:
             solutions_commands.append(self.get_footer_cell(language))
 
         for key in ["\"", "*", "<", ">", "?", "\\", "|", ":"]:
-                # Not checking for forward slash as the platform itself enforces this.
-                self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
+            # Not checking for forward slash as the platform itself enforces this.
+            self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
 
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
@@ -445,7 +462,7 @@ class NotebookDef:
                 cell_m = self.get_comment_marker(test_a)
                 prefix = f"{source_m} MAGIC {cell_m}"
 
-        # print(f"Clean TODO cell, Cmd {cmd+1}")
+        # print(f"Clean TO-DO cell, Cmd {cmd+1}")
 
         for i in range(len(lines)):
             line = lines[i]
@@ -462,7 +479,7 @@ class NotebookDef:
                 self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
             elif line.strip().startswith(f"{prefix} {D_TODO}"):
-                # print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
+                # print(f""" - line #{i+1}: Processing TO-DO line ({prefix}): "{line}" """)
                 # Add as-is
                 new_command += line
 
@@ -606,10 +623,11 @@ class NotebookDef:
                 mod_directive = re.sub("[^-a-zA-Z_]", "_", directive)
 
                 if directive in ["SELECT", "FROM", "AS"]:
-                    pass # not a real directive, but flagged as one because of its SQL syntax
+                    pass  # not a real directive, but flagged as one because of its SQL syntax
 
-                elif directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE,
-                                 D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+                elif directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY,
+                                   D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE,
+                                   D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
                     directives.append(line)
 
                 elif "FILL-IN" in directive or "FILL_IN" in directive:
