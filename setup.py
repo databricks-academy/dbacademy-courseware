@@ -5,6 +5,5 @@ setuptools.setup(
     name="dbacademy-courseware",
     version="0.1",
     package_dir={"dbacademy": "src"},
-    # packages=find_packages(),
-    packages=["dbacademy", "dbacademy.dbpublish", "dbacademy.dbtest"],
+    packages=["dbacademy.dbpublish", "dbacademy.dbtest"],
 )
