@@ -196,10 +196,15 @@ class NotebookDef:
             line_0 = lines[0]
             parts = line_0.strip().split(" ")
 
+            debug_info = line_0
+            debug_info = ("-"*20) + line_0 + ("-"*20) + command + ("-"*20)
+
             passed = True
-            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {line_0}")
-            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\", found {parts[0]}: {line_0}")
-            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\", found {parts[1]}: {line_0}")
+            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {debug_info}")
+            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\", found {parts[0]}: {debug_info}")
+            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
+
+            assert passed
 
             return command
 
