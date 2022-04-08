@@ -194,7 +194,7 @@ class NotebookDef:
         print(f"Command #{i+1}")
 
         lines = command.strip().split("\n")
-        line_0 = lines[0][:8]
+        line_0 = lines[0][8:]
 
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
