@@ -175,11 +175,13 @@ class NotebookDef:
         # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
         if not command.startswith(f"%md") and not command.startswith(f"{cm} MAGIC %md"):
-            return
+            return command
             
         self.validate_single_tick(i, command)
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
+
+        return command
 
     def create_resource_bundle(self, lang:str, source_dir:str, target_dir:str) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
@@ -276,8 +278,10 @@ class NotebookDef:
 
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
-            # Misc tests specific for markdown cells            
-            self.test_md_cells(language, command, i, other_notebooks)
+            # Misc tests specific to %md cells along with i18n specific rewrites
+            command = self.test_md_cells(language, command, i, other_notebooks)
+            
+            # Misc tests specific to %run cells
             self.test_run_cells(language, command, i, other_notebooks)
 
             # Extract the leading comments and then the directives
