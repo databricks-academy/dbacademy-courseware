@@ -197,10 +197,9 @@ class NotebookDef:
             parts = line_0.strip().split(" ")
 
             passed = True
-            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}, {line_0}")
-            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}, {line_0}")
-            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}, {line_0}")
-            print(passed)
+            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {line_0}")
+            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\", found {parts[0]}: {line_0}")
+            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\", found {parts[1]}: {line_0}")
 
             return command
 
@@ -480,10 +479,10 @@ class NotebookDef:
                 new_command += line
 
             elif (i == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
-                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}" """)
+                self.test(lambda: False, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
-                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
+                self.test(lambda: False, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
             elif line.strip().startswith(f"{prefix} {D_TODO}"):
                 # print(f""" - line #{i+1}: Processing TO-DO line ({prefix}): "{line}" """)
@@ -524,11 +523,11 @@ class NotebookDef:
         mustache_pattern = re.compile(r"{{[a-zA-Z\-\\_\\#\\/]*}}")
         result = mustache_pattern.search(contents)
         if result is not None:
-            self.test(None, f"A mustache pattern was detected after all replacements were processed: {result}")
+            self.test(lambda: False, f"A mustache pattern was detected after all replacements were processed: {result}")
 
         for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:", ":NOTE:"]:
             if icon in contents:
-                self.test(None, f"The deprecated {icon} pattern was found after all replacements were processed.")
+                self.test(lambda: False, f"The deprecated {icon} pattern was found after all replacements were processed.")
 
         # No longer supported
         # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
@@ -643,7 +642,7 @@ class NotebookDef:
 
                 elif directive != mod_directive:
                     if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
-                        self.test(None, f"Double-Comment of TODO directive found in Cmd #{i + 1}")
+                        self.test(lambda: False, f"Double-Comment of TODO directive found in Cmd #{i + 1}")
 
                     # print(f"Skipping directive: {directive} vs {mod_directive}")
                     pass  # Number and symbols are not used in directives
