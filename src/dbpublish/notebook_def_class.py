@@ -44,7 +44,7 @@ class NotebookDef:
         result += f"\n - replacements = {self.replacements}"
         return result
 
-    def test(self, assertion, message: str) -> None:
+    def test(self, assertion: Callable[[], bool], message: str) -> None:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
@@ -197,9 +197,9 @@ class NotebookDef:
             parts = line_0.strip().split(" ")
 
             passed = True
-            passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}, {line_0}")
-            passed = passed and self.warn(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}, {line_0}")
-            passed = passed and self.warn(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}, {line_0}")
+            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}, {line_0}")
+            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}, {line_0}")
+            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}, {line_0}")
             print(passed)
 
             return command
