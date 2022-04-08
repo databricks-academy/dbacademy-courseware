@@ -133,7 +133,7 @@ class NotebookDef:
                 link = link[:pos]
 
         self.test_notebook_exists(i, "%run", link, link, other_notebooks)
-    
+
     def validate_single_tick(self, i, command):
         """Test for usage of single-ticks that should also be bolded"""
 
@@ -198,18 +198,12 @@ class NotebookDef:
 
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
-        for line in lines:
-            print(line)
-
         if self.i18n and multiple_lines:
-            print(f"Testing i18n: {line_0}")
             parts = line_0.strip().split(" ")
+            for i, part in enumerate(parts):
+                if part.strip() == "": del parts[i]
 
             debug_info = line_0
-            # debug_info = f"""\n{line_0}\n{dash}"""
-            # for line in lines:
-            #     debug_info += "\n"
-            #     debug_info += line
 
             passed = True
             passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {debug_info}")
