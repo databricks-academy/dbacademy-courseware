@@ -1,3 +1,5 @@
+print("Imported dbacademy.dbpublish")
+
 from dbpublish.publisher_class import Publisher
 
 
@@ -38,7 +40,7 @@ def from_test_config(test_config, target_dir):
                           source_dir=test_config.source_dir,
                           target_dir=target_dir)
 
-    notebooks = list(test_config.notebooks.values())                          
+    notebooks = list(test_config.notebooks.values())
     publisher.add_all(notebooks)
     return publisher
 
