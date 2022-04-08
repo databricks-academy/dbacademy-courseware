@@ -189,6 +189,10 @@ class NotebookDef:
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
+        dash = "-" * 20
+        print(dash)
+        print(f"Command #{i+1}")
+
         lines = command.split("\n")
         print(f"Lines: {len(lines)}")
 
@@ -201,7 +205,6 @@ class NotebookDef:
         if self.i18n and multiple_lines:
             parts = line_0.strip().split(" ")
 
-            dash = "-"*20
             debug_info = line_0
             # debug_info = f"""\n{line_0}\n{dash}"""
             # for line in lines:
