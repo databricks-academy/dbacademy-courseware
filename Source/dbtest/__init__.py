@@ -376,7 +376,7 @@ class TestSuite:
         return result_state != 'FAILED'
 
     def to_results_evaluator(self):
-        from dbtest.results_evaluator import ResultsEvaluator
+        from .results_evaluator import ResultsEvaluator
         return ResultsEvaluator(self.test_results)
 
     def log_run(self, test, response):

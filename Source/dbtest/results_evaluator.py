@@ -45,7 +45,7 @@ class ResultsEvaluator:
             return f"{seconds}s"
 
     def add_section(self, title, rows, print_links=True):
-        from dbtest import to_job_link
+        from . import to_job_link
         
         html = f"""<h1>{title}</h1>"""
         if len(rows) == 0:
