@@ -1,6 +1,6 @@
 requests
-git+https://github.com/databricks-academy/dbacademy-gems#egg=dbacademy-gems
-git+https://github.com/databricks-academy/dbacademy-rest#egg=dbacademy-rest
+git+https://github.com/databricks-academy/dbacademy-gems
+git+https://github.com/databricks-academy/dbacademy-rest
 
 # pyspark
 # pytest

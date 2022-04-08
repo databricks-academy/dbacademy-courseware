@@ -173,17 +173,12 @@ class NotebookDef:
         """Test all HTML links to ensure they have a target set to _blank"""
 
         import re
-        total = 0
 
         for link in re.findall(r"<a .*?<\/a>", command):
             if "target=\"_blank\"" not in link:
                 self.warn(lambda: False, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
-        # if total > 0:
-        #     print(f"Validated {total} HTML links in command #{i+1}")
-
     def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
-        import re
 
         # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
@@ -205,6 +200,7 @@ class NotebookDef:
             passed = passed and self.warn(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words: found {len(parts)}, {line_0}")
             passed = passed and self.warn(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\": found {parts[0]}, {line_0}")
             passed = passed and self.warn(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\": found {parts[1]}, {line_0}")
+            print(passed)
 
             return command
 
@@ -254,7 +250,6 @@ class NotebookDef:
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
-        # from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """

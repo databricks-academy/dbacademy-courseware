@@ -21,24 +21,24 @@ def to_job_link(cloud, job_id, run_id, label):
 
 class TestConfig:
     def __init__(self,
-                 name,
-                 version: str=0,
-                 spark_version: str=None,
-                 cloud: str=None,
-                 instance_pool: str=None,
-                 workers: int=None,
-                 libraries: list=None,
+                 name: str,
+                 version: str = 0,
+                 spark_version: str = None,
+                 cloud: str = None,
+                 instance_pool: str = None,
+                 workers: int = None,
+                 libraries: list = None,
                  client=None,
-                 source_dir: str=None,
-                 source_repo: str=None,
-                 spark_conf: dict=None,
-                 results_table: str=None,       # Deprecated
-                 results_database: str=None,  # Deprecated
-                 include_solutions: bool=True,
-                 i18n: bool=False,
+                 source_dir: str = None,
+                 source_repo: str = None,
+                 spark_conf: dict = None,
+                 results_table: str = None,  # Deprecated
+                 results_database: str = None,  # Deprecated
+                 include_solutions: bool = True,
+                 i18n: bool = False,
                  ):
 
-        import uuid, re, time
+        import uuid, time
         from dbacademy import dbrest
         from dbacademy import dbgems
 
@@ -100,7 +100,7 @@ class TestConfig:
         return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def index_notebooks(self, include_solutions=True, fail_fast=True):
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+        from dbpublish.notebook_def_class import NotebookDef
 
         assert self.source_dir is not None, "TestConfig.source_dir must be specified"
 
@@ -241,7 +241,7 @@ class TestInstance:
             self.notebook_path = f"{test_dir}/{notebook.path}"
 
         hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
-        test_name = test_config.name.lower().replace(" ","-")
+        test_name = test_config.name.lower().replace(" ", "-")
         self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
 
         # Hack to bring the test type down into the test results via the test_config
@@ -376,14 +376,11 @@ class TestSuite:
         return result_state != 'FAILED'
 
     def to_results_evaluator(self):
-        from dbacademy.dbtest.results_evaluator import ResultsEvaluator
+        from dbtest.results_evaluator import ResultsEvaluator
         return ResultsEvaluator(self.test_results)
 
     def log_run(self, test, response):
-        import datetime
-        import traceback, time, uuid, requests, json
-        from dbacademy import dbgems
-        import pyspark.sql.functions as F
+        import time, uuid, requests, json
 
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
@@ -428,15 +425,18 @@ class TestSuite:
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
-        if result_state == "FAILED":    message_type = "error"
-        elif result_state == "IGNORED": message_type = "warn"
-        else: message_type = "info"
+        if result_state == "FAILED":
+            message_type = "error"
+        elif result_state == "IGNORED":
+            message_type = "warn"
+        else:
+            message_type = "info"
         url = to_job_url(self.test_config.cloud, job_id, run_id)
         self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
     def send_first_message(self):
-      if self.slack_first_message is None:
-        self.send_status_update("info", f"*{self.test_config.name}*\nCloud: *{self.test_config.cloud}* | Mode: *{self.test_type}*")
+        if self.slack_first_message is None:
+            self.send_status_update("info", f"*{self.test_config.name}*\nCloud: *{self.test_config.cloud}* | Mode: *{self.test_type}*")
 
     def send_status_update(self, message_type, message):
         import requests, json

@@ -1,6 +1,3 @@
-from dbacademy.dbpublish.notebook_def_class import NotebookDef
-
-
 class Publisher:
     def __init__(self, client, version: str, source_dir: str, target_dir: str):
         self.client = client
@@ -23,7 +20,7 @@ class Publisher:
 
     def add_notebook(self, notebook):
         from datetime import datetime
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+        from dbpublish.notebook_def_class import NotebookDef
 
         assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
 
@@ -33,7 +30,7 @@ class Publisher:
 
         self.notebooks.append(notebook)
 
-    def create_resource_bundle(self, language:str, target_dir:str):
+    def create_resource_bundle(self, language: str, target_dir: str):
         for notebook in self.notebooks:
             notebook.create_resource_bundle(language, self.source_dir, target_dir)
 
