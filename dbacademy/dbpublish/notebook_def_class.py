@@ -1,4 +1,5 @@
 from dbacademy.dbrest import DBAcademyRestClient
+from typing import Callable
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -48,7 +49,7 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion: func, message: str) -> bool:
+    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
             return False
