@@ -1,4 +1,3 @@
-from dbacademy.dbrest import DBAcademyRestClient
 from typing import Callable
 
 D_TODO = "TODO"
@@ -202,6 +201,7 @@ class NotebookDef:
         return command
 
     def create_resource_bundle(self, lang: str, source_dir: str, target_dir: str) -> None:
+        from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         lang = None if lange is None else lang.lower()
@@ -244,6 +244,7 @@ class NotebookDef:
             self.publish_notebook(language, comments, resource_path, print_warnings=True)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+        from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
@@ -423,6 +424,8 @@ class NotebookDef:
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
     def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
+        from dbacademy.dbrest import DBAcademyRestClient
+
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
