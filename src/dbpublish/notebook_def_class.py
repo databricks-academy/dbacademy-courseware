@@ -202,6 +202,12 @@ class NotebookDef:
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
         print(f"multiple_lines: {multiple_lines}")
 
+        print(f"i18n: {self.i18n}")
+
+        for line in lines:
+            print(line)
+
+
         if self.i18n and multiple_lines:
             parts = line_0.strip().split(" ")
 
