@@ -190,10 +190,15 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         lines = command.split("\n")
+        print(f"Lines: {len(lines)}")
+
+        line_0 = lines[0][:8]
+        print(f"line_0: {line_0}")
+
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
+        print(f"multiple_lines: {multiple_lines}")
 
         if self.i18n and multiple_lines:
-            line_0 = lines[0][:8]
             parts = line_0.strip().split(" ")
 
             dash = "-"*20
