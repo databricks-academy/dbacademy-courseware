@@ -1,4 +1,4 @@
-from .publisher_class import Publisher
+print("loaded dbacademy-courseware.dbpublish")
 
 
 def help_html():
@@ -33,6 +33,8 @@ def help_html():
 
 
 def from_test_config(test_config, target_dir):
+    from .publisher_class import Publisher
+
     publisher = Publisher(client=test_config.client,
                           version=test_config.version,
                           source_dir=test_config.source_dir,
