@@ -192,7 +192,7 @@ class NotebookDef:
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
-        multiple_lines = self.warn(lambda: len(lines) > 1, f"Cmd #{i+1} | Expected MD to have more than 1 line of code")
+        multiple_lines = self.test(lambda: len(lines) > 1, f"Cmd #{i+1} | Expected MD to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
             parts = line_0.strip().split(" ")
