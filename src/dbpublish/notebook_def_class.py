@@ -18,6 +18,9 @@ class NotebookError:
     def __init__(self, message):
         self.message = message
 
+    def __str__(self):
+        print(self.message)
+
 
 class NotebookDef:
     def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int, i18n: bool):
@@ -37,6 +40,7 @@ class NotebookDef:
         self.order = order
 
         self.i18n = i18n
+        self.i18n_guids = list()
 
     def __str__(self):
         result = self.path
@@ -44,9 +48,12 @@ class NotebookDef:
         result += f"\n - replacements = {self.replacements}"
         return result
 
-    def test(self, assertion: Callable[[], bool], message: str) -> None:
+    def test(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
+            return False
+        else:
+            return True
 
     def warn(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
@@ -138,23 +145,16 @@ class NotebookDef:
         """Test for usage of single-ticks that should also be bolded"""
 
         import re
-        total = 0
 
         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            total += 1
             self.warn(lambda: False, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
-        
-        # if total > 0: 
-        #     print(f"Validated {total} single-tick blocks in command #{i+1}")
 
     def validate_md_link(self, i, command, other_notebooks):
         """Test for MD links to be replaced with html links"""
 
         import re
-        total = 0
 
         for link in re.findall(r"(?<!!)\[.*?\]\(.*?\)", command):
-            total += 1
 
             # If this is a relative link, we can ignore it.
             match = re.search(r"\(\$.*\)", link)
@@ -165,9 +165,6 @@ class NotebookDef:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
                 self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
-
-        # if total > 0:
-        #     print(f"Validated {total} MD links in command #{i+1}")
 
     def validate_html_link(self, i, command):
         """Test all HTML links to ensure they have a target set to _blank"""
@@ -206,8 +203,17 @@ class NotebookDef:
                 passed = passed and self.test(lambda: False, f"Missing the i18n directive in command #{i+1}: {debug_info}")
             else:
                 passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i+1} to have only two words, found {len(parts)}: {debug_info}")
-                passed = passed and self.test(lambda: parts[0] == "%md", f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\", found {parts[0]}: {debug_info}")
+                passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
                 passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
+
+            if passed:
+                passed = passed and self.test(lambda: parts[1] not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {debug_info}")
+
+            if passed:
+                del lines[0]
+                lines.insert(0, f"# MAGIC {parts[0]}")
+                self.i18n_guids.append(parts[1])
+                command = "\n".join(lines)
 
             return command
 
@@ -269,6 +275,7 @@ class NotebookDef:
 
         self.errors = list()
         self.warnings = list()
+        self.i18n_guids = list()
 
         print("=" * 80)
         print(f".../{self.path}")

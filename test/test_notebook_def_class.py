@@ -24,8 +24,8 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
-        self.assertEqual(len(notebook.warnings), 0)
-        self.assertEqual(len(notebook.errors), 0)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
 
     def test_good_double_spaced_i18n(self):
         command = """
@@ -35,8 +35,8 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
-        self.assertEqual(len(notebook.warnings), 0)
-        self.assertEqual(len(notebook.errors), 0)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
 
     def test_missing_i18n(self):
         command = """
@@ -46,8 +46,8 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
-        self.assertEqual(len(notebook.warnings), 0)
-        self.assertEqual(len(notebook.errors), 1)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Missing the i18n directive in command #4: %md", notebook.errors[0].message)
 
     def test_extra_word_i18n(self):
@@ -58,9 +58,52 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
-        self.assertEqual(len(notebook.warnings), 0)
-        self.assertEqual(len(notebook.errors), 1)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Expected the first line of MD in command #4 to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
+
+    def test_duplicate_i18n_guid(self):
+        command_a = """
+            # MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
+            # MAGIC # Some Title""".strip()
+        command_b = """
+            # MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
+            # MAGIC # Some Title""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_md_cells(language="Python", command=command_a, i=3, other_notebooks=[])
+        notebook.test_md_cells(language="Python", command=command_b, i=4, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+        self.assertEqual("Duplicate i18n GUID found in command #5: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
+
+    def test_unique_i18n_guid(self):
+        command_a = """
+            # MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
+            # MAGIC # Some Title""".strip()
+        command_b = """
+            # MAGIC %md --i18n-9d06d80d-2381-42d5-8f9e-cc99ee3cd82a
+            # MAGIC # Some Title""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_md_cells(language="Python", command=command_a, i=3, other_notebooks=[])
+        notebook.test_md_cells(language="Python", command=command_b, i=4, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+
+    def test_i18n_guid_removal(self):
+        command = """# MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
+
+        notebook = self.create_notebook()
+        actual = notebook.test_md_cells(language="Python", command=command, i=4, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+
+        expected = """# MAGIC %md\n# MAGIC # Some Title""".strip()
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':
