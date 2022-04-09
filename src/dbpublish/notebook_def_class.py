@@ -103,7 +103,7 @@ class NotebookDef:
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
 
-        message = f"Cannot find notebook for the {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\""
+        message = f"Cmd #{i+1} | Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\""
         # self.test(lambda: len(notebooks) != 0, message)
         self.warn(lambda: len(notebooks) != 0, message)
 
@@ -130,7 +130,7 @@ class NotebookDef:
             link = link[1:]
             pos = link.find("\"")
             if pos < 0:
-                self.warn(lambda: False, f"Missing closing quote in %run target in command #{i+1}")
+                self.warn(lambda: False, f"Cmd #{i+1} | Missing closing quote in %run target")
                 return
             else:
                 link = link[:pos]
@@ -147,7 +147,7 @@ class NotebookDef:
         import re
 
         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            self.warn(lambda: False, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
+            self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
     def validate_md_link(self, i, command, other_notebooks):
         """Test for MD links to be replaced with html links"""
@@ -160,7 +160,7 @@ class NotebookDef:
             match = re.search(r"\(\$.*\)", link)
 
             if not match:
-                self.warn(lambda: False, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
+                self.warn(lambda: False, f"Cmd #{i+1} | Found a MD link, expected HTML link: \"{link}\"")
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
@@ -173,7 +173,7 @@ class NotebookDef:
 
         for link in re.findall(r"<a .*?<\/a>", command):
             if "target=\"_blank\"" not in link:
-                self.warn(lambda: False, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
+                self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": \"{link}\"")
 
     def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
 
@@ -189,7 +189,7 @@ class NotebookDef:
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
-        multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
+        multiple_lines = self.warn(lambda: len(lines) > 1, f"Cmd #{i+1} | Expected MD to have more than 1 line of code")
 
         if self.i18n and multiple_lines:
             parts = line_0.strip().split(" ")
@@ -202,14 +202,14 @@ class NotebookDef:
 
             passed = True
             if len(parts) == 1:
-                passed = passed and self.test(lambda: False, f"Missing the i18n directive in command #{i+1}: {debug_info}")
+                passed = passed and self.test(lambda: False, f"Cmd #{i+1} | Missing the i18n directive: {debug_info}")
             else:
-                passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i+1} to have only two words, found {len(parts)}: {debug_info}")
-                passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
-                passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {guid}: {debug_info}")
+                passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i+1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
+                passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i+1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
+                passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i+1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
 
             # if passed:
-            #     passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {guid}")
+            #     passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i+1} | Duplicate i18n GUID found: {guid}")
 
             if passed:
                 self.i18n_guids.append(guid)
@@ -491,7 +491,6 @@ class NotebookDef:
             line = lines[i]
 
             if i == 0 and first == 1:
-                # print(f" - line #{i+1}: First line is a magic command")
                 # This is the first line, but the first is a magic command
                 new_command += line
 
@@ -502,23 +501,19 @@ class NotebookDef:
                 self.test(lambda: False, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
             elif line.strip().startswith(f"{prefix} {D_TODO}"):
-                # print(f""" - line #{i+1}: Processing TO-DO line ({prefix}): "{line}" """)
                 # Add as-is
                 new_command += line
 
             elif line.strip() == "" or line.strip() == f"{source_m} MAGIC":
-                # print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
                 # No comment, do not process
                 new_command += line
 
             elif line.strip().startswith(f"{prefix} "):
-                # print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
                 # Remove comment and space
                 length = len(prefix) + 1
                 new_command += line[length:]
 
             else:
-                # print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
                 # Remove just the comment
                 length = len(prefix)
                 new_command += line[length:]
@@ -664,7 +659,6 @@ class NotebookDef:
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    # print(f"""Processing "{directive}" in Cmd #{i+1} """)
                     reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
                     reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
                     reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")

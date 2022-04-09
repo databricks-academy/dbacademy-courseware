@@ -65,7 +65,7 @@ class MyTestCase(unittest.TestCase):
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
-        self.assertEqual("Missing the i18n directive in command #4: %md", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
 
     def test_extra_word_i18n(self):
         command = """
@@ -77,7 +77,7 @@ class MyTestCase(unittest.TestCase):
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
-        self.assertEqual("Expected the first line of MD in command #4 to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Expected the first line of MD to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
 
     def test_duplicate_i18n_guid(self):
         command_a = """
