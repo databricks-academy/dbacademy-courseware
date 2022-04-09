@@ -134,6 +134,18 @@ class MyTestCase(unittest.TestCase):
         expected = """# MAGIC %md-sandbox\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
+    def test_i18n_sql(self):
+        command = """-- MAGIC %md-sandbox --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n-- MAGIC # Some Title""".strip()
+
+        notebook = self.create_notebook()
+        actual = notebook.test_md_cells(language="SQL", command=command, i=4, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+
+        expected = """-- MAGIC %md-sandbox\n-- MAGIC # Some Title""".strip()
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -187,7 +187,7 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         lines = command.strip().split("\n")
-        line_0 = lines[0][8:]
+        line_0 = lines[0][7+len(cm):]
 
         multiple_lines = self.warn(lambda: len(lines) > 1, f"Expected MD in command #{i+1} to have more than 1 line of code")
 
@@ -214,7 +214,7 @@ class NotebookDef:
             if passed:
                 self.i18n_guids.append(guid)
                 del lines[0]
-                lines.insert(0, f"# MAGIC {md_tag}")
+                lines.insert(0, f"{cm} MAGIC {md_tag}")
                 command = "\n".join(lines)
 
             return command
