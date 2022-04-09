@@ -196,15 +196,18 @@ class NotebookDef:
 
         if self.i18n and multiple_lines:
             parts = line_0.strip().split(" ")
-            for i, part in enumerate(parts):
-                if part.strip() == "": del parts[i]
+            for index, part in enumerate(parts):
+                if part.strip() == "": del parts[index]
 
             debug_info = line_0
 
             passed = True
-            passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i + 1} to have only two words, found {len(parts)}: {debug_info}")
-            passed = passed and self.test(lambda: parts[0] == "%md md", f"Expected word[0] of the first line of MD in command #{i + 1} to be \"%md\", found {parts[0]}: {debug_info}")
-            passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i + 1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
+            if len(parts) == 1:
+                passed = passed and self.test(lambda: False, f"Missing the i18n directive in command #{i+1}: {debug_info}")
+            else:
+                passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i+1} to have only two words, found {len(parts)}: {debug_info}")
+                passed = passed and self.test(lambda: parts[0] == "%md", f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\", found {parts[0]}: {debug_info}")
+                passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
 
             return command
 
