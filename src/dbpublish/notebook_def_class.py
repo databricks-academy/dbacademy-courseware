@@ -464,8 +464,11 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
+        print("-"*20)
         current_dir = os.getcwd()
-        print(current_dir)
+        print(f"current_dir: {current_dir}")
+        print(f"target_path: {target_path}")
+        print("-"*20)
 
         # client = DBAcademyRestClient()
         # parent_dir = "/".join(target_path.split("/")[0:-1])
