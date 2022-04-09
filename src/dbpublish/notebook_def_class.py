@@ -179,7 +179,7 @@ class NotebookDef:
 
         # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
-        if not command.startswith(f"%md") and not command.startswith(f"{cm} MAGIC %md"):
+        if not command.startswith(f"{cm} MAGIC %md"):
             return command
             
         self.validate_single_tick(i, command)
