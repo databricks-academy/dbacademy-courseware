@@ -71,7 +71,7 @@ class NotebookDef:
                 print(warning.message)
             print()
 
-    def assert_no_errors(self) -> None:
+    def assert_no_errors(self, print_warnings) -> None:
         if len(self.errors) > 0:
             what = "error was" if len(self.errors) == 1 else "errors were"
             print(f"ABORTING: {len(self.errors)} {what} found while publishing")
@@ -79,6 +79,9 @@ class NotebookDef:
                 print("-" * 80)
                 print(error.message)
             raise Exception("Publish aborted - see previous errors for more information")
+
+        if print_warnings:
+            self.assert_no_warnings()
 
     def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
@@ -461,9 +464,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
-        if print_warnings: 
-            self.assert_no_warnings()
-        self.assert_no_errors()
+        self.assert_no_errors(print_warnings)
 
         client = DBAcademyRestClient()
         parent_dir = "/".join(target_path.split("/")[0:-1])
