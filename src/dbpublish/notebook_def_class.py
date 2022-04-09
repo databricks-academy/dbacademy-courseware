@@ -195,6 +195,7 @@ class NotebookDef:
             parts = line_0.strip().split(" ")
             for index, part in enumerate(parts):
                 if part.strip() == "": del parts[index]
+            md_tag = None if len(parts) < 1 else parts[0]
             guid = None if len(parts) < 2 else parts[1]
 
             debug_info = line_0
@@ -213,7 +214,7 @@ class NotebookDef:
             if passed:
                 self.i18n_guids.append(guid)
                 del lines[0]
-                lines.insert(0, f"# MAGIC {parts[0]}")
+                lines.insert(0, f"# MAGIC {md_tag}")
                 command = "\n".join(lines)
 
             return command

@@ -110,7 +110,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
 
-    def test_i18n_guid_removal(self):
+    def test_md_i18n_guid_removal(self):
         command = """# MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
 
         notebook = self.create_notebook()
@@ -120,6 +120,18 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
 
         expected = """# MAGIC %md\n# MAGIC # Some Title""".strip()
+        self.assertEqual(expected, actual)
+
+    def test_md_sandbox_i18n_guid_removal(self):
+        command = """# MAGIC %md-sandbox --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
+
+        notebook = self.create_notebook()
+        actual = notebook.test_md_cells(language="Python", command=command, i=4, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+
+        expected = """# MAGIC %md-sandbox\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
 
