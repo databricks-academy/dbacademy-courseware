@@ -76,7 +76,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
-        self.assertEqual("Duplicate i18n GUID found in command #5: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
+        self.assertEqual("Duplicate i18n GUID found in command #5: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
 
     def test_unique_i18n_guid(self):
         command_a = """

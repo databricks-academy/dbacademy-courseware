@@ -195,6 +195,7 @@ class NotebookDef:
             parts = line_0.strip().split(" ")
             for index, part in enumerate(parts):
                 if part.strip() == "": del parts[index]
+            guid = None if len(parts) < 2 else parts[1]
 
             debug_info = line_0
 
@@ -204,15 +205,15 @@ class NotebookDef:
             else:
                 passed = passed and self.test(lambda: len(parts) == 2, f"Expected the first line of MD in command #{i+1} to have only two words, found {len(parts)}: {debug_info}")
                 passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
-                passed = passed and self.test(lambda: parts[1].startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {parts[1]}: {debug_info}")
+                passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {guid}: {debug_info}")
 
             if passed:
-                passed = passed and self.test(lambda: parts[1] not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {debug_info}")
+                passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {guid}")
 
             if passed:
                 del lines[0]
                 lines.insert(0, f"# MAGIC {parts[0]}")
-                self.i18n_guids.append(parts[1])
+                self.i18n_guids.append(guid)
                 command = "\n".join(lines)
 
             return command
