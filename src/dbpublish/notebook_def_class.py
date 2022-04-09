@@ -468,8 +468,8 @@ class NotebookDef:
 
         target_file = "/Workspace"+target_path+".md"
         target_dir = "/".join(target_file.split("/")[:-1])
-        #os.makedirs(target_dir)
-
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
 
         print("-"*20)
         current_dir = os.getcwd()
