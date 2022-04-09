@@ -82,7 +82,7 @@ class NotebookDef:
 
     def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(lambda: False, f"Found unexpected, relative, {what} target in command #{i + 1}: \"{original_target}\" resolved as \"{target}\"".strip())
+            self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
         offset = -1
@@ -314,7 +314,7 @@ class NotebookDef:
 
             command = commands[i].lstrip()
 
-            self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
+            self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Unsupported Cell-Title found")
 
             # Misc tests specific to %md cells along with i18n specific rewrites
             command = self.test_md_cells(language, command, i, other_notebooks)
@@ -353,7 +353,7 @@ class NotebookDef:
             for directive in directives:
                 if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
                     directive_count += 1
-            self.test(lambda: directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i + 1}: {directives}")
+            self.test(lambda: directive_count <= 1, f"Cmd #{i+1} | Found multiple directives ({directive_count}): {directives}")
 
             # Process the various directives
             if command.strip() == "":
@@ -393,26 +393,26 @@ class NotebookDef:
                           "NEW_PART", "{dbr}"]
 
             for token in bdc_tokens:
-                self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
+                self.test(lambda: token not in command, f"""Cmd #{i+1} | Found the token "{token}" """)
 
             cm = self.get_comment_marker(language)
             if not command.startswith(f"{cm} MAGIC %md"):
                 if language.lower() == "python":
-                    self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook""")
+                    self.warn(lambda: "%python" not in command, f"""Cmd #{i+1} | Found "%python" in a Python notebook""")
                 elif language.lower() == "sql":
-                    self.warn(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1} of a SQL notebook""")
+                    self.warn(lambda: "%sql" not in command, f"""Cmd #{i+1} | Found "%sql" in a SQL notebook""")
                 elif language.lower() == "scala":
-                    self.warn(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1} of a Scala notebook""")
+                    self.warn(lambda: "%scala" not in command, f"""Cmd #{i+1} | Found "%scala" in a Scala notebook""")
                 elif language.lower() == "r":
                     # We have to check both cases so as not to catch %run by accident
-                    self.warn(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1} of an R notebook""")
-                    self.warn(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1} of an R notebook""")
+                    self.warn(lambda: "%r " not in command,  f"""Cmd #{i+1} | Found "%r" in an R notebook""")
+                    self.warn(lambda: "%r\n" not in command, f"""Cmd #{i+1} | Found "%r" in an R notebook""")
                 else:
                     raise Exception(f"The language {language} is not supported")
 
             for year in range(2017, 2999):
                 tag = f"{year} Databricks, Inc"
-                self.test(lambda: tag not in command, f"""Found copyright ({tag}) in command #{i + 1}""")
+                self.test(lambda: tag not in command, f"""Cmd #{i+1} | Found copyright ({tag}) """)
 
         self.test(lambda: found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found.")
         self.test(lambda: found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found.")
@@ -470,7 +470,7 @@ class NotebookDef:
         client.workspace().mkdirs(parent_dir)
         client.workspace().import_notebook(language.upper(), target_path, final_source)
 
-    def clean_todo_cell(self, source_language, command, cmd):
+    def clean_todo_cell(self, source_language, command, i):
         new_command = ""
         lines = command.split("\n")
         source_m = self.get_comment_marker(source_language)
@@ -485,20 +485,18 @@ class NotebookDef:
                 cell_m = self.get_comment_marker(test_a)
                 prefix = f"{source_m} MAGIC {cell_m}"
 
-        # print(f"Clean TO-DO cell, Cmd {cmd+1}")
+        for index in range(len(lines)):
+            line = lines[index]
 
-        for i in range(len(lines)):
-            line = lines[i]
-
-            if i == 0 and first == 1:
+            if index == 0 and first == 1:
                 # This is the first line, but the first is a magic command
                 new_command += line
 
-            elif (i == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
-                self.test(lambda: False, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}" """)
+            elif (index == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
+                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
-                self.test(lambda: False, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
+                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
             elif line.strip().startswith(f"{prefix} {D_TODO}"):
                 # Add as-is
@@ -519,7 +517,7 @@ class NotebookDef:
                 new_command += line[length:]
 
             # Add new line for all but the last line
-            if i < len(lines) - 1:
+            if index < len(lines) - 1:
                 new_command += "\n"
 
         return new_command
@@ -653,15 +651,15 @@ class NotebookDef:
 
                 elif directive != mod_directive:
                     if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
-                        self.test(lambda: False, f"Double-Comment of TODO directive found in Cmd #{i + 1}")
+                        self.test(lambda: False, f"Cmd #{i+1} | Found double-comment of TODO directive")
 
                     # print(f"Skipping directive: {directive} vs {mod_directive}")
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
+                    reslut_a = self.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
+                    reslut_b = self.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
+                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.Publisher.help_html() for more information.""")
                     if reslut_a and reslut_b and reslut_c:
                         directives.append(line)
 
@@ -669,7 +667,7 @@ class NotebookDef:
 
     def skipping(self, i, label):
         if label:
-            print(f"Skipping Cmd #{i + 1} - {label}")
+            print(f"Cmd #{i+1} | Skipping: {label}")
         return 1
 
     def get_header_cell(self, language):
