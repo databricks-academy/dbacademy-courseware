@@ -464,6 +464,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
+        final_source = final_source.replace(f"{m} Databricks notebook source\n", "")
         final_source = final_source.replace(f"{m} MAGIC ", "")
         final_source = final_source.replace(f"{m} COMMAND ----------\n%md --i18n-", f"<hr>--i18n-")
 
