@@ -449,6 +449,8 @@ class NotebookDef:
     def publish_resource(self, language: str, commands: list, target_path: str) -> None:
         import os
 
+        target_path = "/Workspace"+target_path
+
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
