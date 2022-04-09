@@ -464,7 +464,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
-        final_source = re.sub(f"^  {m} MAGIC", "", final_source)
+        final_source = re.sub(f"^{m} MAGIC", "", final_source)
 
         target_file = "/Workspace"+target_path+".md"
         target_dir = "/".join(target_file.split("/")[:-1])
