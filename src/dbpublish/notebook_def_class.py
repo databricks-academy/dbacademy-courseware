@@ -671,7 +671,6 @@ class NotebookDef:
                     reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
                     if reslut_a and reslut_b and reslut_c:
                         directives.append(line)
-                        print()
         
         return directives
 
