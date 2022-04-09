@@ -211,9 +211,9 @@ class NotebookDef:
                 passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {guid}")
 
             if passed:
+                self.i18n_guids.append(guid)
                 del lines[0]
                 lines.insert(0, f"# MAGIC {parts[0]}")
-                self.i18n_guids.append(guid)
                 command = "\n".join(lines)
 
             return command

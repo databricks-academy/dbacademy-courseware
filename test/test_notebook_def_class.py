@@ -26,6 +26,8 @@ class MyTestCase(unittest.TestCase):
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
+        self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_good_double_spaced_i18n(self):
         command = """
@@ -37,6 +39,21 @@ class MyTestCase(unittest.TestCase):
         notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
+        self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
+
+    def test_good_md_sandbox_i18n(self):
+        command = """
+            # MAGIC %md-sandbox --i18n-TBD
+            # MAGIC 
+            # MAGIC # Build-Time Substitutions""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
+        self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_missing_i18n(self):
         command = """
