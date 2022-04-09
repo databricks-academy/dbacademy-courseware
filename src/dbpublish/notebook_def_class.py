@@ -449,9 +449,6 @@ class NotebookDef:
     def publish_resource(self, language: str, commands: list, target_path: str) -> None:
         import os
 
-        target_file = "/Workspace"+target_path+".md"
-        target_dir = "/".join(target_file.split("/")[:-1])
-
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
@@ -467,15 +464,19 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
+        target_file = "/Workspace"+target_path+".md"
+        target_dir = "/".join(target_file.split("/")[:-1])
+        os.makedirs(target_dir)
+
         print("-"*20)
         current_dir = os.getcwd()
         print(f"current_dir: {current_dir}")
-        print(f"target_dir: {target_dir}")
+        print(f"target_dir:  {target_dir}")
         print(f"target_file: {target_file}")
         print("-"*20)
 
-        # with open(target_file, "w") as w:
-        #     w.write(final_source)
+        with open(target_file, "w") as w:
+            w.write(final_source)
 
         # client = DBAcademyRestClient()
         # parent_dir = "/".join(target_path.split("/")[0:-1])
