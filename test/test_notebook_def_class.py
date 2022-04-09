@@ -93,7 +93,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
-        self.assertEqual("Duplicate i18n GUID found in command #5: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
+        self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
 
     def test_unique_i18n_guid(self):
         command_a = """
@@ -156,6 +156,38 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, len(notebook.errors), f"Expected 1 errors, found {len(notebook.errors)}")
 
         self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code", notebook.errors[0].message)
+
+    def test_replacement(self):
+        import re
+        command ="""# Databricks notebook source
+# MAGIC %md --i18n-5f2cfc0b-1998-4182-966d-8efed6020eb2
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC # Getting Started with the Databricks Platform
+# MAGIC 
+# MAGIC This notebook provides a hands-on review of some of the basic functionality of the Databricks Data Science and Engineering Workspace.
+# MAGIC 
+# MAGIC ## Learning Objectives
+# MAGIC By the end of this lessons, you will be able to:
+# MAGIC - Rename a notebook and change the default language
+# MAGIC - Attach a cluster
+# MAGIC - Use the **`%run`** magic command
+# MAGIC - Run Python and SQL cells
+# MAGIC - Create a Markdown cell
+
+# COMMAND ----------
+# MAGIC %md --i18n-05dca5e4-6c50-4b39-a497-a35cd6d99434
+# MAGIC 
+# MAGIC 
+# MAGIC 
+# MAGIC # Renaming a Notebook
+# MAGIC 
+# MAGIC Changing the name of a notebook is easy. Click on the name at the top of this page, then make changes to the name. To make it easier to navigate back to this notebook later in case you need to, append a short test string to the end of the existing name."""
+        m = "#"
+        result = command.replace(f"{m} MAGIC ", "")
+        print(result)
+
 
 if __name__ == '__main__':
     unittest.main()
