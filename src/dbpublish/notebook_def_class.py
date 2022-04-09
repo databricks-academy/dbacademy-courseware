@@ -224,12 +224,12 @@ class NotebookDef:
 
         return command
 
-    def create_resource_bundle(self, lang: str, source_dir: str, target_dir: str) -> None:
+    def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
 
-        lang = None if lang is None else lang.lower()
+        natural_language = None if natural_language is None else natural_language.lower()
 
-        assert type(lang) == str, f"""Expected the parameter "lang" to be of type "str", found "{type(lang)}" """
+        assert type(natural_language) == str, f"""Expected the parameter "natural_language" to be of type "str", found "{type(natural_language)}" """
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
 
@@ -254,17 +254,17 @@ class NotebookDef:
             command = commands[i].lstrip()
 
             cm = self.get_comment_marker(language)
-            if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+            if command.startswith(f"{cm} MAGIC %md"):
                 comments.append(command)
 
         if len(comments) == 0:
             print(f"Skipping resource bundle: {self.path}")
         else:
-            resource_path = f"{target_dir}/{lang}/{self.path}"
+            resource_path = f"{target_dir}/{natural_language}/{self.path}"
             print(f"Writing resource bundle: {self.path}")
             print(f"...writing {len(comments)} blocks")
 
-            self.publish_notebook(language, comments, resource_path, print_warnings=True)
+            self.publish_resource(language, comments, resource_path)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
@@ -445,6 +445,32 @@ class NotebookDef:
             if verbose: print(solutions_notebook_path)
             if verbose: print(f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
+
+    def publish_resource(self, language: str, commands: list, target_path: str) -> None:
+        import os
+
+        m = self.get_comment_marker(language)
+        final_source = f"{m} Databricks notebook source\n"
+
+        # Processes all commands except the last
+        for command in commands[:-1]:
+            final_source += command
+            final_source += self.get_cmd_delim(language)
+
+        # Process the last command
+        m = self.get_comment_marker(language)
+        final_source += commands[-1]
+        final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
+
+        final_source = self.replace_contents(final_source)
+
+        current_dir = os.getcwd()
+        print(current_dir)
+
+        # client = DBAcademyRestClient()
+        # parent_dir = "/".join(target_path.split("/")[0:-1])
+        # client.workspace().mkdirs(parent_dir)
+        # client.workspace().import_notebook(language.upper(), target_path, final_source)
 
     def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
