@@ -465,18 +465,12 @@ class NotebookDef:
         final_source = self.replace_contents(final_source)
 
         final_source = final_source.replace(f"{m} MAGIC ", "")
+        final_source = final_source.replace(f"{m} COMMAND ----------\n%md --i18n-", f"<hr>--i18n-")
 
         target_file = "/Workspace"+target_path+".md"
         target_dir = "/".join(target_file.split("/")[:-1])
         if not os.path.exists(target_dir):
             os.makedirs(target_dir)
-
-        print("-"*20)
-        current_dir = os.getcwd()
-        print(f"current_dir: {current_dir}")
-        print(f"target_dir:  {target_dir}")
-        print(f"target_file: {target_file}")
-        print("-"*20)
 
         with open(target_file, "w") as w:
             w.write(final_source)
