@@ -208,8 +208,8 @@ class NotebookDef:
                 passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Expected word[0] of the first line of MD in command #{i+1} to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
                 passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Expected word[1] of the first line of MD in command #{i+1} to start with \"--i18n-\", found {guid}: {debug_info}")
 
-            if passed:
-                passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {guid}")
+            # if passed:
+            #     passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Duplicate i18n GUID found in command #{i+1}: {guid}")
 
             if passed:
                 self.i18n_guids.append(guid)
