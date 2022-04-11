@@ -447,7 +447,7 @@ class NotebookDef:
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
     def publish_resource(self, language: str, commands: list, target_path: str) -> None:
-        import os, re
+        import os
 
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
