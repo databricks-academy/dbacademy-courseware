@@ -112,6 +112,12 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
+    def create_new_resource_message(self, language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
+        return f"""
+                <body>
+                    <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/Version Info.md" target="_blank">Published Version</a></p>
+                </body>"""
+
     def create_publish_message(self, name, version, source_repo, target_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
         message = f"""
 @channel Published {name}, v{version}
