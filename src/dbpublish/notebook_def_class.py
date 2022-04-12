@@ -248,23 +248,23 @@ class NotebookDef:
         cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
 
-        comments = list()
+        md_commands = list()
 
         for i in range(len(commands)):
             command = commands[i].lstrip()
 
             cm = self.get_comment_marker(language)
             if command.startswith(f"{cm} MAGIC %md"):
-                comments.append(command)
+                md_commands.append(command)
 
-        if len(comments) == 0:
+        if len(md_commands) == 0:
             print(f"Skipping resource: {self.path}")
         else:
             resource_path = f"{target_dir}/{natural_language}/{self.path}"
             print(f"Writing resource bundle: {self.path}")
-            print(f"...writing {len(comments)} blocks")
+            print(f"...writing {len(md_commands)} blocks")
 
-            self.publish_resource(language, comments, resource_path)
+            self.publish_resource(language, md_commands, resource_path)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
