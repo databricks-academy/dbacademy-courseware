@@ -477,11 +477,6 @@ class NotebookDef:
         with open(target_file, "w") as w:
             w.write(final_source)
 
-        # client = DBAcademyRestClient()
-        # parent_dir = "/".join(target_path.split("/")[0:-1])
-        # client.workspace().mkdirs(parent_dir)
-        # client.workspace().import_notebook(language.upper(), target_path, final_source)
-
     def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
 
