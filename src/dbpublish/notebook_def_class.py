@@ -258,7 +258,7 @@ class NotebookDef:
                 comments.append(command)
 
         if len(comments) == 0:
-            print(f"Skipping resource bundle: {self.path}")
+            print(f"Skipping resource: {self.path}")
         else:
             resource_path = f"{target_dir}/{natural_language}/{self.path}"
             print(f"Writing resource bundle: {self.path}")
