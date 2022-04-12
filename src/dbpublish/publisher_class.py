@@ -118,7 +118,7 @@ class Publisher:
                     <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/Version Info.md" target="_blank">Resource Bundle: {language}</a></p>
                 </body>"""
 
-    def create_publish_message(self, test_config, target_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
+    def create_publish_message(self, test_config, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
         name = test_config.name
         version = test_config.version
         source_repo = test_config.source_repo
@@ -136,6 +136,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         return f"""
         <body>
-            <p><a href="https://{domain}/?o={workspace_id}#workspace{target_dir}/Version Info" target="_blank">Published Version</a></p>
+            <p><a href="https://{domain}/?o={workspace_id}#workspace{self.target_dir}/Version Info" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows=11> \n{message}</textarea>
         </body>"""
