@@ -192,9 +192,7 @@ class NotebookDef:
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
-        multiple_lines = self.test(lambda: len(lines) > 1, f"Cmd #{i+1} | Expected MD to have more than 1 line of code")
-
-        if self.i18n and multiple_lines:
+        if self.i18n:
             parts = line_0.strip().split(" ")
             for index, part in enumerate(parts):
                 if part.strip() == "": del parts[index]
@@ -203,7 +201,8 @@ class NotebookDef:
 
             debug_info = line_0
 
-            passed = True
+            passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
+
             if len(parts) == 1:
                 passed = passed and self.test(lambda: False, f"Cmd #{i+1} | Missing the i18n directive: {debug_info}")
             else:

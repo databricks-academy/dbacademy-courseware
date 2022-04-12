@@ -55,7 +55,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
-    def test_missing_i18n(self):
+    def test_missing_i18n_multi(self):
         command = """
             # MAGIC %md
             # MAGIC 
@@ -66,6 +66,16 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
+
+    def test_missing_i18n_single(self):
+        command = """
+            # MAGIC %md | # Build-Time Substitutions""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+        self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.errors[0].message)
 
     def test_extra_word_i18n(self):
         command = """
@@ -155,7 +165,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 errors, found {len(notebook.errors)}")
 
-        self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code", notebook.errors[0].message)
+        self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code with i18n enabled: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title", notebook.errors[0].message)
 
     def test_replacement(self):
         import re
