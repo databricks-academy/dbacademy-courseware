@@ -259,12 +259,8 @@ class NotebookDef:
         if len(md_commands) == 0:
             print(f"Skipping resource: {self.path}")
         else:
-            resource_root = f"{target_dir}/{natural_language}"
-            resource_path = f"{resource_root}/{self.path}"
-            print(f"Writing resource bundle: {self.path}")
-            print(f"...writing {len(md_commands)} blocks")
-
-            self.publish_resource(language, md_commands, resource_root, resource_path)
+            # self.publish_resource(language, md_commands, resource_root, resource_path)
+            self.publish_resource(language, md_commands, target_dir, natural_language)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
@@ -446,30 +442,23 @@ class NotebookDef:
             if verbose: print(f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
-    def publish_resource(self, language: str, commands: list, target_dir: str, target_path: str) -> None:
+    def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:
         import os
 
         m = self.get_comment_marker(language)
-        final_source = f"{m} Databricks notebook source\n"
+        target_path = f"{target_dir}/{natural_language}/{self.path}"
+
+        final_source = f"# {self.path}\n\n"
 
         # Processes all commands except the last
-        for command in commands[:-1]:
-            final_source += command
-            final_source += self.get_cmd_delim(language)
-
-        # Process the last command
-        m = self.get_comment_marker(language)
-        final_source += commands[-1]
-        final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
+        for md_command in md_commands:
+            md_command = md_command.replace(f"{m} MAGIC ", "")
+            md_command = md_command.replace(f"%md-sandbox --i18n-", f"<hr sandbox>--i18n-")
+            md_command = md_command.replace(f"%md --i18n-", f"<hr>--i18n-")
+            final_source += md_command
+            final_source += "\n"
 
         final_source = self.replace_contents(final_source)
-
-        resource_name = target_path.replace(target_dir, "")
-        final_source = final_source.replace(f"{m} MAGIC ", "")
-        final_source = final_source.replace(f"{m} Databricks notebook source\n%md-sandbox --i18n-", f"# {resource_name}\n<hr sandbox>--i18n-")
-        final_source = final_source.replace(f"{m} Databricks notebook source\n%md --i18n-", f"# {resource_name}\n<hr>--i18n-")
-        final_source = final_source.replace(f"{m} COMMAND ----------\n%md-sandbox --i18n-", f"<hr sandbox>--i18n-")
-        final_source = final_source.replace(f"{m} COMMAND ----------\n%md --i18n-", f"<hr>--i18n-")
 
         target_file = "/Workspace"+target_path+".md"
         target_dir = "/".join(target_file.split("/")[:-1])
