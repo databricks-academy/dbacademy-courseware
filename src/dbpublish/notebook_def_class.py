@@ -466,8 +466,8 @@ class NotebookDef:
         resource_name = target_path.replace("/Repos/Instructor-Led Source", "")
         final_source = final_source.replace(f"{m} MAGIC ", "")
         final_source = final_source.replace(f"{m} Databricks notebook source\n%md --i18n-", f"# {resource_name}\n<hr>--i18n-")
-        final_source = final_source.replace(f"{m} COMMAND ----------\n%md --i18n-", f"<hr>--i18n-")
         final_source = final_source.replace(f"{m} COMMAND ----------\n%md-sandbox --i18n-", f"<hr sandbox>--i18n-")
+        final_source = final_source.replace(f"{m} COMMAND ----------\n%md --i18n-", f"<hr>--i18n-")
 
         target_file = "/Workspace"+target_path+".md"
         target_dir = "/".join(target_file.split("/")[:-1])
