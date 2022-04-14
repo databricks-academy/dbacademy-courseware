@@ -263,7 +263,7 @@ class NotebookDef:
             print(f"Writing resource bundle: {self.path}")
             print(f"...writing {len(md_commands)} blocks")
 
-            self.publish_resource(language, md_commands, resource_path)
+            self.publish_resource(language, md_commands, target_dir, resource_path)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
@@ -445,7 +445,7 @@ class NotebookDef:
             if verbose: print(f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
-    def publish_resource(self, language: str, commands: list, target_path: str) -> None:
+    def publish_resource(self, language: str, commands: list, target_dir: str, target_path: str) -> None:
         import os
 
         m = self.get_comment_marker(language)
@@ -463,7 +463,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
-        resource_name = target_path.replace("/Repos/Instructor-Led Source", "")
+        resource_name = target_path.replace(target_dir, "")
         final_source = final_source.replace(f"{m} MAGIC ", "")
         final_source = final_source.replace(f"{m} Databricks notebook source\n%md --i18n-", f"# {resource_name}\n<hr>--i18n-")
         final_source = final_source.replace(f"{m} COMMAND ----------\n%md-sandbox --i18n-", f"<hr sandbox>--i18n-")
