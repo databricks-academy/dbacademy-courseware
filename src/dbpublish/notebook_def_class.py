@@ -448,7 +448,7 @@ class NotebookDef:
         m = self.get_comment_marker(language)
         target_path = f"{target_dir}/{natural_language}/{self.path}"
 
-        final_source = f"# {self.path}\n\n"
+        final_source = f"# /{self.path}\n\n"
 
         # Processes all commands except the last
         for md_command in md_commands:
