@@ -259,11 +259,12 @@ class NotebookDef:
         if len(md_commands) == 0:
             print(f"Skipping resource: {self.path}")
         else:
-            resource_path = f"{target_dir}/{natural_language}/{self.path}"
+            resource_root = f"{target_dir}/{natural_language}"
+            resource_path = f"{resource_root}/{self.path}"
             print(f"Writing resource bundle: {self.path}")
             print(f"...writing {len(md_commands)} blocks")
 
-            self.publish_resource(language, md_commands, target_dir, resource_path)
+            self.publish_resource(language, md_commands, resource_root, resource_path)
 
     def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
