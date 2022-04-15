@@ -458,6 +458,7 @@ class NotebookDef:
             final_source += md_command
             final_source += "\n"
 
+        final_source += f"<hr>--end\n"
         final_source = self.replace_contents(final_source)
 
         target_file = "/Workspace"+target_path+".md"
