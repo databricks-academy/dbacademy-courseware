@@ -466,6 +466,9 @@ class NotebookDef:
         if not os.path.exists(target_dir):
             os.makedirs(target_dir)
 
+        if os.path.exists(target_file):
+            os.remove(target_file)
+
         with open(target_file, "w") as w:
             w.write(final_source)
 
