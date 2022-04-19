@@ -1,6 +1,3 @@
-print("loaded dbacademy-courseware.dbpublish")
-
-
 def help_html():
     from .notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
     from .notebook_def_class import SUPPORTED_DIRECTIVES

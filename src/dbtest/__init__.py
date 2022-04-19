@@ -1,6 +1,3 @@
-print("loaded dbacademy-courseware.dbtest")
-
-
 def to_job_url(cloud, job_id, run_id):
     from dbacademy import dbgems
 
