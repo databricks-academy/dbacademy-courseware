@@ -202,6 +202,9 @@ def create_test_job(client, test_config, job_name, notebook_path):
             "instance_pool_id": f"{test_config.instance_pool}",
             "spark_version": f"{test_config.spark_version}",
             "spark_conf": test_config.spark_conf
+        },
+        "spark_env_vars": {
+            "WSFS_ENABLE_WRITE_SUPPORT": "true"
         }
     }
     json_response = client.jobs().create(params)
