@@ -685,7 +685,7 @@ class NotebookDef:
                 else:
                     reslut_a = self.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
                     reslut_b = self.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
-                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.Publisher.help_html() for more information.""")
+                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
                     if reslut_a and reslut_b and reslut_c:
                         directives.append(line)
 
