@@ -183,7 +183,7 @@ class TestConfig:
                         if len(notebook.replacements.keys()) == 0:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
                         else:
-                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements:")
+                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements: {{")
                             max_key_length = 0
                             for key in notebook.replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
 
@@ -192,7 +192,7 @@ class TestConfig:
                                 print(f"        {key}", end="")
                                 print(" "*(max_key_length-len(key)), end="")
                                 print(f": {value}")
-
+                            print("      }")
 
         print("-" * 100)
 
