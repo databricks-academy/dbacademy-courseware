@@ -152,9 +152,8 @@ class TestConfig:
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
 
-        max_length = 0
-        for path in self.notebooks:
-            if len(path) > max_length: max_length = len(path)
+        max_name_length = 0
+        for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
 
         if len(self.notebooks) == 0:
             print(f"notebooks:        none")
@@ -178,16 +177,22 @@ class TestConfig:
                 for notebook in sorted(self.notebooks.values(), key=lambda n: n.order):
                     # notebook = self.notebooks[path]
                     if test_round == notebook.test_round:
-                        path = notebook.path.ljust(max_length)
+                        path = notebook.path.ljust(max_name_length)
                         ignored = str(notebook.ignored).ljust(5)
                         include_solution = str(notebook.include_solution).ljust(5)
                         if len(notebook.replacements.keys()) == 0:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
                         else:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements:")
+                            max_key_length = 0
+                            for key in notebook.replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+
                             for key in notebook.replacements:
                                 value = notebook.replacements[key]
-                                print(f"{key:20s}: {value}")
+                                print(f"        {key}")
+                                print(" "*(max_key_length-len(key)))
+                                print(f": {value}")
+
 
         print("-" * 100)
 
