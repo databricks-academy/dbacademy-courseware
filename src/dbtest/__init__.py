@@ -180,14 +180,13 @@ class TestConfig:
                     if test_round == notebook.test_round:
                         path = notebook.path.ljust(max_length)
                         ignored = str(notebook.ignored).ljust(5)
-                        replacements = str(notebook.replacements)
                         include_solution = str(notebook.include_solution).ljust(5)
-                        if len(replacements.keys()) == 0:
-                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+                        if len(notebook.keys()) == 0:
+                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
                         else:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements:")
-                            for key in replacements:
-                                value = replacements[key]
+                            for key in notebook.replacements:
+                                value = notebook.replacements[key]
                                 print(f"{key:20s}: {value}")
 
         print("-" * 100)
