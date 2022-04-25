@@ -189,8 +189,8 @@ class TestConfig:
 
                             for key in notebook.replacements:
                                 value = notebook.replacements[key]
-                                print(f"        {key}")
-                                print(" "*(max_key_length-len(key)))
+                                print(f"        {key}", end="")
+                                print(" "*(max_key_length-len(key)), end="")
                                 print(f": {value}")
 
 
