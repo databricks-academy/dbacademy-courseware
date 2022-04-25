@@ -181,7 +181,7 @@ class TestConfig:
                         path = notebook.path.ljust(max_length)
                         ignored = str(notebook.ignored).ljust(5)
                         include_solution = str(notebook.include_solution).ljust(5)
-                        if len(notebook.keys()) == 0:
+                        if len(notebook.replacements.keys()) == 0:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
                         else:
                             print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements:")
