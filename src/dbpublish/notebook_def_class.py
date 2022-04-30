@@ -664,7 +664,7 @@ class NotebookDef:
                 directive = line.strip()
                 mod_directive = re.sub("[^-a-zA-Z_]", "_", directive)
 
-                if directive in ["SELECT", "FROM", "AS"]:
+                if directive in ["SELECT", "FROM", "AS", "AND"]:
                     pass  # not a real directive, but flagged as one because of its SQL syntax
 
                 elif directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY,
