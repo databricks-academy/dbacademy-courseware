@@ -224,7 +224,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
             },
             "custom_tags": {
                 "dbacademy.course": course_name,
-                "dbacademy.source": "DBAcadmey Smoke-Test"
+                "dbacademy.source": "DBAcadmey_Smoke_Test"
             }
         }
     }
