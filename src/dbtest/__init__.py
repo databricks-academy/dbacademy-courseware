@@ -198,9 +198,12 @@ class TestConfig:
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
+    import re
 
     test_config.spark_conf["dbacademy.smoke-test"] = "true"
-    print(f"Creating job for |{test_config.name}|")
+
+    course_name = re.sub("[^a-zA-Z0-9]", "_", test_config.name)
+    while "__" in course_name: course_name = course_name.replace("__", "_")
 
     params = {
         "notebook_task": {
@@ -220,7 +223,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
                 "WSFS_ENABLE_WRITE_SUPPORT": "true"
             },
             "custom_tags": {
-                "dbacademy.course": test_config.name,
+                "dbacademy.course": course_name,
                 "dbacademy.source": "DBAcadmey Smoke-Test"
             }
         }
