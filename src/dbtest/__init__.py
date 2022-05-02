@@ -200,6 +200,7 @@ class TestConfig:
 def create_test_job(client, test_config, job_name, notebook_path):
 
     test_config.spark_conf["dbacademy.smoke-test"] = "true"
+    print(f"Creating job for |{test_config.name}|")
 
     params = {
         "notebook_task": {
