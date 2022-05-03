@@ -306,7 +306,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
         # print()
 
-    def test_all_synchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+    def test_all_synchronously(self, test_round, fail_fast=True, owner=None) -> bool:
         from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
