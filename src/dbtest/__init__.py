@@ -329,17 +329,26 @@ class TestSuite:
         passed = True
 
         for test in tests:
-            self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
-            job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
-            if owner: self.client.permissions().change_job_owner(job_id, owner)
+            if fail_fast and not passed:
+                self.log_run(test, {})
 
-            run_id = self.client.jobs().run_now(job_id)["run_id"]
+                print("-" * 80)
+                print(f"Job #x-x is SKIPPED, previous failure")
+                print("-" * 80)
 
-            print(f"""/{test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
+            else:
+                self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
-            response = self.client.runs().wait_for(run_id)
-            passed = False if not self.conclude_test(test, response, fail_fast) else passed
+                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
+                if owner: self.client.permissions().change_job_owner(job_id, owner)
+
+                run_id = self.client.jobs().run_now(job_id)["run_id"]
+
+                print(f"""/{test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
+
+                response = self.client.runs().wait_for(run_id)
+                passed = False if not self.conclude_test(test, response) else passed
 
         return passed
 
@@ -373,11 +382,11 @@ class TestSuite:
             self.send_status_update("info", f"Waiting for */{test.notebook.path}*")
 
             response = self.client.runs().wait_for(test.run_id)
-            passed = False if not self.conclude_test(test, response, fail_fast) else passed
+            passed = False if not self.conclude_test(test, response) else passed
 
         return passed
 
-    def conclude_test(self, test, response, fail_fast) -> bool:
+    def conclude_test(self, test, response) -> bool:
         import json
         self.log_run(test, response)
 
@@ -394,9 +403,6 @@ class TestSuite:
         print(f"Job #{job_id}-{run_id} is {response['state']['life_cycle_state']} - {result_state}")
         print("-" * 80)
 
-        if fail_fast and result_state == 'FAILED':
-            raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
-
         return result_state != 'FAILED'
 
     def to_results_evaluator(self):
@@ -406,15 +412,14 @@ class TestSuite:
     def log_run(self, test, response):
         import time, uuid, requests, json
 
-        job_id = response["job_id"] if "job_id" in response else 0
-        run_id = response["run_id"] if "run_id" in response else 0
+        job_id = response.get("job_id", 0)
+        run_id = response.get("run_id", 0)
 
-        result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        result_state = response.get("state", {}).get("result_state", "UNKNOWN")
         if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
 
-        execution_duration = response["execution_duration"] if "execution_duration" in response else 0
-        notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
-            "notebook_task"] else "UNKNOWN"
+        execution_duration = response.get("execution_duration", 0)
+        notebook_path = response.get("task", {}).get("notebook_task", {}).get("notebook_path", "UNKNOWN")
 
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
