@@ -217,7 +217,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
         "format": "MULTI_TASK",
         "tasks": [
             {
-                "task_key": "Smoke Test",
+                "task_key": "Smoke-Test",
                 "description": "Executes a single notebook, hoping that the magic smoke doesn't escape",
                 "libraries": test_config.libraries,
                 "notebook_task": {
