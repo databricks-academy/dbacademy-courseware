@@ -19,7 +19,7 @@ def to_job_link(cloud, job_id, run_id, label):
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
 
-class TestConfig:
+class BuildConfig:
     def __init__(self,
                  name: str,
                  version: str = 0,
@@ -32,8 +32,7 @@ class TestConfig:
                  source_dir: str = None,
                  source_repo: str = None,
                  spark_conf: dict = None,
-                 results_table: str = None,  # Deprecated
-                 results_database: str = None,  # Deprecated
+                 job_arguments: dict = None,
                  include_solutions: bool = True,
                  i18n: bool = False,
                  ):
@@ -43,14 +42,6 @@ class TestConfig:
         from dbacademy import dbgems
 
         self.i18n = i18n
-
-        # Refactored away
-        if results_table is not None:
-            print("WARNING - results_table is no longer supported/required")
-
-        # Refactored away
-        if results_database is not None:
-            print("WARNING - results_database is no longer supported/required")
 
         self.test_type = None
         self.notebooks = None
@@ -83,6 +74,9 @@ class TestConfig:
         self.spark_conf = dict() if spark_conf is None else spark_conf
         if self.workers == 0:
             self.spark_conf["spark.master"] = "local[*]"
+
+        # Test-Job's arguments
+        self.job_arguments = dict() if job_arguments is None else job_arguments
 
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
@@ -197,6 +191,12 @@ class TestConfig:
         print("-" * 100)
 
 
+class TestConfig(BuildConfig):
+    def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, results_table: str = None, results_database: str = None, include_solutions: bool = True, i18n: bool = False):
+        super().__init__(name, version, spark_version, cloud, instance_pool, workers, libraries, client, source_dir, source_repo, spark_conf, results_table, results_database, include_solutions, i18n)
+        print(f"DEPRECATION WARNING: TestConfig has been repalced by BuildConfig, please update your code accordingly.")
+
+
 def create_test_job(client, test_config, job_name, notebook_path):
     import re
 
@@ -208,6 +208,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
     params = {
         "notebook_task": {
             "notebook_path": f"{notebook_path}",
+            "base_parameters": test_config.job_arguments
         },
         "name": f"{job_name}",
         "timeout_seconds": 7200,
