@@ -19,7 +19,7 @@ def to_job_link(cloud, job_id, run_id, label):
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
 
-class BuildConfig:
+class TestConfig:
     def __init__(self,
                  name: str,
                  version: str = 0,
@@ -191,10 +191,10 @@ class BuildConfig:
         print("-" * 100)
 
 
-class TestConfig(BuildConfig):
-    def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, results_table: str = None, results_database: str = None, include_solutions: bool = True, i18n: bool = False):
-        super().__init__(name, version, spark_version, cloud, instance_pool, workers, libraries, client, source_dir, source_repo, spark_conf, results_table, results_database, include_solutions, i18n)
-        print(f"DEPRECATION WARNING: TestConfig has been repalced by BuildConfig, please update your code accordingly.")
+# class TestConfig(BuildConfig):
+#     def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, results_table: str = None, results_database: str = None, include_solutions: bool = True, i18n: bool = False):
+#         super().__init__(name, version, spark_version, cloud, instance_pool, workers, libraries, client, source_dir, source_repo, spark_conf, results_table, results_database, include_solutions, i18n)
+#         print(f"DEPRECATION WARNING: TestConfig has been repalced by BuildConfig, please update your code accordingly.")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
