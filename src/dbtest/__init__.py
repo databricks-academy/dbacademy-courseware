@@ -62,13 +62,13 @@ class TestConfig:
         assert self.version is not None, "The course's version must be specified."
 
         # The runtime you wish to test against
-        self.spark_version = dbgems.get_current_spark_version() if spark_version is None else spark_version
+        self.spark_version = self.client.clusters().get_current_spark_version() if spark_version is None else spark_version
 
         # We can use local-mode clusters here
         self.workers = 0 if workers is None else workers
 
         # The instance pool from which to obtain VMs
-        self.instance_pool = dbgems.get_current_instance_pool_id(self.client) if instance_pool is None else instance_pool
+        self.instance_pool = self.client.clusters().get_current_instance_pool_id(self.client) if instance_pool is None else instance_pool
 
         # Spark configuration parameters
         self.spark_conf = dict() if spark_conf is None else spark_conf
