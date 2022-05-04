@@ -206,28 +206,35 @@ def create_test_job(client, test_config, job_name, notebook_path):
     while "__" in course_name: course_name = course_name.replace("__", "_")
 
     params = {
-        "notebook_task": {
-            "notebook_path": f"{notebook_path}",
-            "base_parameters": test_config.job_arguments
-        },
         "name": f"{job_name}",
+        "tags": {
+            "dbacademy.course": course_name,
+            "dbacademy.source": "DBAcadmey_Smoke_Test"
+        },
+        "email_notifications": {},
         "timeout_seconds": 7200,
         "max_concurrent_runs": 1,
-        "email_notifications": {},
-        "libraries": test_config.libraries,
-        "new_cluster": {
-            "num_workers": test_config.workers,
-            "instance_pool_id": f"{test_config.instance_pool}",
-            "spark_version": f"{test_config.spark_version}",
-            "spark_conf": test_config.spark_conf,
-            "spark_env_vars": {
-                "WSFS_ENABLE_WRITE_SUPPORT": "true"
+        "format": "MULTI_TASK",
+        "tasks": [
+            {
+                "task_key": "Smoke Test",
+                "description": "Executes a single notebook, hoping that the magic smoke doesn't escape",
+                "libraries": test_config.libraries,
+                "notebook_task": {
+                    "notebook_path": f"{notebook_path}",
+                    "base_parameters": test_config.job_arguments
+                },
+                "new_cluster": {
+                    "num_workers": test_config.workers,
+                    "spark_version": f"{test_config.spark_version}",
+                    "spark_conf": test_config.spark_conf,
+                    "instance_pool_id": f"{test_config.instance_pool}",
+                    "spark_env_vars": {
+                        "WSFS_ENABLE_WRITE_SUPPORT": "true"
+                    },
+                },
             },
-            "custom_tags": {
-                "dbacademy.course": course_name,
-                "dbacademy.source": "DBAcadmey_Smoke_Test"
-            }
-        }
+        ],
     }
     json_response = client.jobs().create(params)
     return json_response["job_id"]
