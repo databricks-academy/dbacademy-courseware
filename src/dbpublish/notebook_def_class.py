@@ -209,7 +209,7 @@ class NotebookDef:
 
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
-            self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}|{line}")
+            self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}| {line}")
 
         return command
 
