@@ -192,11 +192,7 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": \"{link}\"")
 
-    def test_source_cells(self, language: str, command: str, i: int):
-        if language not in ["python", "scala", "sql", "java", "r"]:
-            return command
-
-        what = "/mnt/training"
+    def test_source_for(self, command: str, i: int, what: str):
         if what in command:
             pos = command.find(what)
             pos_a = command.rfind("\n", 0, pos)
@@ -210,6 +206,14 @@ class NotebookDef:
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
             self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}| {line}")
+
+    def test_source_cells(self, language: str, command: str, i: int):
+        
+        if language not in ["python", "scala", "sql", "java", "r"]:
+            return command
+
+        self.test_source_for(command, i, "/mnt/training")
+        self.test_source_for(command, i, "/databricks-datasets")
 
         return command
 
