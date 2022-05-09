@@ -207,7 +207,7 @@ class NotebookDef:
 
             line = command[pos_a:pos_b]
 
-            self.warn(lambda: False not in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training: {line}")
+            self.warn(lambda: False, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training: {line}")
 
         return command
 
