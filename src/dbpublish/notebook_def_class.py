@@ -88,6 +88,15 @@ class NotebookDef:
             self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
+        all_paths = other_notebooks
+        directories = set()
+
+        print("*"*80)
+        for other in other_notebooks:
+            directory = '/'.join(other.path.split("/")[:-1])
+            print(directory)
+        print("*"*80)
+
         offset = -1
 
         if target.startswith("../"):
