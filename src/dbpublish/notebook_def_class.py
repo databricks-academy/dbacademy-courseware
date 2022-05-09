@@ -94,7 +94,7 @@ class NotebookDef:
             directory = '/'.join(other.path.split("/")[:-1])
             directories.add(directory)
 
-            while "/" in directory and directory != "/":
+            while "/" in directory and directory.count("/") > 1:
                 directory = '/'.join(other.path.split("/")[:-1])
                 directories.add(directory)
 
