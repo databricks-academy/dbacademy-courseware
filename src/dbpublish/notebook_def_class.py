@@ -91,7 +91,12 @@ class NotebookDef:
         all_paths = other_notebooks
         directories = set()
         for other in other_notebooks:
-            directories.add('/'.join(other.path.split("/")[:-1]))
+            directory = '/'.join(other.path.split("/")[:-1])
+            directories.add(directory)
+
+            while "/" in directory:
+                directory = '/'.join(other.path.split("/")[:-1])
+                directories.add(directory)
 
         print("*"*80)
         for directory in directories:
