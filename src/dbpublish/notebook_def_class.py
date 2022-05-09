@@ -196,8 +196,8 @@ class NotebookDef:
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
-        self.warn(lambda: "/mnt/training" in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training")
-        
+        self.warn(lambda: "/mnt/training" not in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training")
+
         return command
 
     def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
