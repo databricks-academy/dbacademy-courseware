@@ -88,11 +88,16 @@ class NotebookDef:
             self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
-        all_paths = set(other_notebooks)
+        all_paths = set()
         for other in other_notebooks:
+            # Add the original notebook's path
+            all_paths.add(other.path)
+
+            # Get the notebook's directory
             directory = '/'.join(other.path.split("/")[:-1])
             all_paths.add(directory)
 
+            # While there are still parent directories, keep processing
             while directory.count("/") > 1:
                 directory = '/'.join(other.path.split("/")[:-1])
                 all_paths.add(directory)
@@ -113,7 +118,7 @@ class NotebookDef:
 
         if target.startswith("/"): target = target[1:]
 
-        notebooks = [n.path for n in all_paths if target == n.path]
+        notebooks = [n for n in all_paths if target == n]
 
         message = f"Cmd #{i+1} | Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\""
         # self.test(lambda: len(notebooks) != 0, message)
