@@ -192,6 +192,12 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": \"{link}\"")
 
+    def test_source_cells(self, language: str, command: str, i: int):
+        if language not in ["python", "scala", "sql", "java", "r"]:
+            return command
+
+        self.warn(lambda: "/mnt/training" in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training")
+
     def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
 
         # First verify that the specified command is a mark-down cell
@@ -328,6 +334,9 @@ class NotebookDef:
             command = commands[i].lstrip()
 
             self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Unsupported Cell-Title found")
+
+            # Misc tests for language specific cells
+            command = self.test_source_cells(language, command, i)
 
             # Misc tests specific to %md cells along with i18n specific rewrites
             command = self.test_md_cells(language, command, i, other_notebooks)
