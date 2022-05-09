@@ -88,20 +88,23 @@ class NotebookDef:
             self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
-        all_paths = other_notebooks
         directories = set()
         for other in other_notebooks:
             directory = '/'.join(other.path.split("/")[:-1])
             directories.add(directory)
 
-            while "/" in directory and directory.count("/") > 1:
+            while directory.count("/") > 1:
                 directory = '/'.join(other.path.split("/")[:-1])
                 directories.add(directory)
 
-        print("*"*80)
-        for directory in directories:
-            print(directory)
-        print("*"*80)
+        # print("*"*80)
+        # for directory in directories:
+        #     print(directory)
+        # print("*"*80)
+
+        all_paths = set(other_notebooks)
+        all_paths.update(directories)
+        all_paths = list(all_paths)
 
         offset = -1
 
@@ -119,7 +122,7 @@ class NotebookDef:
 
         if target.startswith("/"): target = target[1:]
 
-        notebooks = [n.path for n in other_notebooks if target == n.path]
+        notebooks = [n.path for n in all_paths if target == n.path]
 
         message = f"Cmd #{i+1} | Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\""
         # self.test(lambda: len(notebooks) != 0, message)
