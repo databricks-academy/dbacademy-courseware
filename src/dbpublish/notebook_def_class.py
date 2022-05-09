@@ -196,7 +196,18 @@ class NotebookDef:
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
-        self.warn(lambda: "/mnt/training" not in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training")
+        what = "/mnt/training"
+        if what in command:
+            pos = command.find(what)
+            pos_a = command.rfind("\n", 0, pos)
+            pos_a = 0 if pos_a == -1 else pos_a
+
+            pos_b = command.find("\n", pos)
+            pos_b = len(command)-1 if pos_b == -1 else pos_b
+
+            line = command[pos_a:pos_b]
+
+            self.warn(lambda: False not in command, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training: {line}")
 
         return command
 
