@@ -205,9 +205,11 @@ class NotebookDef:
             pos_b = command.find("\n", pos)
             pos_b = len(command)-1 if pos_b == -1 else pos_b
 
-            line = command[pos_a:pos_b]
+            line = command[pos_a:pos_b].strip()
 
-            self.warn(lambda: False, f"Cmd #{i+1} | Course includes prohibited use of /mnt/training: {line}")
+            prefix = f"Cmd #{i+1} "
+            padding = " "*len(prefix)
+            self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}|{line}")
 
         return command
 
