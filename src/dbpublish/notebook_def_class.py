@@ -122,7 +122,7 @@ class NotebookDef:
 
         message = f"Cmd #{i+1} | Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\""
         # self.test(lambda: len(notebooks) != 0, message)
-        self.warn(lambda: len(notebooks) != 0, message)
+        self.test(lambda: len(notebooks) != 0, message)
 
     def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
         """
