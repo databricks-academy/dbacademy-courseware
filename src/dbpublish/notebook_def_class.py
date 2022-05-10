@@ -208,7 +208,7 @@ class NotebookDef:
             self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}| {line}")
 
     def test_source_cells(self, language: str, command: str, i: int):
-        
+
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
@@ -317,6 +317,7 @@ class NotebookDef:
         self.warnings = list()
         self.i18n_guids = list()
 
+        print()
         print("=" * 80)
         print(f".../{self.path}")
 
