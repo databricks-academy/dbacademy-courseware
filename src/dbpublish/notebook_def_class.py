@@ -99,7 +99,6 @@ class NotebookDef:
 
             # While there are still parent directories, keep processing
             while directory.count("/") > 0:
-                print(f"Processing {directory}")
                 directory = '/'.join(directory.split("/")[:-1])
                 all_paths.add(directory)
 
