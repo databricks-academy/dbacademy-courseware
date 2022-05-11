@@ -41,6 +41,8 @@ class TestConfig:
         from dbacademy import dbrest
         from dbacademy import dbgems
 
+        self.ignoring = []
+
         self.i18n = i18n
 
         self.test_type = None
@@ -129,7 +131,7 @@ class TestConfig:
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i, i18n=self.i18n)
+                self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i, i18n=self.i18n, ignoring=self.ignoring)
 
     def print(self):
         print("-" * 100)

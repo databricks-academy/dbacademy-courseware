@@ -14,7 +14,8 @@ class MyTestCase(unittest.TestCase):
                            test_round=2,
                            ignored=False,
                            order=0,
-                           i18n=True)
+                           i18n=True,
+                           ignoring=[])
 
     def test_good_single_space_i18n(self):
         command = """

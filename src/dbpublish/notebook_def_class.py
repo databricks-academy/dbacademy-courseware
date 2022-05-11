@@ -23,7 +23,7 @@ class NotebookError:
 
 
 class NotebookDef:
-    def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int, i18n: bool):
+    def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int, i18n: bool, ignoring: list):
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
         assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
         assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
@@ -41,6 +41,8 @@ class NotebookDef:
 
         self.i18n = i18n
         self.i18n_guids = list()
+
+        self.ignoring = ignoring
 
     def __str__(self):
         result = self.path
@@ -164,7 +166,8 @@ class NotebookDef:
         import re
 
         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+            if "single-tick" not in self.ignoring:
+                self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
     def validate_md_link(self, i, command, other_notebooks):
         """Test for MD links to be replaced with html links"""
