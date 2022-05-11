@@ -160,14 +160,14 @@ class NotebookDef:
 
         self.test_notebook_exists(i, "%run", link, link, other_notebooks)
 
-    def validate_single_tick(self, i, command):
-        """Test for usage of single-ticks that should also be bolded"""
-
-        import re
-
-        for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            if "single-tick" not in self.ignoring:
-                self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+    # def validate_single_tick(self, i, command):
+    #     """Test for usage of single-ticks that should also be bolded"""
+    #
+    #     import re
+    #
+    #     for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
+    #         if "single-tick" not in self.ignoring:
+    #             self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
     def validate_md_link(self, i, command, other_notebooks):
         """Test for MD links to be replaced with html links"""
@@ -229,7 +229,7 @@ class NotebookDef:
         if not command.startswith(f"{cm} MAGIC %md"):
             return command
             
-        self.validate_single_tick(i, command)
+        # self.validate_single_tick(i, command)
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
