@@ -43,7 +43,6 @@ class NotebookDef:
         self.i18n_guids = list()
 
         self.ignoring = ignoring
-        print(f"Ignoring {self.ignoring} in {self.path}")
 
     def __str__(self):
         result = self.path
