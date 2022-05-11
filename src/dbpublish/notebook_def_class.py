@@ -208,7 +208,8 @@ class NotebookDef:
 
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
-            self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}| {line}")
+            if "prohibited-dataset" not in self.ignoring:
+                self.warn(lambda: False, f"{prefix}| Course includes prohibited use of /mnt/training:\n{padding}| {line}")
 
     def test_source_cells(self, language: str, command: str, i: int):
 
