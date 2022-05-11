@@ -35,13 +35,13 @@ class TestConfig:
                  job_arguments: dict = None,
                  include_solutions: bool = True,
                  i18n: bool = False,
-                 ):
+                 ignoring: list = []):
 
         import uuid, time
         from dbacademy import dbrest
         from dbacademy import dbgems
 
-        self.ignoring = []
+        self.ignoring = ignoring
 
         self.i18n = i18n
 
