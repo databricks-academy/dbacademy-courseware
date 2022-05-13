@@ -301,7 +301,7 @@ class NotebookDef:
                 md_commands.append(command)
 
         if len(md_commands) == 0:
-            print(f"Skipping resource: {self.path}")
+            print(f"Skipping resource - 0 MD cells: {self.path}")
         else:
             # self.publish_resource(language, md_commands, resource_root, resource_path)
             self.publish_resource(language, md_commands, target_dir, natural_language)
