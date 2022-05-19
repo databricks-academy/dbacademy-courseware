@@ -34,7 +34,7 @@ class Publisher:
         for notebook in self.notebooks:
             notebook.create_resource_bundle(natural_language, self.source_dir, target_dir)
 
-    def publish(self, testing, mode=None, verbose=False, debugging=False):
+    def publish(self, testing, mode=None, verbose=False, debugging=False, exclude=None):
         version_info_notebook = None
         main_notebooks = []
 
@@ -42,8 +42,13 @@ class Publisher:
         expected_modes = ["delete", "overwrite", "no-overwrite"]
         assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
 
+        exclude = list() if exclude is None else exclude
+
         for notebook in self.notebooks:
-            if notebook.path == self.version_info_notebook_name:
+            if notebook.path in exclude:
+                print(f"Excluding Notebook: {notebook.path}")  # Don't do anything with this notebook
+
+            elif notebook.path == self.version_info_notebook_name:
                 version_info_notebook = notebook
             else:
                 main_notebooks.append(notebook)
