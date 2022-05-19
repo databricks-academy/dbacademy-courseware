@@ -46,7 +46,7 @@ class Publisher:
 
         for notebook in self.notebooks:
             if notebook.path in exclude:
-                print(f"Excluding Notebook: {notebook.path}")  # Don't do anything with this notebook
+                print(f"Excluding: {notebook.path}")  # Don't do anything with this notebook
 
             elif notebook.path == self.version_info_notebook_name:
                 version_info_notebook = notebook
