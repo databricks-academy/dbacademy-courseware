@@ -348,7 +348,7 @@ class TestSuite:
                 self.log_run(test, {})
 
                 print("-" * 80)
-                print(f"Job #x-x is SKIPPED, previous failure")
+                print(f"Skipping job, previous failure for {test.job_name}")
                 print("-" * 80)
 
             else:
