@@ -207,11 +207,15 @@ def create_test_job(client, test_config, job_name, notebook_path):
     course_name = re.sub("[^a-zA-Z0-9]", "-", test_config.name.lower())
     while "--" in course_name: course_name = course_name.replace("--", "-")
 
+    test_type = re.sub("[^a-zA-Z0-9]", "-", test_config.test_config.test_type.lower())
+    while "--" in test_type: test_type = test_type.replace("--", "-")
+
     params = {
         "name": f"{job_name}",
         "tags": {
             "dbacademy.course": course_name,
-            "dbacademy.source": "dbacadmey-smoke-test"
+            "dbacademy.source": "dbacadmey-smoke-test",
+            "dbacademy.test-type": test_type
         },
         "email_notifications": {},
         "timeout_seconds": 7200,
