@@ -204,7 +204,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
 
     test_config.spark_conf["dbacademy.smoke-test"] = "true"
 
-    course_name = re.sub("[^a-zA-Z0-9]", "-", test_config.name)
+    course_name = re.sub("[^a-zA-Z0-9]", "-", test_config.name.lower())
     while "--" in course_name: course_name = course_name.replace("--", "-")
 
     params = {
