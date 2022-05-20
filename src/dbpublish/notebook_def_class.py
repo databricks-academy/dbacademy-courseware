@@ -445,15 +445,19 @@ class NotebookDef:
             cm = self.get_comment_marker(language)
             if not command.startswith(f"{cm} MAGIC %md"):
                 if language.lower() == "python":
-                    self.warn(lambda: "%python" not in command, f"""Cmd #{i+1} | Found "%python" in a Python notebook""")
+                    if "%python" not in self.ignoring:
+                        self.warn(lambda: "%python" not in command, f"""Cmd #{i+1} | Found "%python" in a Python notebook""")
                 elif language.lower() == "sql":
-                    self.warn(lambda: "%sql" not in command, f"""Cmd #{i+1} | Found "%sql" in a SQL notebook""")
+                    if "%sql" not in self.ignoring:
+                        self.warn(lambda: "%sql" not in command, f"""Cmd #{i+1} | Found "%sql" in a SQL notebook""")
                 elif language.lower() == "scala":
-                    self.warn(lambda: "%scala" not in command, f"""Cmd #{i+1} | Found "%scala" in a Scala notebook""")
+                    if "%scala" not in self.ignoring:
+                        self.warn(lambda: "%scala" not in command, f"""Cmd #{i+1} | Found "%scala" in a Scala notebook""")
                 elif language.lower() == "r":
                     # We have to check both cases so as not to catch %run by accident
-                    self.warn(lambda: "%r " not in command,  f"""Cmd #{i+1} | Found "%r" in an R notebook""")
-                    self.warn(lambda: "%r\n" not in command, f"""Cmd #{i+1} | Found "%r" in an R notebook""")
+                    if "%r" not in self.ignoring:
+                        self.warn(lambda: "%r " not in command,  f"""Cmd #{i+1} | Found "%r" in an R notebook""")
+                        self.warn(lambda: "%r\n" not in command, f"""Cmd #{i+1} | Found "%r" in an R notebook""")
                 else:
                     raise Exception(f"The language {language} is not supported")
 
