@@ -211,7 +211,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
         "name": f"{job_name}",
         "tags": {
             "dbacademy.course": course_name,
-            "dbacademy.source": "DBAcadmey_Smoke_Test"
+            "dbacademy.source": "dbacadmey-smoke-test"
         },
         "email_notifications": {},
         "timeout_seconds": 7200,
