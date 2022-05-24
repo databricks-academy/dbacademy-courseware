@@ -123,7 +123,8 @@ class TestConfig:
             if "includes/" in path.lower():  # Any folder that ends in "includes"
                 test_round = 0  # Never test notebooks in the "includes" folders
 
-            if "includes/reset" in path.lower():  # Any reset notebook in any "includes" folder
+            # The reset and workspace-setup notebooks have special handling: include in round 1 & no solution
+            if path.lower().startswith("includes/reset") or path.lower().startswith("includes/workspace-setup"):
                 test_round = 1  # Add to test_round #1 before all other tests
                 include_solution = False  # Exclude from the solutions folder
 
