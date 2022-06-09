@@ -349,13 +349,13 @@ class NotebookDef:
 
         raw_source = client.workspace().export_notebook(source_notebook_path)
 
+        i18n_source = ""
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
             with open(f"{i18n_source_path}") as f:
                 i18n_source = f.read()
-        else:
-            print(f"Not found: {i18n_source_path}")
-            i18n_source = ""
+        elif self.i18n_language is not None:
+            self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
         skipped = 0
         students_commands = []
