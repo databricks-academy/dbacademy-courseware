@@ -349,7 +349,7 @@ class NotebookDef:
         raw_source = client.workspace().export_notebook(source_notebook_path)
 
         if self.i18n_language is not None:
-            i18n_source_path = f"{i18n_resources_dir}/{self.i18n_language}/{self.path}.md"
+            i18n_source_path = f"{i18n_resources_dir}/{self.path}.md"
             i18n_source = client.workspace().export_notebook(i18n_source_path)
 
         skipped = 0
