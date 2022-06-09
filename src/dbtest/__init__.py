@@ -45,6 +45,7 @@ class TestConfig:
         self.ignoring = ignoring
 
         self.i18n = i18n
+        self.i18n_language = None if str(i18n_language).lower() == "english" else i18n_language
 
         self.test_type = None
         self.notebooks = None
@@ -133,7 +134,15 @@ class TestConfig:
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i, i18n=self.i18n, ignoring=self.ignoring)
+                self.notebooks[path] = NotebookDef(test_round=test_round,
+                                                   path=path,
+                                                   ignored=False,
+                                                   include_solution=include_solution,
+                                                   replacements=dict(),
+                                                   order=i,
+                                                   i18n=self.i18n,
+                                                   i18n_language=self.i18n_language,
+                                                   ignoring=self.ignoring)
 
     def print(self):
         print("-" * 100)
@@ -149,6 +158,8 @@ class TestConfig:
         print(f"libraries:         {self.libraries}")
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
+        print(f"i18n:              {self.i18n}")
+        print(f"i18n_language:     {self.i18n_language}")
 
         max_name_length = 0
         for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length

@@ -1,8 +1,10 @@
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str):
+    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_language:str):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
+
+        self.i18n_language = i18n_language
 
         self.source_dir = source_dir
         self.target_dir = target_dir

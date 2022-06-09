@@ -35,7 +35,8 @@ def from_test_config(test_config, target_dir):
     publisher = Publisher(client=test_config.client,
                           version=test_config.version,
                           source_dir=test_config.source_dir,
-                          target_dir=target_dir)
+                          target_dir=target_dir,
+                          i18n_language=test_config.i18n_language)
 
     notebooks = list(test_config.notebooks.values())
     publisher.add_all(notebooks)
