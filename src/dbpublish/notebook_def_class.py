@@ -351,8 +351,8 @@ class NotebookDef:
         if self.i18n_language is not None:
             i18n_source_path = f"{i18n_resources_dir}/{self.path}.md"
             import os
-            print(os.curdir)
-            with open(f"/Workspace/{i18n_source_path}") as f:
+            print(os.getcwd())
+            with open(f"/Workspace{i18n_source_path}") as f:
                 i18n_source = f.read()
 
         skipped = 0
