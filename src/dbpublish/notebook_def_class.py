@@ -1,4 +1,3 @@
-import os
 from typing import Callable
 from typing import Union
 
@@ -320,6 +319,7 @@ class NotebookDef:
             self.publish_resource(language, md_commands, target_dir, natural_language)
 
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+        import re, os
         from dbacademy.dbrest import DBAcademyRestClient
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
@@ -358,7 +358,11 @@ class NotebookDef:
             self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
         if self.path == "01 - Databricks Workspace and Services/DE 1.1 - Create and Manage Interactive Clusters":
-            print("Found it!")
+            parts = (re.split(r"\<hr\>--i18n-.*$", i18n_source, flags=re.MULTILINE))
+            print(f"Found {len(parts)} parts")
+            for part in parts:
+                print(part)
+                print("="*80)
 
         skipped = 0
         students_commands = []
