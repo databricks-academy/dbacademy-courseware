@@ -376,12 +376,12 @@ class NotebookDef:
                 pos = part.find("\n")
                 if pos >= 0:
                     guid = part[0:pos]
-                    i18n_guid_map[guid] = part[pos:]
-                    print(f"Adding {guid}")
-                    print("-"*80)
-                    print(i18n_guid_map[guid])
-                    print("="*80)
-
+                    value = part[pos:]
+                    if value is None:
+                        print(f"GUID is None: {guid}")
+                    else:
+                        i18n_guid_map[guid] = value
+                        
         skipped = 0
         students_commands = []
         solutions_commands = []
