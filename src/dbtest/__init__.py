@@ -1,5 +1,5 @@
 def to_job_url(cloud, job_id, run_id):
-    from dbacademy import dbgems
+    import dbacademy.dbgems as dbgems
 
     if dbgems.get_browser_host_name() is not None:
         return f"https://{dbgems.get_browser_host_name()}/?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}"
@@ -35,6 +35,7 @@ class TestConfig:
                  job_arguments: dict = None,
                  include_solutions: bool = True,
                  i18n: bool = False,
+                 i18n_language: str = None,
                  ignoring: list = []):
 
         import uuid, time
