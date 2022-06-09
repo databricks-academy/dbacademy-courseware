@@ -357,6 +357,9 @@ class NotebookDef:
         elif self.i18n_language is not None:
             self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
+        if self.path == "01 - Databricks Workspace and Services/DE 1.1 - Create and Manage Interactive Clusters":
+            print("Found it!")
+
         skipped = 0
         students_commands = []
         solutions_commands = []
