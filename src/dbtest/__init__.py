@@ -1,3 +1,6 @@
+from typing import Union
+
+
 def to_job_url(cloud, job_id, run_id):
     import dbacademy.dbgems as dbgems
 
@@ -134,6 +137,8 @@ class TestConfig:
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
+                i18n_source_path = None if self.i18n_language is None else f"{self.source_repo}/Resources/{self.i18n_language}/{path}.md"
+
                 self.notebooks[path] = NotebookDef(test_round=test_round,
                                                    path=path,
                                                    ignored=False,
@@ -142,6 +147,7 @@ class TestConfig:
                                                    order=i,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
+                                                   i18n_source_path=i18n_source_path,
                                                    ignoring=self.ignoring)
 
     def print(self):

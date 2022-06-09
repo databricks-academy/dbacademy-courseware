@@ -1,4 +1,5 @@
 from typing import Callable
+from typing import Union
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -31,7 +32,8 @@ class NotebookDef:
                  ignored: bool,
                  order: int,
                  i18n: bool,
-                 i18n_language: str,
+                 i18n_language: Union[None, str],
+                 i18n_source_path: Union[None, str],
                  ignoring: list):
 
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -51,6 +53,7 @@ class NotebookDef:
 
         self.i18n = i18n
         self.i18n_language = i18n_language
+        self.i18n_source_path = i18n_source_path
         self.i18n_guids = list()
 
         self.ignoring = ignoring
