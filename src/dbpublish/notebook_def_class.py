@@ -358,7 +358,7 @@ class NotebookDef:
             self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
         if self.path == "01 - Databricks Workspace and Services/DE 1.1 - Create and Manage Interactive Clusters":
-            parts = (re.split(r"\<hr\>--i18n-.*$", i18n_source, flags=re.MULTILINE))
+            parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
             print(f"Found {len(parts)} parts")
             for part in parts:
                 print(part)
