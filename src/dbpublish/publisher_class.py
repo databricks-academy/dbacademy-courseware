@@ -72,15 +72,11 @@ class Publisher:
         try:
             version_info_target = f"{self.target_dir}/{version_info_notebook.path}"
             version_info_source = self.client.workspace().export_notebook(version_info_target)
-            if verbose:
-                print("-"*80)
-            if verbose:
-                print(f"Backed up .../{version_info_notebook.path}")
+            self.print_if(verbose, "-"*80)
+            self.print_if(f"Backed up .../{version_info_notebook.path}")
         except Exception:
-            if verbose:
-                print("-"*80)
-            if verbose:
-                print(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
+            self.print_if("-"*80)
+            self.print_if(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
             version_info_source = None  # It's OK if the published version of this notebook doesn't exist
 
         # Now that we backed up the version-info, we can delete everything.
@@ -90,16 +86,12 @@ class Publisher:
         elif mode == "no-overwrite":
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
-            if verbose:
-                print("-"*80)
-            if verbose:
-                print(f"Deleting target directory...")
+            self.print_if("-"*80)
+            self.print_if(f"Deleting target directory...")
             self.client.workspace().delete_path(self.target_dir)
         elif mode.lower() != "overwrite":
-            if verbose:
-                print("-"*80)
-            if verbose:
-                print(f"Overwriting target directory (unused files will not be removed)...")
+            self.print_if("-"*80)
+            self.print_if(f"Overwriting target directory (unused files will not be removed)...")
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
         # Determine if we are in test mode or not.
@@ -158,3 +150,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             <p><a href="https://{domain}/?o={workspace_id}#workspace{self.target_dir}/Version Info" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows=11> \n{message}</textarea>
         </body>"""
+
+    @staticmethod
+    def print_if(condition, text):
+        if condition:
+            print(text)
