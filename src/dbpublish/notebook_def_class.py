@@ -234,14 +234,16 @@ class NotebookDef:
 
         return command
 
-    def test_md_cells(self, language: str, command: str, i: int, other_notebooks: list):
+    def update_md_cells(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list):
 
         # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
         if not command.startswith(f"{cm} MAGIC %md"):
             return command
             
+        # No longer enforcing this requirement
         # self.validate_single_tick(i, command)
+
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
@@ -271,7 +273,14 @@ class NotebookDef:
 
             if passed:
                 self.i18n_guids.append(guid)
-                del lines[0]
+
+                if not self.i18n_language:
+                    # This is a "standard" publish, just update the one cell
+                    del lines[0]  # Remove the i18n directive
+                else:
+                    self.test(lambda: guid in i18n_guid_map, f"The GUID {guid} was not found for the translation {self.i18n_language}")
+                    lines = i18n_guid_map.get(guid).split("\n")
+
                 lines.insert(0, f"{cm} MAGIC {md_tag}")
                 command = "\n".join(lines)
 
@@ -361,17 +370,13 @@ class NotebookDef:
         if self.i18n_language is not None:
             parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
             name = parts[0].strip()[3:]
-            print(f"||{name}||")
-            del parts[0]
+            assert name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\""
 
-            for part in parts:
+            for part in parts[1:]:
                 pos = part.find("\n")
                 if pos >= 0:
                     guid = part[0:pos]
                     i18n_guid_map[guid] = part[pos:]
-
-        if "014a6669-786f-416d-ac00-9c2e4e9eecfe" in i18n_guid_map:
-            print("Found it!")
 
         skipped = 0
         students_commands = []
@@ -402,7 +407,7 @@ class NotebookDef:
             command = self.test_source_cells(language, command, i)
 
             # Misc tests specific to %md cells along with i18n specific rewrites
-            command = self.test_md_cells(language, command, i, other_notebooks)
+            command = self.update_md_cells(language, command, i, i18n_guid_map, other_notebooks)
             
             # Misc tests specific to %run cells
             self.test_run_cells(language, command, i, other_notebooks)
@@ -521,15 +526,15 @@ class NotebookDef:
 
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
-        if verbose: print(students_notebook_path)
-        if verbose: print(f"...publishing {len(students_commands)} commands")
+        self.print_if(verbose, students_notebook_path)
+        self.print_if(verbose, f"...publishing {len(students_commands)} commands")
         self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{target_dir}/Solutions/{self.path}"
-            if verbose: print(solutions_notebook_path)
-            if verbose: print(f"...publishing {len(solutions_commands)} commands")
+            self.print_if(verbose, solutions_notebook_path)
+            self.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
     def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:
@@ -808,3 +813,8 @@ class NotebookDef:
     {m} MAGIC <br/>
     {m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
     """.strip()
+
+    @staticmethod
+    def print_if(condition, text):
+        if condition:
+            print(text)
