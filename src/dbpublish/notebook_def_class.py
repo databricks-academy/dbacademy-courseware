@@ -358,13 +358,17 @@ class NotebookDef:
             self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
         i18n_guid_map = {}
-        parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
-        print(parts[0])
-        for part in parts:
-            pos = part.find("\n")
-            if pos >= 0:
-                guid = part[0:pos]
-                i18n_guid_map[guid] = part[pos:]
+        if self.i18n_language is not None:
+            parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
+            name = parts[0].strip()[1:]
+            print(name)
+            del parts[0]
+
+            for part in parts:
+                pos = part.find("\n")
+                if pos >= 0:
+                    guid = part[0:pos]
+                    i18n_guid_map[guid] = part[pos:]
 
         if "014a6669-786f-416d-ac00-9c2e4e9eecfe" in i18n_guid_map:
             print("Found it!")
