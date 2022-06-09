@@ -33,7 +33,6 @@ class NotebookDef:
                  order: int,
                  i18n: bool,
                  i18n_language: Union[None, str],
-                 i18n_source_path: Union[None, str],
                  ignoring: list):
 
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -53,7 +52,6 @@ class NotebookDef:
 
         self.i18n = i18n
         self.i18n_language = i18n_language
-        self.i18n_source_path = i18n_source_path
         self.i18n_guids = list()
 
         self.ignoring = ignoring
@@ -320,11 +318,12 @@ class NotebookDef:
             # self.publish_resource(language, md_commands, resource_root, resource_path)
             self.publish_resource(language, md_commands, target_dir, natural_language)
 
-    def publish(self, source_dir: str, target_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+    def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
+        assert type(i18n_resources_dir) == str, f"""Expected the parameter "resources_dir" to be of type "str", found "{type(i18n_resources_dir)}" """
         assert type(verbose) == bool, f"""Expected the parameter "verbose" to be of type "bool", found "{type(verbose)}" """
         assert type(debugging) == bool, f"""Expected the parameter "debugging" to be of type "bool", found "{type(debugging)}" """
 
@@ -348,6 +347,10 @@ class NotebookDef:
         language = source_info["language"].lower()
 
         raw_source = client.workspace().export_notebook(source_notebook_path)
+
+        if self.i18n_language is not None:
+            i18n_source_path = f"{i18n_resources_dir}/{self.i18n_language}/{self.path}.md"
+            i18n_source = client.workspace().export_notebook(i18n_source_path)
 
         skipped = 0
         students_commands = []

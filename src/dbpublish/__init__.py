@@ -32,10 +32,13 @@ def help_html():
 def from_test_config(test_config, target_dir):
     from .publisher_class import Publisher
 
+    i18n_resources_dir = f"{test_config.source_repo}/Resources/{test_config.i18n_language}"
+
     publisher = Publisher(client=test_config.client,
                           version=test_config.version,
                           source_dir=test_config.source_dir,
                           target_dir=target_dir,
+                          i18n_resources_dir=i18n_resources_dir,
                           i18n_language=test_config.i18n_language)
 
     notebooks = list(test_config.notebooks.values())

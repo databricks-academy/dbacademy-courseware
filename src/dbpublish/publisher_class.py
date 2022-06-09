@@ -1,5 +1,5 @@
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_language:str):
+    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language:str):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
@@ -8,6 +8,7 @@ class Publisher:
 
         self.source_dir = source_dir
         self.target_dir = target_dir
+        self.i18n_resources_dir = i18n_resources_dir
 
         self.notebooks = []
 
@@ -65,16 +66,21 @@ class Publisher:
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
         print(f"  testing =   {testing}")
+        print(f"  exclude =   {exclude}")
 
         # Backup the version info in case we are just testing
         try:
             version_info_target = f"{self.target_dir}/{version_info_notebook.path}"
             version_info_source = self.client.workspace().export_notebook(version_info_target)
-            if verbose: print("-"*80)
-            if verbose: print(f"Backed up .../{version_info_notebook.path}")
+            if verbose:
+                print("-"*80)
+            if verbose:
+                print(f"Backed up .../{version_info_notebook.path}")
         except Exception:
-            if verbose: print("-"*80)
-            if verbose: print(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
+            if verbose:
+                print("-"*80)
+            if verbose:
+                print(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
             version_info_source = None  # It's OK if the published version of this notebook doesn't exist
 
         # Now that we backed up the version-info, we can delete everything.
@@ -84,12 +90,16 @@ class Publisher:
         elif mode == "no-overwrite":
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
-            if verbose: print("-"*80)
-            if verbose: print(f"Deleting target directory...")
+            if verbose:
+                print("-"*80)
+            if verbose:
+                print(f"Deleting target directory...")
             self.client.workspace().delete_path(self.target_dir)
         elif mode.lower() != "overwrite":
-            if verbose: print("-"*80)
-            if verbose: print(f"Overwriting target directory (unused files will not be removed)...")
+            if verbose:
+                print("-"*80)
+            if verbose:
+                print(f"Overwriting target directory (unused files will not be removed)...")
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
         # Determine if we are in test mode or not.
@@ -101,6 +111,7 @@ class Publisher:
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
                              target_dir=self.target_dir,
+                             i18n_resources_dir=self.i18n_resources_dir,
                              verbose=verbose, 
                              debugging=debugging,
                              other_notebooks=self.notebooks)
@@ -119,7 +130,8 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
-    def create_new_resource_message(self, language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
+    @staticmethod
+    def create_new_resource_message(language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
         return f"""
                 <body>
                     <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/Version Info.md" target="_blank">Resource Bundle: {language}</a></p>
