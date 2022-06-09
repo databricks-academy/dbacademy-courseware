@@ -360,8 +360,8 @@ class NotebookDef:
         i18n_guid_map = {}
         if self.i18n_language is not None:
             parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
-            name = parts[0].strip()[1:]
-            print(name)
+            name = parts[0].strip()
+            print(f"|||{name}||")
             del parts[0]
 
             for part in parts:
