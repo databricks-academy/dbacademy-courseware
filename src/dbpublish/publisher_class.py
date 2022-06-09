@@ -1,5 +1,5 @@
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language:str):
+    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language: str):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
@@ -73,10 +73,10 @@ class Publisher:
             version_info_target = f"{self.target_dir}/{version_info_notebook.path}"
             version_info_source = self.client.workspace().export_notebook(version_info_target)
             self.print_if(verbose, "-"*80)
-            self.print_if(f"Backed up .../{version_info_notebook.path}")
+            self.print_if(verbose, f"Backed up .../{version_info_notebook.path}")
         except Exception:
-            self.print_if("-"*80)
-            self.print_if(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
+            self.print_if(verbose, "-"*80)
+            self.print_if(verbose, f"An existing copy of .../{version_info_notebook.path} was not found to backup")
             version_info_source = None  # It's OK if the published version of this notebook doesn't exist
 
         # Now that we backed up the version-info, we can delete everything.
@@ -86,12 +86,12 @@ class Publisher:
         elif mode == "no-overwrite":
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
-            self.print_if("-"*80)
-            self.print_if(f"Deleting target directory...")
+            self.print_if(verbose, "-"*80)
+            self.print_if(verbose, f"Deleting target directory...")
             self.client.workspace().delete_path(self.target_dir)
         elif mode.lower() != "overwrite":
-            self.print_if("-"*80)
-            self.print_if(f"Overwriting target directory (unused files will not be removed)...")
+            self.print_if(verbose, "-"*80)
+            self.print_if(verbose, f"Overwriting target directory (unused files will not be removed)...")
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
         # Determine if we are in test mode or not.
