@@ -124,6 +124,7 @@ class Publisher:
         else:
             version_info_notebook.publish(source_dir=self.source_dir,
                                           target_dir=self.target_dir,
+                                          i18n_resources_dir=self.i18n_resources_dir,
                                           verbose=verbose, 
                                           debugging=debugging,
                                           other_notebooks=self.notebooks)
