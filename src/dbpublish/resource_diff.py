@@ -52,7 +52,7 @@ class ResourceDiff:
                                 <td>{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
-                    rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+1
+                    rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+2
 
                     html += f"""<tr><td colspan="2" style="padding:0">
                         <table style="width:1600px; border-collapse: collapse; border-spacing:0"><tr>
