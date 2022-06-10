@@ -278,7 +278,7 @@ class NotebookDef:
                     # This is a "standard" publish, just update the one cell
                     del lines[0]  # Remove the i18n directive
                 else:
-                    print(f"Processing GUID {guid}")
+                    # print(f"Processing GUID {guid}")
                     if guid not in i18n_guid_map:
                         lines = []
                         self.test(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
@@ -366,7 +366,7 @@ class NotebookDef:
             if value is None:
                 print(f"GUID is None: {guid}")
             else:
-                print(f"Adding {guid}: {len(value)} characters")
+                # print(f"Adding {guid}: {len(value)} characters")
                 i18n_guid_map[guid] = value
 
         return i18n_guid_map
