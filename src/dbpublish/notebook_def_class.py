@@ -331,6 +331,46 @@ class NotebookDef:
             # self.publish_resource(language, md_commands, resource_root, resource_path)
             self.publish_resource(language, md_commands, target_dir, natural_language)
 
+    def load_i18n_source(self, i18n_resources_dir):
+        import os
+
+        i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
+        if os.path.exists(i18n_source_path):
+            print(f"Importing translation: {i18n_source_path}")
+            with open(f"{i18n_source_path}") as f:
+                return f.read()
+
+        # i18n_language better be None if the file doesn't exist.
+        self.warn(lambda: self.i18n_language is None, f"Resource Not found: {i18n_source_path}")
+
+        return None
+
+    def load_i18n_guid_map(self, i18n_source: str):
+        import re
+
+        if i18n_source is None:
+            return dict()
+
+        i18n_guid_map = {}
+
+        parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
+        name = parts[0].strip()[3:]
+        self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
+
+        for part in parts[1:]:
+            pos = part.find("\n")
+            pos = pos if pos >= 0 else len(part)
+
+            guid = f"--i18n-{part[0:pos]}"
+            value = part[pos:]
+            if value is None:
+                print(f"GUID is None: {guid}")
+            else:
+                print(f"Adding {guid}: {len(value)} characters")
+                i18n_guid_map[guid] = value
+
+        return i18n_guid_map
+
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
         import re, os
         from dbacademy.dbrest import DBAcademyRestClient
@@ -362,32 +402,8 @@ class NotebookDef:
 
         raw_source = client.workspace().export_notebook(source_notebook_path)
 
-        i18n_source = None
-        i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
-        if os.path.exists(i18n_source_path):
-            print(f"Importing translation: {i18n_source_path}")
-            with open(f"{i18n_source_path}") as f:
-                i18n_source = f.read()
-        elif self.i18n_language is not None:
-            self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
-
-        i18n_guid_map = {}
-        if i18n_source is not None:
-            parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
-            name = parts[0].strip()[3:]
-            self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
-
-            for part in parts[1:]:
-                pos = part.find("\n")
-                pos = pos if pos >= 0 else len(part)
-
-                guid = f"--i18n-{part[0:pos]}"
-                value = part[pos:]
-                if value is None:
-                    print(f"GUID is None: {guid}")
-                else:
-                    print(f"Adding {guid}: {len(value)} characters")
-                    i18n_guid_map[guid] = value
+        i18n_source = self.load_i18n_source()
+        i18n_guid_map = self.load_i18n_guid_map(i18n_source)
 
         skipped = 0
         students_commands = []
