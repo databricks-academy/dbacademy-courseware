@@ -45,27 +45,27 @@ class ResourceDiff:
         for file in self.all_files:
             sd = SegmentDiff(file, self.original_dir, self.latest_dir)
             sd.read_segments()
-            html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro"><h2>/{sd.name}</h2></td></tr>"""
+            
+            if len(sd.diff()) > 0:
+                html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro"><h2>/{sd.name}</h2></td></tr>"""
+                for change in sd.diff():
+                    html += f"""<tr><td style="white-space:nowrap; font-weight:bold">{change.change_type}</td>
+                                    <td style="font-weight:bold; width:100%">{change.message}</td>
+                                </tr>"""
+                    if change.change_type == "Cell Changed":
+                        rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+2
 
-            for change in sd.diff():
-                html += f"""<tr><td style="white-space:nowrap; font-weight:bold">{change.change_type}</td>
-                                <td style="font-weight:bold; width:100%">{change.message}</td>
-                            </tr>"""
-                if change.change_type == "Cell Changed":
-                    rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+2
-
-                    html += f"""<tr><td colspan="2" style="padding:0">
-                        <table style="width:1600px; border-collapse: collapse; border-spacing:0"><tr>
-                            <td style="width:800px; vertical-align:top; padding:0">
-                                <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.original_text}</textarea>
-                            </td>
-                            <td style="width:800px; vertical-align:top; padding:0">
-                                <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.latest_text}</textarea>
-                            </td>
-                        </tr></table>
-                    </td></tr>"""
-
-            html += f"""</tbody>"""
+                        html += f"""<tr><td colspan="2" style="padding:0">
+                            <table style="width:1600px; border-collapse: collapse; border-spacing:0"><tr>
+                                <td style="width:800px; vertical-align:top; padding:0">
+                                    <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.original_text}</textarea>
+                                </td>
+                                <td style="width:800px; vertical-align:top; padding:0">
+                                    <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.latest_text}</textarea>
+                                </td>
+                            </tr></table>
+                        </td></tr>"""
+                html += f"""</tbody>"""
 
         html += "</table></body></html>"
         return html
