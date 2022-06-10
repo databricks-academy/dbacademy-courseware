@@ -52,7 +52,7 @@ class ResourceDiff:
                                 <td>{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
-                    html += f"""<tr><td style="overflow:scroll" colsapn="2">
+                    html += f"""<tr><td style="overflow:scroll; white-space:pre" colsapn="2">
                         <table><tr><td>{change.original_text}</td><td>{change.latest_text}</td></tr></table>
                     </td></tr>"""
 
@@ -67,8 +67,14 @@ class Change:
         self.change_type = change_type
         self.name = name
         self.message = message
+
         self.original_text = original_text
+        while "\n\n" in self.original_text:
+            self.original_text = self.original_text.replace("\n\n", "\n")
+
         self.latest_text = latest_text
+        while "\n\n" in self.latest_text:
+            self.latest_text = self.latest_text.replace("\n\n", "\n")
 
 
 class Segment:
