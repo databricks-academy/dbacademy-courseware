@@ -377,14 +377,15 @@ class NotebookDef:
 
             for part in parts[1:]:
                 pos = part.find("\n")
-                if pos >= 0:
-                    guid = f"--i18n-{part[0:pos]}"
-                    value = part[pos:]
-                    if value is None:
-                        print(f"GUID is None: {guid}")
-                    else:
-                        print(f"Adding {guid}: {len(value)} characters")
-                        i18n_guid_map[guid] = value
+                pos = pos if pos >= 0 else len(part)
+
+                guid = f"--i18n-{part[0:pos]}"
+                value = part[pos:]
+                if value is None:
+                    print(f"GUID is None: {guid}")
+                else:
+                    print(f"Adding {guid}: {len(value)} characters")
+                    i18n_guid_map[guid] = value
 
         skipped = 0
         students_commands = []
