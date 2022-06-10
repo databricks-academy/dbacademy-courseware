@@ -48,7 +48,7 @@ class TestConfig:
         self.ignoring = ignoring
 
         self.i18n = i18n
-        self.i18n_language = None if str(i18n_language).lower() == "english" else i18n_language
+        self.i18n_language = i18n_language
 
         self.test_type = None
         self.notebooks = None

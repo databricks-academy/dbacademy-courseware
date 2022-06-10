@@ -344,8 +344,7 @@ class NotebookDef:
                 source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
                 return source
 
-        # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero
-
+        # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero or one
         self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
 
         return None

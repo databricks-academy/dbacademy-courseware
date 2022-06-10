@@ -5,16 +5,10 @@ class Publisher:
         self.version_info_notebook_name = "Version Info"
 
         self.source_dir = source_dir
+        self.target_dir = target_dir
 
         self.i18n_language = i18n_language
         self.i18n_resources_dir = i18n_resources_dir
-
-        if self.i18n_language is None:
-            self.target_dir = target_dir
-        else:
-            i18n_language = self.i18n_language.split("-")[0]
-            i18n_language = i18n_language[0].upper() + i18n_language[1:]
-            self.target_dir = f"{target_dir}-{i18n_language}"
 
         self.notebooks = []
 
