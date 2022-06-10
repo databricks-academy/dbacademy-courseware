@@ -54,7 +54,7 @@ class ResourceDiff:
                 if change.change_type == "Cell Changed":
                     original_text = change.original_text.replace("\n","<br/>")
                     latest_text = change.latest_text.replace("\n", "<br/>")
-                    rows = min(len(original_text.split("\n")), len(latest_text.split("\n")))
+                    rows = max(len(original_text.split("\n")), len(latest_text.split("\n")))+1
 
                     html += f"""<tr><td colspan="2" style="padding:0">
                         <table style="width:1600px"><tr>
