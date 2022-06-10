@@ -353,7 +353,7 @@ class NotebookDef:
 
         i18n_guid_map = dict()
 
-        #parts = re.split(r"^<hr>--i18n-", i18n_source, flags=re.MULTILINE)
+        # parts = re.split(r"^<hr>--i18n-", i18n_source, flags=re.MULTILINE)
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
@@ -379,7 +379,7 @@ class NotebookDef:
         pos = pos if pos >= 0 else len(part)
 
         guid = f"--i18n-{part[0:pos]}"
-        value = part[pos:]
+        value = part[pos:].lstrip()
 
         return guid, value
 
