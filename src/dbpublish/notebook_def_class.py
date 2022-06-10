@@ -341,7 +341,8 @@ class NotebookDef:
                 return f.read()
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero
-        self.warn(lambda: self.i18n_language is None or self.test_round == 0, f"Resource not found ({self.test_round}): {i18n_source_path}")
+
+        self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
 
         return None
 
@@ -379,7 +380,7 @@ class NotebookDef:
         pos = pos if pos >= 0 else len(part)
 
         guid = f"--i18n-{part[0:pos]}"
-        value = part[pos:].lstrip()
+        value = "\n"+part[pos:].lstrip()
 
         return guid, value
 
