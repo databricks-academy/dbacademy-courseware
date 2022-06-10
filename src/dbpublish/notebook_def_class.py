@@ -340,8 +340,8 @@ class NotebookDef:
             with open(f"{i18n_source_path}") as f:
                 return f.read()
 
-        # i18n_language better be None if the file doesn't exist.
-        self.warn(lambda: self.i18n_language is None, f"Resource Not found: {i18n_source_path}")
+        # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero
+        self.warn(lambda: self.i18n_language is None or self.test_round == 0, f"Resource Not found: {i18n_source_path}")
 
         return None
 
