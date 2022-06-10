@@ -4,11 +4,17 @@ class Publisher:
         self.version = version
         self.version_info_notebook_name = "Version Info"
 
-        self.i18n_language = i18n_language
-
         self.source_dir = source_dir
-        self.target_dir = target_dir
+
+        self.i18n_language = i18n_language
         self.i18n_resources_dir = i18n_resources_dir
+
+        if self.i18n_language is None:
+            self.target_dir = target_dir
+        else:
+            i18n_language = self.i18n_language.split("-")[0]
+            i18n_language = i18n_language[0].upper() + i18n_language[1:]
+            self.target_dir = f"{target_dir}-{i18n_language}"
 
         self.notebooks = []
 
@@ -135,13 +141,6 @@ class Publisher:
         version = test_config.version
         source_repo = test_config.source_repo
 
-        if self.i18n_language is None:
-            target_dir = self.target_dir
-        else:
-            i18n_language = self.i18n_language.split("-")[0]
-            i18n_language = i18n_language[0].upper() + i18n_language[1:]
-            target_dir = f"{self.target_dir}-{i18n_language}"
-
         message = f"""
 @channel Published {name}, v{version}
 
@@ -154,7 +153,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         return f"""
         <body>
-            <p><a href="https://{domain}/?o={workspace_id}#workspace{target_dir}/Version Info" target="_blank">Published Version</a></p>
+            <p><a href="https://{domain}/?o={workspace_id}#workspace{self.target_dir}/Version Info" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows=11> \n{message}</textarea>
         </body>"""
 
