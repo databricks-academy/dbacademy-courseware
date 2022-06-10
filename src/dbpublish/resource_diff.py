@@ -50,8 +50,8 @@ class ResourceDiff:
             for change in sd.diff():
                 html += f"""<tr><td style="white-space:nowrap">{change.change_type}</td>
                                 <td>{change.message}</td>
-                                <td><a href="/#workspace{self.repo_dir}/{self.original_resource}/{sd.name}">original</a></td>
-                                <td><a href="/#workspace{self.repo_dir}/{self.latest_resource}/{sd.name}">latest</a></td>
+                                <td><a href="/#{self.repo_dir}/{self.original_resource}/{sd.name}">original</a></td>
+                                <td><a href="/#{self.repo_dir}/{self.latest_resource}/{sd.name}">latest</a></td>
                             </tr>"""
             html += f"""</tbody>"""
 
