@@ -338,7 +338,9 @@ class NotebookDef:
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
             with open(f"{i18n_source_path}") as f:
-                return f.read()
+                source = f.read()
+                source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
+                return source
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero
 
