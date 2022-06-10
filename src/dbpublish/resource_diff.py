@@ -52,8 +52,11 @@ class ResourceDiff:
                                 <td>{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
-                    html += f"""<tr><td style="overflow:scroll; white-space:pre" colsapn="2">
-                        <table><tr><td>{change.original_text}</td><td>{change.latest_text}</td></tr></table>
+                    html += f"""<tr><td colsapn="2">
+                        <table style="width:1024"><tr>
+                            <td style="width:50%; vertical-align:top; overflow:scroll; white-space:pre">{change.original_text}</td>
+                            <td style="width:50%; vertical-align:top; overflow:scroll; white-space:pre">{change.latest_text}</td>
+                        </tr></table>
                     </td></tr>"""
 
             html += f"""</tbody>"""
