@@ -402,7 +402,7 @@ class NotebookDef:
 
         raw_source = client.workspace().export_notebook(source_notebook_path)
 
-        i18n_source = self.load_i18n_source()
+        i18n_source = self.load_i18n_source(i18n_resources_dir)
         i18n_guid_map = self.load_i18n_guid_map(i18n_source)
 
         skipped = 0
