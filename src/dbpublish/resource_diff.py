@@ -58,8 +58,8 @@ class ResourceDiff:
 
                     html += f"""<tr><td colspan="2" style="padding:0">
                         <table style="width:1600px"><tr>
-                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea style="width:800px; white-space:pre;">{original_text}</textarea></td>
-                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea style="width:800px; white-space:pre;">{latest_text}</textarea></td>
+                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea rows="{rows}" style="width:800px; white-space:pre;">{original_text}</textarea></td>
+                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea rows="{rows}" style="width:800px; white-space:pre;">{latest_text}</textarea></td>
                         </tr></table>
                     </td></tr>"""
 
