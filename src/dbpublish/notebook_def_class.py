@@ -336,7 +336,6 @@ class NotebookDef:
 
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
-            print(f"Importing translation: {i18n_source_path}")
             with open(f"{i18n_source_path}") as f:
                 return f.read()
 
@@ -363,6 +362,10 @@ class NotebookDef:
 
             guid = f"--i18n-{part[0:pos]}"
             value = part[pos:]
+
+            if name == "03 - Relational Entities on Databricks/DE 3.2B - Views and CTEs on Databricks, Cont":
+                print(f"Adding {guid}: {len(value)} characters")
+
             if value is None:
                 print(f"GUID is None: {guid}")
             else:
