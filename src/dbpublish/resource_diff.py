@@ -45,7 +45,7 @@ class ResourceDiff:
         for file in self.all_files:
             sd = SegmentDiff(file, self.original_dir, self.latest_dir)
             sd.read_segments()
-            html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro"><h1>/{sd.name}</h1></td></tr>"""
+            html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro"><h2>/{sd.name}</h2></td></tr>"""
 
             for change in sd.diff():
                 html += f"""<tr><td style="white-space:nowrap">{change.change_type}</td>
