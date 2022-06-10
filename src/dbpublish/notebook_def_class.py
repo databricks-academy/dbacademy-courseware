@@ -364,6 +364,7 @@ class NotebookDef:
         i18n_source = ""
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
+            print(f"Importing translation: {i18n_source_path}")
             with open(f"{i18n_source_path}") as f:
                 i18n_source = f.read()
         elif self.i18n_language is not None:
