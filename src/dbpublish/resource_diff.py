@@ -84,9 +84,9 @@ class SegmentDiff:
 
     def diff(self):
         if self.segments_a is None:
-            return [Change("Missing Notebook", self.name, f"{self.name} from directory A")]
+            return [Change("Missing Notebook", self.name, f"{self.name} from original")]
         elif self.segments_b is None:
-            return [Change("Missing Notebook", self.name, f"{self.name} from directory B")]
+            return [Change("Missing Notebook", self.name, f"{self.name} from latest")]
 
         changes = []
 
@@ -97,9 +97,9 @@ class SegmentDiff:
 
         for guid in guids:
             if guid not in self.segments_a:
-                changes.append(Change("Missing Cell", self.name, f"{guid} from directory A"))
+                changes.append(Change("Missing Cell", self.name, f"{guid} from original"))
             elif guid not in self.segments_b:
-                changes.append(Change("Missing Cell", self.name, f"{guid} from directory B"))
+                changes.append(Change("Missing Cell", self.name, f"{guid} from latest"))
             elif self.segments_a[guid].contents != self.segments_b[guid].contents:
                 changes.append(Change("Cell Changed", self.name, f"{guid}"))
 
