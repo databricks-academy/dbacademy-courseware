@@ -342,6 +342,7 @@ class NotebookDef:
             with open(f"{i18n_source_path}") as f:
                 source = f.read()
                 source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
+                source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
                 return source
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero or one
