@@ -55,8 +55,8 @@ class ResourceDiff:
                     original_text = change.original_text.replace("\n","<br/>")
                     latest_text = change.latest_text.replace("\n", "<br/>")
 
-                    html += f"""<tr style="width:100%"><td colsapn="2">
-                        <table><tr>
+                    html += f"""<tr><td colsapn="2">
+                        <table style="width:100%"><tr>
                             <td style="width:50%; vertical-align:top;"><div style="overflow-x:scroll;">{original_text}</div></td>
                             <td style="width:50%; vertical-align:top;"><div style="overflow-x:scroll;">{latest_text}</div></td>
                         </tr></table>
