@@ -54,8 +54,8 @@ class ResourceDiff:
                 if change.change_type == "Cell Changed":
                     html += f"""<tr style="width:1024px"><td colsapn="2">
                         <table><tr>
-                            <td style="width:512px; vertical-align:top; overflow:scroll; white-space:pre">{change.original_text}</td>
-                            <td style="width:512px; vertical-align:top; overflow:scroll; white-space:pre">{change.latest_text}</td>
+                            <td style="width:512px; vertical-align:top; overflow-x:scroll; white-space:pre">{change.original_text}</td>
+                            <td style="width:512px; vertical-align:top; overflow-x:scroll; white-space:pre">{change.latest_text}</td>
                         </tr></table>
                     </td></tr>"""
 
