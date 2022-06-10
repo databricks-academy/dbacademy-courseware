@@ -69,12 +69,14 @@ class Change:
         self.message = message
 
         self.original_text = original_text
-        while "\n\n" in self.original_text:
-            self.original_text = self.original_text.replace("\n\n", "\n")
+        if self.original_text is not None:
+            while "\n\n" in self.original_text:
+                self.original_text = self.original_text.replace("\n\n", "\n")
 
         self.latest_text = latest_text
-        while "\n\n" in self.latest_text:
-            self.latest_text = self.latest_text.replace("\n\n", "\n")
+        if self.latest_text is not None:
+            while "\n\n" in self.latest_text:
+                self.latest_text = self.latest_text.replace("\n\n", "\n")
 
 
 class Segment:
