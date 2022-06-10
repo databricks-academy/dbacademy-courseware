@@ -376,7 +376,7 @@ class NotebookDef:
             for part in parts[1:]:
                 pos = part.find("\n")
                 if pos >= 0:
-                    guid = part[0:pos]
+                    guid = f"--i18n-{part[0:pos]}"
                     value = part[pos:]
                     if value is None:
                         print(f"GUID is None: {guid}")
