@@ -279,8 +279,10 @@ class NotebookDef:
                     del lines[0]  # Remove the i18n directive
                 else:
                     print(f"Processing GUID {guid}")
-                    self.test(lambda: guid in i18n_guid_map, f"The GUID {guid} was not found for the translation {self.i18n_language}")
-                    lines = i18n_guid_map.get(guid).split("\n")
+                    self.test(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
+                    text = i18n_guid_map.get(guid)
+                    self.test(lambda: text is not None, f"The text for GUID \"{guid}\" was for the translation of {self.i18n_language}")
+                    lines = [] if text is None else text.split("\n")
 
                 lines.insert(0, f"{cm} MAGIC {md_tag}")
                 command = "\n".join(lines)
