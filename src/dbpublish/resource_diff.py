@@ -2,11 +2,11 @@ from typing import Union
 
 
 class ResourceDiff:
-    def __init__(self, dir_a: str, version_a: str, dir_b: str, version_b: str):
-        self.dir_a = dir_a
-        self.version_a = version_a
-        self.dir_b = dir_b
-        self.version_b = version_b
+    def __init__(self, original_dir: str, original_version: str, latest_dir: str, latest_version: str):
+        self.original_dir = original_dir
+        self.original_version = original_version
+        self.latest_dir = latest_dir
+        self.latest_version = latest_version
 
         self.files_a = None
         self.files_b = None
@@ -15,11 +15,11 @@ class ResourceDiff:
     def compare(self):
         import os
 
-        self.files_a = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.dir_a) for f in filenames]
-        self.files_a = [r[len(self.dir_a) + 1:] for r in self.files_a]
+        self.files_a = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.original_dir) for f in filenames]
+        self.files_a = [r[len(self.original_dir) + 1:] for r in self.files_a]
 
-        self.files_b = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.dir_b) for f in filenames]
-        self.files_b = [r[len(self.dir_b) + 1:] for r in self.files_b]
+        self.files_b = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.latest_dir) for f in filenames]
+        self.files_b = [r[len(self.latest_dir) + 1:] for r in self.files_b]
 
         self.all_files = []
         self.all_files.extend(self.files_a)
@@ -33,14 +33,14 @@ class ResourceDiff:
         </style>
         </head>
         <body>
-            <p>Dir A ({self.version_a}): <b>{self.dir_a}</b></p>
-            <p>Dir B ({self.version_b}): <b>{self.dir_b}</b></p>
+            <p>Original ({self.original_version}): <b>{self.original_dir}</b></p>
+            <p>Latest ({self.latest_version}): <b>{self.latest_dir}</b></p>
             <table style="border-collapse: collapse; border-spacing:0">"""
 
         html += f"""<thead><tr><td>Change Type</td><td>Message</td></tr></thead>"""
 
         for file in self.all_files:
-            sd = SegmentDiff(file, self.dir_a, self.dir_b)
+            sd = SegmentDiff(file, self.original_dir, self.latest_dir)
             sd.read_segments()
             html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro">/{sd.name}</td></tr>"""
 
@@ -71,10 +71,10 @@ class Segment:
 
 class SegmentDiff:
 
-    def __init__(self, name, dir_a, dir_b):
+    def __init__(self, name, original_dir, latest_dir):
         self.name = name
-        self.dir_a = dir_a
-        self.dir_b = dir_b
+        self.original_dir = original_dir
+        self.latest_dir = latest_dir
         self.segments_a = None
         self.segments_b = None
 
@@ -102,8 +102,8 @@ class SegmentDiff:
         return changes
 
     def read_segments(self):
-        self.segments_a = self._read_segments_file(f"{self.dir_a}/{self.name}")
-        self.segments_b = self._read_segments_file(f"{self.dir_b}/{self.name}")
+        self.segments_a = self._read_segments_file(f"{self.original_dir}/{self.name}")
+        self.segments_b = self._read_segments_file(f"{self.latest_dir}/{self.name}")
 
     @staticmethod
     def _read_segments_file(file: str) -> Union[None, dict]:
