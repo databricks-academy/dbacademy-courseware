@@ -51,6 +51,11 @@ class ResourceDiff:
                 html += f"""<tr><td style="white-space:nowrap">{change.change_type}</td>
                                 <td>{change.message}</td>
                             </tr>"""
+                if change.change_type == "Cell Changed":
+                    html += f"""<tr><td style="overflow:scroll" colsapn="2">
+                        <table><tr><td>{change.original_text}</td><td>{change.latest_text}</td></tr></table>
+                    </td></tr>"""
+
             html += f"""</tbody>"""
 
         html += "</table></body></html>"
@@ -58,10 +63,12 @@ class ResourceDiff:
 
 
 class Change:
-    def __init__(self, change_type, name, message):
+    def __init__(self, change_type: str, name: str, message: str, original_text: str = None, latest_text: str = None):
         self.change_type = change_type
         self.name = name
         self.message = message
+        self.original_text = original_text
+        self.latest_text = latest_text
 
 
 class Segment:
@@ -97,11 +104,12 @@ class SegmentDiff:
 
         for guid in guids:
             if guid not in self.segments_a:
-                changes.append(Change("Cell Added to Latest", self.name, guid))
+                changes.append(Change("Cell Added", self.name, guid))
             elif guid not in self.segments_b:
-                changes.append(Change("Cell Removed from Latest", self.name, guid))
+                changes.append(Change("Cell Removed", self.name, guid))
             elif self.segments_a[guid].contents.strip() != self.segments_b[guid].contents.strip():
-                changes.append(Change("Cell Changed", self.name, f"{guid}"))
+                # Try to figure out the first line that changed.
+                changes.append(Change("Cell Changed", self.name, f"{guid}", self.segments_a[guid].contents.strip(), self.segments_b[guid].contents.strip()))
 
         return changes
 
