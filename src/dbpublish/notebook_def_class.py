@@ -380,7 +380,7 @@ class NotebookDef:
         pos = pos if pos >= 0 else len(part)
 
         guid = f"--i18n-{part[0:pos]}"
-        value = part[pos:] # .lstrip()
+        value = part[pos+1:]  # .lstrip()
 
         return guid, value
 
