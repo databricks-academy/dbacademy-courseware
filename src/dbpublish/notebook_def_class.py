@@ -358,7 +358,7 @@ class NotebookDef:
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
-        self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
+        self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found\n                      \"{name}\"")
 
         for part in parts[1:]:
             guid, value = self.parse_guid_and_value(part)
