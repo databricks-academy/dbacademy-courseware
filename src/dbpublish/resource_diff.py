@@ -54,11 +54,11 @@ class ResourceDiff:
                 if change.change_type == "Cell Changed":
                     original_text = change.original_text.replace("\n","<br/>")
                     latest_text = change.latest_text.replace("\n", "<br/>")
-                    
-                    html += f"""<tr style="width:1024px"><td colsapn="2">
+
+                    html += f"""<tr style="width:100%"><td colsapn="2">
                         <table><tr>
-                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{original_text}</td>
-                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{latest_text}</td>
+                            <td style="width:50%; vertical-align:top; overflow-x:scroll;">{original_text}</td>
+                            <td style="width:50%; vertical-align:top; overflow-x:scroll;">{latest_text}</td>
                         </tr></table>
                     </td></tr>"""
 
