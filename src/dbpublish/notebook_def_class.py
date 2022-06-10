@@ -412,7 +412,7 @@ class NotebookDef:
         source_notebook_path = f"{source_dir}/{self.path}"
         i18n_language = self.i18n_language.split("-")[0]
         i18n_language = i18n_language[0].upper() + i18n_language[1:]
-        target_dir = target_dir if self.i18n_language is None else f"{target_dir-i18n_language}"
+        target_dir = target_dir if self.i18n_language is None else f"{target_dir}-{i18n_language}"
 
         client = DBAcademyRestClient()
 
