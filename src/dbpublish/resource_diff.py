@@ -52,14 +52,16 @@ class ResourceDiff:
                                 <td>{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
-                    original_text = change.original_text.replace("\n","<br/>")
-                    latest_text = change.latest_text.replace("\n", "<br/>")
-                    rows = max(len(original_text.split("\n")), len(latest_text.split("\n")))+1
+                    rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+1
 
                     html += f"""<tr><td colspan="2" style="padding:0">
                         <table style="width:1600px"><tr>
-                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea rows="{rows}" style="width:800px; white-space:pre;">{original_text}</textarea></td>
-                            <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea rows="{rows}" style="width:800px; white-space:pre;">{latest_text}</textarea></td>
+                            <td style="width:800px; vertical-align:top; overflow-x:scroll;">
+                                <textarea rows="{rows}" style="width:800px; white-space:pre;">{change.original_text}</textarea>
+                            </td>
+                            <td style="width:800px; vertical-align:top; overflow-x:scroll;">
+                                <textarea rows="{rows}" style="width:800px; white-space:pre;">{change.latest_text}</textarea>
+                            </td>
                         </tr></table>
                     </td></tr>"""
 
