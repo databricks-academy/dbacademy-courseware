@@ -97,7 +97,7 @@ class SegmentDiff:
 
         for guid in guids:
             if guid not in self.segments_a:
-                changes.append(Change("Missing Cell", self.name, f"{guid} from original"))
+                changes.append(Change("Cell Added to Latest", self.name, guid))
             elif guid not in self.segments_b:
                 changes.append(Change("Missing Cell", self.name, f"{guid} from latest"))
             elif self.segments_a[guid].contents != self.segments_b[guid].contents:
