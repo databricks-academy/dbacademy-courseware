@@ -2,11 +2,15 @@ from typing import Union
 
 
 class ResourceDiff:
-    def __init__(self, original_dir: str, original_version: str, latest_dir: str, latest_version: str):
-        self.original_dir = original_dir
-        self.original_version = original_version
-        self.latest_dir = latest_dir
-        self.latest_version = latest_version
+    def __init__(self, repo_dir, original_resource: str, latest_resource: str, resources_folder: str = "Resources"):
+
+        self.repo_dir = repo_dir
+
+        self.latest_resource = latest_resource
+        self.original_resource = original_resource
+
+        self.latest_dir =   f"{repo_dir}/{resources_folder}/{latest_resource}"
+        self.original_dir = f"{repo_dir}/{resources_folder}/{original_resource}"
 
         self.files_a = None
         self.files_b = None
@@ -25,16 +29,15 @@ class ResourceDiff:
         self.all_files.extend(self.files_a)
         self.all_files.extend(self.files_b)
 
-    def report(self):
         html = f"""<!DOCTYPE html><html>
         <head>
         <style>
             td {{padding: 5px; border:1px solid silver}}
         </style>
         </head>
-        <body>
-            <p>Original ({self.original_version}): <b>{self.original_dir}</b></p>
-            <p>Latest ({self.latest_version}): <b>{self.latest_dir}</b></p>
+        <body style="font-size:16px>
+            <p>Original: <b>{self.original_resource}</b></p>
+            <p>Latest: <b>{self.latest_resource}</b></p>
             <table style="border-collapse: collapse; border-spacing:0">"""
 
         html += f"""<thead><tr><td>Change Type</td><td>Message</td></tr></thead>"""
