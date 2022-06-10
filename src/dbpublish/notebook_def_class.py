@@ -362,7 +362,7 @@ class NotebookDef:
 
         raw_source = client.workspace().export_notebook(source_notebook_path)
 
-        i18n_source = ""
+        i18n_source = None
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
             print(f"Importing translation: {i18n_source_path}")
@@ -372,10 +372,10 @@ class NotebookDef:
             self.warn(lambda: False, f"Resource Not found: {i18n_source_path}")
 
         i18n_guid_map = {}
-        if self.i18n_language is not None:
+        if i18n_source is not None:
             parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
             name = parts[0].strip()[3:]
-            assert name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\""
+            self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
 
             for part in parts[1:]:
                 pos = part.find("\n")
