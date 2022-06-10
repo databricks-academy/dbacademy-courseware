@@ -352,7 +352,8 @@ class NotebookDef:
 
         i18n_guid_map = {}
 
-        parts = (re.split(r"^\<hr\>--i18n-", i18n_source, flags=re.MULTILINE))
+        # parts = (re.split(r"^\<hr\>--i18n-", i18n_source))
+        parts = (re.split(r"^\<hr\>--i18n-|\<hr sandbox\>--i18n-", i18n_source))
         name = parts[0].strip()[3:]
         self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
 
