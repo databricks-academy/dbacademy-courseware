@@ -52,10 +52,13 @@ class ResourceDiff:
                                 <td>{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
+                    original_text = change.original_text.replace("\n","<br/>")
+                    latest_text = change.latest_text.replace("\n", "<br/>")
+                    
                     html += f"""<tr style="width:1024px"><td colsapn="2">
                         <table><tr>
-                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{change.original_text.replace("\n","<br/>")}</td>
-                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{change.latest_text.replace("\n","<br/>")}</td>
+                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{original_text}</td>
+                            <td style="width:512px; vertical-align:top; overflow-x:scroll;">{latest_text}</td>
                         </tr></table>
                     </td></tr>"""
 
