@@ -353,15 +353,14 @@ class NotebookDef:
 
         i18n_guid_map = dict()
 
-        # parts = (re.split(r"^\<hr\>--i18n-", i18n_source))
-        parts = re.split(r"^\<hr\>--i18n-", i18n_source)
+        parts = re.split(r"^<hr>--i18n-", i18n_source)
         name = parts[0].strip()[3:]
         self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
 
         for part in parts[1:]:
             guid, value = self.parse_guid_and_value(part)
 
-            sandbox_parts = re.split(r"\<hr sandbox\>--i18n-", value)
+            sandbox_parts = re.split(r"^<hr sandbox>--i18n-", value)
             i18n_guid_map[guid] = sandbox_parts[0]
 
             for sandbox_part in sandbox_parts[1:]:
