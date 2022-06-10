@@ -49,7 +49,7 @@ class ResourceDiff:
 
             for change in sd.diff():
                 html += f"""<tr><td style="white-space:nowrap; font-weight:bold">{change.change_type}</td>
-                                <td style="font-weight:bold">{change.message}</td>
+                                <td style="font-weight:bold; width:100%">{change.message}</td>
                             </tr>"""
                 if change.change_type == "Cell Changed":
                     rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+2
