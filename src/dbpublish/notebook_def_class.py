@@ -253,7 +253,8 @@ class NotebookDef:
         if self.i18n:
             parts = line_0.strip().split(" ")
             for index, part in enumerate(parts):
-                if part.strip() == "": del parts[index]
+                if part.strip() == "":
+                    del parts[index]
             md_tag = None if len(parts) < 1 else parts[0]
             guid = None if len(parts) < 2 else parts[1]
 
@@ -350,33 +351,36 @@ class NotebookDef:
         if i18n_source is None:
             return dict()
 
-        i18n_guid_map = {}
+        i18n_guid_map = dict()
 
         # parts = (re.split(r"^\<hr\>--i18n-", i18n_source))
-        parts = (re.split(r"^\<hr\>--i18n-|\<hr sandbox\>--i18n-", i18n_source))
+        parts = re.split(r"^\<hr\>--i18n-", i18n_source)
         name = parts[0].strip()[3:]
         self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found \"{name}\"")
 
         for part in parts[1:]:
-            pos = part.find("\n")
-            pos = pos if pos >= 0 else len(part)
+            guid, value = self.parse_guid_and_value(part)
 
-            guid = f"--i18n-{part[0:pos]}"
-            value = part[pos:]
+            sandbox_parts = re.split(r"\<hr sandbox\>--i18n-", value)
+            i18n_guid_map[guid] = sandbox_parts[0]
 
-            if name == "03 - Relational Entities on Databricks/DE 3.2B - Views and CTEs on Databricks, Cont":
-                print(f"Adding {guid}: {len(value)} characters")
-
-            if value is None:
-                print(f"GUID is None: {guid}")
-            else:
-                # print(f"Adding {guid}: {len(value)} characters")
+            for sandbox_part in sandbox_parts[1:]:
+                guid, value = self.parse_guid_and_value(sandbox_part)
                 i18n_guid_map[guid] = value
 
         return i18n_guid_map
 
+    @staticmethod
+    def parse_guid_and_value(part):
+        pos = part.find("\n")
+        pos = pos if pos >= 0 else len(part)
+
+        guid = f"--i18n-{part[0:pos]}"
+        value = part[pos:]
+
+        return guid, value
+
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
-        import re, os
         from dbacademy.dbrest import DBAcademyRestClient
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
