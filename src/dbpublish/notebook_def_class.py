@@ -406,6 +406,7 @@ class NotebookDef:
         print(f".../{self.path}")
 
         source_notebook_path = f"{source_dir}/{self.path}"
+        target_dir = target_dir if self.i18n_language is None else f"{target_dir}/{self.i18n_language}"
 
         client = DBAcademyRestClient()
 
