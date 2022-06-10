@@ -381,7 +381,7 @@ class NotebookDef:
                     if value is None:
                         print(f"GUID is None: {guid}")
                     else:
-                        print(f"Adding {guid}")
+                        print(f"Adding {guid}: {len(value)} characters")
                         i18n_guid_map[guid] = value
 
         skipped = 0
