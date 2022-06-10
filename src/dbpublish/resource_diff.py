@@ -45,7 +45,7 @@ class ResourceDiff:
         for file in self.all_files:
             sd = SegmentDiff(file, self.original_dir, self.latest_dir)
             sd.read_segments()
-            html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro">/{sd.name}</td></tr>"""
+            html += f"""<tbody><tr><td colspan="2" style="background-color:gainsboro"><h1>/{sd.name}</h1></td></tr>"""
 
             for change in sd.diff():
                 html += f"""<tr><td style="white-space:nowrap">{change.change_type}</td>
@@ -54,8 +54,9 @@ class ResourceDiff:
                 if change.change_type == "Cell Changed":
                     original_text = change.original_text.replace("\n","<br/>")
                     latest_text = change.latest_text.replace("\n", "<br/>")
+                    rows = min(len(original_text.split("\n")), len(latest_text.split("\n")))
 
-                    html += f"""<tr><td colspan="3">
+                    html += f"""<tr><td colspan="2" style="padding:0">
                         <table style="width:1600px"><tr>
                             <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea style="width:800px; white-space:pre;">{original_text}</textarea></td>
                             <td style="width:800px; vertical-align:top; overflow-x:scroll;"><textarea style="width:800px; white-space:pre;">{latest_text}</textarea></td>
