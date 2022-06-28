@@ -193,7 +193,8 @@ class NotebookDef:
 
             if not match:
                 if "md-link" not in self.ignoring:
-                    self.warn(lambda: False, f"Cmd #{i+1} | Found a MD link, expected HTML link: \"{link}\"")
+                    # self.warn(lambda: False, f"Cmd #{i+1} | Found a MD link, expected HTML link: \"{link}\"")
+                    print(f"MD Link: {link}")
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
