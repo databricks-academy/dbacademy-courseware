@@ -191,14 +191,12 @@ class NotebookDef:
             # If this is a relative link, we can ignore it.
             match = re.search(r"\(\$.*\)", link)
 
-            if not match:
-                if "md-link" not in self.ignoring:
-                    # self.warn(lambda: False, f"Cmd #{i+1} | Found a MD link, expected HTML link: \"{link}\"")
-                    print(f"MD Link: {link}")
-            else:
+            if match:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
                 self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
+            else:
+                # This is not a notebook link, need to validate that the link exists.
 
     def validate_html_link(self, i, command):
         """Test all HTML links to ensure they have a target set to _blank"""
@@ -208,6 +206,8 @@ class NotebookDef:
         for link in re.findall(r"<a .*?<\/a>", command):
             if "target=\"_blank\"" not in link:
                 self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": \"{link}\"")
+
+            # Need to validate that the link exists.
 
     def test_source_for(self, command: str, i: int, what: str):
         if what in command:
