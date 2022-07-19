@@ -196,6 +196,7 @@ class NotebookDef:
                 target = original_target[1:]
                 self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
             else:
+                pass
                 # This is not a notebook link, need to validate that the link exists.
 
     def validate_html_link(self, i, command):
