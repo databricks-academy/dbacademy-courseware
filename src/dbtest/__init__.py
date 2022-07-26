@@ -215,7 +215,7 @@ class TestConfig:
 #         print(f"DEPRECATION WARNING: TestConfig has been repalced by BuildConfig, please update your code accordingly.")
 
 
-def create_test_job(client, test_config, job_name, notebook_path, policy_id=None, policy_name=None):
+def create_test_job(client, test_config, job_name, notebook_path, policy_id=None):
     import re
 
     test_config.spark_conf["dbacademy.smoke-test"] = "true"
@@ -258,11 +258,6 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
             },
         ],
     }
-
-    if policy_name is not None:
-        policy = client.cluster_policies.get_by_name(policy_name)
-        assert policy is not None, f"The policy \"{policy_name}\" does not exist or you do not have permissions to use named policy: {[p.get('name') for p in client.cluster_policies.list()]}"
-        policy_id = policy.get("policy_id", "None")
 
     if policy_id is not None:
         policy = client.cluster_policies.get_by_id(policy_id)
@@ -347,7 +342,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
         # print()
 
-    def test_all_synchronously(self, test_round, fail_fast=True, owner=None, policy_id: str = None, policy_name: str = None) -> bool:
+    def test_all_synchronously(self, test_round, fail_fast=True, owner=None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
@@ -381,7 +376,7 @@ class TestSuite:
             else:
                 self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
-                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id, policy_name=policy_name)
+                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
                 if owner: self.client.permissions().change_job_owner(job_id, owner)
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
@@ -393,7 +388,7 @@ class TestSuite:
 
         return passed
 
-    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None, policy_id: str = None, policy_name: str = None) -> bool:
+    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
@@ -407,7 +402,7 @@ class TestSuite:
         for test in tests:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
-            test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id, policy_name=policy_name)
+            test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
             if owner: self.client.permissions().change_job_owner(test.job_id, owner)
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
