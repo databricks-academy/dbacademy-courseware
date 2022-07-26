@@ -122,6 +122,7 @@ class TestConfig:
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative too the source root
 
             if path == "Version Info":
+                test_round = 1  # Test after the Reset notebook
                 include_solution = False  # Exclude from the solutions folder
 
             if "includes/" in path.lower():  # Any folder that ends in "includes"
