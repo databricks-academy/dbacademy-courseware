@@ -121,8 +121,7 @@ class TestConfig:
             include_solution = include_solutions  # Initialize to the default value
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative too the source root
 
-            if path.lower().startswith("version"):  # Any notebook that starts with "version" as in "Version Info" or "Version 1.2.3"
-                test_round = 0  # Never test the version notebook
+            if path == "Version Info":
                 include_solution = False  # Exclude from the solutions folder
 
             if "includes/" in path.lower():  # Any folder that ends in "includes"
