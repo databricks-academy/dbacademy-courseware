@@ -260,7 +260,7 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
     }
 
     if policy_name is not None:
-        policy_id = client.cluster_policies.get_by_name(policy_name)
+        policy_id = client.cluster_policies.get_by_name(policy_name).get("policy_id")
 
     if policy_id is not None:
         client.cluster_policies.get_by_name()
