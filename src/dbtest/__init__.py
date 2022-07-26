@@ -260,10 +260,11 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
     }
 
     if policy_name is not None:
-        policy_id = client.cluster_policies.get_by_name(policy_name).get("policy_id")
+        policy_id = client.cluster_policies.get_by_name(policy_name).get("policy_id", "None")
+        print(f"Using policy name {policy_name}")
 
     if policy_id is not None:
-        client.cluster_policies.get_by_name()
+        print(f"Using policy id {policy_id}")
         params.get("tasks")[0].get("new_cluster")["policy_id"] = policy_id
 
     json_response = client.jobs().create(params)
