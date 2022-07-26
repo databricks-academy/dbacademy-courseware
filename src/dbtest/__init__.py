@@ -261,12 +261,12 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
 
     if policy_name is not None:
         policy = client.cluster_policies.get_by_name(policy_name)
-        assert policy is not None, f"The policy \"{policy_name}\" does not exist or you do not have permissions to use named policy."
+        assert policy is not None, f"The policy \"{policy_name}\" does not exist or you do not have permissions to use named policy: {[p.get('name') for p in client.cluster_policies.list()]}"
         policy_id = policy.get("policy_id", "None")
 
     if policy_id is not None:
         policy = client.cluster_policies.get_by_id(policy_id)
-        assert policy is not None, f"The policy \"{policy_id}\" does not exist or you do not have permissions to use specified policy."
+        assert policy is not None, f"The policy \"{policy_id}\" does not exist or you do not have permissions to use specified policy: {[p.get('name') for p in client.cluster_policies.list()]}"
         params.get("tasks")[0].get("new_cluster")["policy_id"] = policy_id
 
     json_response = client.jobs().create(params)
