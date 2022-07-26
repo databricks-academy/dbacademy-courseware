@@ -117,6 +117,7 @@ class TestConfig:
 
         for i in range(len(entities)):
             entity = entities[i]
+            order = i       # Start with the natural order
             test_round = 2  # Default test_round for all notebooks
             include_solution = include_solutions  # Initialize to the default value
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative too the source root
@@ -143,7 +144,7 @@ class TestConfig:
                                                    ignored=False,
                                                    include_solution=include_solution,
                                                    replacements=dict(),
-                                                   order=i,
+                                                   order=order,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
                                                    ignoring=self.ignoring)
