@@ -121,16 +121,17 @@ class TestConfig:
             include_solution = include_solutions  # Initialize to the default value
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative too the source root
 
-            if path == "Version Info":
-                test_round = 1  # Test after the Reset notebook
-                include_solution = False  # Exclude from the solutions folder
-
-            if "includes/" in path.lower():  # Any folder that ends in "includes"
+            if "includes/" in path.lower():  # Any folder that ends in "includes/"
                 test_round = 0  # Never test notebooks in the "includes" folders
 
-            # The reset and workspace-setup notebooks have special handling: include in round 1 & no solution
-            if path.lower().startswith("includes/reset") or path.lower().startswith("includes/workspace-setup"):
-                test_round = 1  # Add to test_round #1 before all other tests
+            if path.lower() == "includes/reset":
+                order = 0                 # Reset needs to run first.
+                test_round = 1            # Add to test_round #1
+                include_solution = False  # Exclude from the solutions folder
+
+            if path.lower() == "version info":
+                order = 1                 # Version info to run second.
+                test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
             if "wip" in path.lower():
