@@ -170,9 +170,9 @@ class TestConfig:
         for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
 
         if len(self.notebooks) == 0:
-            print(f"notebooks:        none")
+            print(f"notebooks:         none")
         else:
-            print(f"notebooks:        {len(self.notebooks)}")
+            print(f"notebooks:         {len(self.notebooks)}")
 
             rounds = list(map(lambda notebook_path: self.notebooks[notebook_path].test_round, self.notebooks))
             rounds.sort()
