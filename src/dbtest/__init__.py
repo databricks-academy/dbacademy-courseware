@@ -130,8 +130,13 @@ class TestConfig:
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
+            if path.lower() == "includes/workspace-setup":
+                order = 1                 # Reset needs to run first.
+                test_round = 1            # Add to test_round #1
+                include_solution = False  # Exclude from the solutions folder
+
             if path.lower() == "version info":
-                order = 1                 # Version info to run second.
+                order = 2                 # Version info to run second.
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
