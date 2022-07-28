@@ -91,7 +91,7 @@ class Publisher:
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Deleting from {self.target_dir}...")
 
-            keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE"]]
+            keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE", "docs"]]
 
             deleted_count = 0
             for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
