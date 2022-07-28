@@ -87,8 +87,14 @@ class Publisher:
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
             self.print_if(verbose, "-"*80)
-            self.print_if(verbose, f"Deleting target directory...")
-            self.client.workspace().delete_path(self.target_dir)
+            self.print_if(verbose, f"Deleting from {self.target_dir}...")
+
+            keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE"]]
+
+            for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
+                self.print_if(verbose, f"...{path}")
+                self.client.workspace().delete_path(path)
+
         elif mode.lower() != "overwrite":
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Overwriting target directory (unused files will not be removed)...")
