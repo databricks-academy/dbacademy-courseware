@@ -22,6 +22,9 @@ class NotebookError:
     def __str__(self):
         print(self.message)
 
+    def __repr__(self):
+        print(self.message)
+
 
 class NotebookDef:
     def __init__(self,
@@ -138,14 +141,37 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.test(lambda: len(notebooks) != 0, message)
 
-    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
+    def test_pip_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
         """
-        Validates %run cells meet specific requirements
-        :param language: The langage of the corresponding notebook
+        Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
+        :param language: The language of the corresponding notebook
         :param command: The %run command string to be evaluated
         :param i: The zero-based index to the command within the notebook
         :param other_notebooks: A complete list of notebooks for cross-validation
-        :return:
+        :return: None
+        """
+        import re
+
+        # First verify that the specified command is a %pip cell
+        cm = self.get_comment_marker(language)
+        prefix = f"{cm} MAGIC %pip"
+        if not command.startswith(prefix):
+            return
+
+        # Assuming that %pip is a one-liner or at least should be
+        pattern = re.compile(r"^# MAGIC ", re.MULTILINE)
+        libraries = [r for r in pattern.sub("", command).replace("\n", " ").split(" ") if r.startswith("git+https://github.com/databricks-academy")]
+        for library in libraries:
+            self.test(lambda: "@" in library, f"The library is not pinned to a specific version: {library}")
+
+    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
+        """
+        Validates %run cells meet specific requirements
+        :param language: The language of the corresponding notebook
+        :param command: The %run command string to be evaluated
+        :param i: The zero-based index to the command within the notebook
+        :param other_notebooks: A complete list of notebooks for cross-validation
+        :return: None
         """
 
         # First verify that the specified command is a %run cell
@@ -452,9 +478,12 @@ class NotebookDef:
 
             # Misc tests specific to %md cells along with i18n specific rewrites
             command = self.update_md_cells(language, command, i, i18n_guid_map, other_notebooks)
-            
+
             # Misc tests specific to %run cells
             self.test_run_cells(language, command, i, other_notebooks)
+
+            # Misc tests specific to %pip cells
+            self.test_pip_cells(language, command, i, other_notebooks)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())

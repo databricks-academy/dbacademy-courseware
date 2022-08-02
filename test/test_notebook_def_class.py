@@ -6,7 +6,8 @@ class MyTestCase(unittest.TestCase):
     def __init__(self, method_name):
         super().__init__(method_name)
 
-    def create_notebook(self):
+    @staticmethod
+    def create_notebook():
         from dbpublish.notebook_def_class import NotebookDef
         return NotebookDef(path="Agenda",
                            replacements={},
@@ -15,17 +16,50 @@ class MyTestCase(unittest.TestCase):
                            ignored=False,
                            order=0,
                            i18n=True,
-                           ignoring=[])
+                           ignoring=[],
+                           i18n_language="English")
+
+    def test_test_pip_cells_pinned(self):
+        command = r"""
+# MAGIC %pip install \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-gems@123 \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-rest@123 \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-helper@123 \
+# MAGIC --quiet --disable-pip-version-check""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_pip_cells(language="Python", command=command, i=3, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+
+    def test_test_pip_cells_not_pinned(self):
+        command = r"""
+# MAGIC %pip install \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
+# MAGIC git+https://github.com/databricks-academy/dbacademy-helper \
+# MAGIC --quiet --disable-pip-version-check""".strip()
+
+        notebook = self.create_notebook()
+        notebook.test_pip_cells(language="Python", command=command, i=3, other_notebooks=[])
+
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(3, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+
+        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-gems", notebook.errors[0].message)
+        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-rest", notebook.errors[1].message)
+        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-helper", notebook.errors[2].message)
 
     def test_good_single_space_i18n(self):
         command = """
-            # MAGIC %md --i18n-TBD
-            # MAGIC 
-            # MAGIC # Build-Time Substitutions""".strip()
+# MAGIC %md --i18n-TBD
+# MAGIC 
+# MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}: {notebook.errors}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
@@ -37,7 +71,7 @@ class MyTestCase(unittest.TestCase):
             # MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
@@ -50,7 +84,7 @@ class MyTestCase(unittest.TestCase):
             # MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
@@ -63,7 +97,7 @@ class MyTestCase(unittest.TestCase):
             # MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
@@ -73,7 +107,7 @@ class MyTestCase(unittest.TestCase):
             # MAGIC %md | # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.errors[0].message)
@@ -85,7 +119,7 @@ class MyTestCase(unittest.TestCase):
             # MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Cmd #4 | Expected the first line of MD to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
@@ -98,25 +132,35 @@ class MyTestCase(unittest.TestCase):
             # MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
             # MAGIC # Some Title""".strip()
 
+        i18n_guid_map = {
+            "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "whatever"
+        }
+
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command_a, i=3, other_notebooks=[])
-        notebook.test_md_cells(language="Python", command=command_b, i=4, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command_a, i=3, i18n_guid_map=i18n_guid_map, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command_b, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
         self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
 
     def test_unique_i18n_guid(self):
-        command_a = """
-            # MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
-            # MAGIC # Some Title""".strip()
-        command_b = """
-            # MAGIC %md --i18n-9d06d80d-2381-42d5-8f9e-cc99ee3cd82a
+        guid_a = "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a"
+        command_a = f"""
+            # MAGIC %md {guid_a}
             # MAGIC # Some Title""".strip()
 
+        guid_b = "--i18n-9d06d80d-2381-42d5-8f9e-cc99ee3cd82a"
+        command_b = f"""
+            # MAGIC %md {guid_b}
+            # MAGIC # Some Title""".strip()
+
+        i18n_guid_map_a = {guid_a: "# MAGIC # Some Title"}
+        i18n_guid_map_b = {guid_b: "# MAGIC # Some Title"}
+
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="Python", command=command_a, i=3, other_notebooks=[])
-        notebook.test_md_cells(language="Python", command=command_b, i=4, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command_a, i=3, i18n_guid_map=i18n_guid_map_a, other_notebooks=[])
+        notebook.update_md_cells(language="Python", command=command_b, i=4, i18n_guid_map=i18n_guid_map_b, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
@@ -124,8 +168,10 @@ class MyTestCase(unittest.TestCase):
     def test_md_i18n_guid_removal(self):
         command = """# MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
 
+        i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "# MAGIC # Some Title"}
+
         notebook = self.create_notebook()
-        actual = notebook.test_md_cells(language="Python", command=command, i=4, other_notebooks=[])
+        actual = notebook.update_md_cells(language="Python", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
@@ -136,8 +182,10 @@ class MyTestCase(unittest.TestCase):
     def test_md_sandbox_i18n_guid_removal(self):
         command = """# MAGIC %md-sandbox --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
 
+        i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "# MAGIC # Some Title"}
+
         notebook = self.create_notebook()
-        actual = notebook.test_md_cells(language="Python", command=command, i=4, other_notebooks=[])
+        actual = notebook.update_md_cells(language="Python", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
@@ -148,8 +196,10 @@ class MyTestCase(unittest.TestCase):
     def test_i18n_sql(self):
         command = """-- MAGIC %md-sandbox --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n-- MAGIC # Some Title""".strip()
 
+        i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "-- MAGIC # Some Title"}
+
         notebook = self.create_notebook()
-        actual = notebook.test_md_cells(language="SQL", command=command, i=4, other_notebooks=[])
+        actual = notebook.update_md_cells(language="SQL", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
@@ -161,15 +211,15 @@ class MyTestCase(unittest.TestCase):
         command = """-- MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_md_cells(language="SQL", command=command, i=4, other_notebooks=[])
+        notebook.update_md_cells(language="SQL", command=command, i=4, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(1, len(notebook.errors), f"Expected 1 errors, found {len(notebook.errors)}")
 
         self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code with i18n enabled: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title", notebook.errors[0].message)
 
-    def test_replacement(self):
-        import re
+    @staticmethod
+    def test_replacement():
         command ="""# Databricks notebook source
 # MAGIC %md --i18n-5f2cfc0b-1998-4182-966d-8efed6020eb2
 # MAGIC 
