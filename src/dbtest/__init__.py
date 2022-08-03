@@ -135,10 +135,10 @@ class TestConfig:
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
-            if path.lower() == "version info":
-                order = 2                 # Version info to run second.
-                test_round = 1            # Add to test_round #1
-                include_solution = False  # Exclude from the solutions folder
+            # if path.lower() == "version info":
+            #     order = 2                 # Version info to run second.
+            #     test_round = 1            # Add to test_round #1
+            #     include_solution = False  # Exclude from the solutions folder
 
             if "wip" in path.lower():
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
