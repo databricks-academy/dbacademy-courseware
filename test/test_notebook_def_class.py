@@ -8,7 +8,7 @@ class MyTestCase(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbpublish.notebook_def_class import NotebookDef
+        from dbacademy.dbpublish.notebook_def_class import NotebookDef
         return NotebookDef(path="Agenda",
                            replacements={},
                            include_solution=False,
