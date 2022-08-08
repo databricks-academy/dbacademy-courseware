@@ -1,10 +1,28 @@
 import unittest
-
+import typing
+from dbacademy.dbpublish.notebook_def_class import NotebookDef, NotebookError
 
 class MyTestCase(unittest.TestCase):
 
     def __init__(self, method_name):
         super().__init__(method_name)
+
+    def assert_n_errors(self, expected, notebook: NotebookDef):
+        message = f"Expected {expected} errors, found {len(notebook.errors)}"
+        for error in notebook.errors:
+            message += f"\n{error.message}"
+
+        self.assertEqual(expected, len(notebook.errors), f"Expected {expected} errors, found {len(notebook.errors)}")
+
+    def assert_n_warnings(self, expected, notebook: NotebookDef):
+        message = f"Expected {expected} errors, found {len(notebook.warnings)}"
+        for warning in notebook.warnings:
+            message += f"\n{warning.message}"
+
+        self.assertEqual(expected, len(notebook.warnings), message)
+
+    def assert_message(self, messages: typing.List[NotebookError], index, message):
+        self.assertEqual(message, messages[index].message)
 
     @staticmethod
     def create_notebook():
@@ -28,7 +46,7 @@ class MyTestCase(unittest.TestCase):
 # MAGIC --quiet --disable-pip-version-check""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_pip_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.test_pip_cells(language="Python", command=command, i=3)
 
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
@@ -42,14 +60,14 @@ class MyTestCase(unittest.TestCase):
 # MAGIC --quiet --disable-pip-version-check""".strip()
 
         notebook = self.create_notebook()
-        notebook.test_pip_cells(language="Python", command=command, i=3, other_notebooks=[])
+        notebook.test_pip_cells(language="Python", command=command, i=3)
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(3, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(3, notebook)
 
-        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-gems", notebook.errors[0].message)
-        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-rest", notebook.errors[1].message)
-        self.assertEqual("The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-helper", notebook.errors[2].message)
+        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-gems", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-rest", notebook.errors[1].message)
+        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-helper", notebook.errors[2].message)
 
     def test_good_single_space_i18n(self):
         command = """
@@ -59,8 +77,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}: {notebook.errors}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
+
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
@@ -72,8 +92,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
+
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
@@ -85,8 +107,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
+
         self.assertEqual(1, len(notebook.i18n_guids), f"Expected 1 GUID, found {len(notebook.i18n_guids)}")
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
@@ -98,8 +122,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+
         self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
 
     def test_missing_i18n_single(self):
@@ -108,8 +134,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+
         self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.errors[0].message)
 
     def test_extra_word_i18n(self):
@@ -120,8 +148,10 @@ class MyTestCase(unittest.TestCase):
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+
         self.assertEqual("Cmd #4 | Expected the first line of MD to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
 
     def test_duplicate_i18n_guid(self):
@@ -140,8 +170,9 @@ class MyTestCase(unittest.TestCase):
         notebook.update_md_cells(language="Python", command=command_a, i=3, i18n_guid_map=i18n_guid_map, other_notebooks=[])
         notebook.update_md_cells(language="Python", command=command_b, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 1 error, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+
         self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
 
     def test_unique_i18n_guid(self):
@@ -162,8 +193,8 @@ class MyTestCase(unittest.TestCase):
         notebook.update_md_cells(language="Python", command=command_a, i=3, i18n_guid_map=i18n_guid_map_a, other_notebooks=[])
         notebook.update_md_cells(language="Python", command=command_b, i=4, i18n_guid_map=i18n_guid_map_b, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
     def test_md_i18n_guid_removal(self):
         command = """# MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
@@ -173,8 +204,8 @@ class MyTestCase(unittest.TestCase):
         notebook = self.create_notebook()
         actual = notebook.update_md_cells(language="Python", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
         expected = """# MAGIC %md\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
@@ -187,8 +218,8 @@ class MyTestCase(unittest.TestCase):
         notebook = self.create_notebook()
         actual = notebook.update_md_cells(language="Python", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
         expected = """# MAGIC %md-sandbox\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
@@ -201,8 +232,8 @@ class MyTestCase(unittest.TestCase):
         notebook = self.create_notebook()
         actual = notebook.update_md_cells(language="SQL", command=command, i=4, i18n_guid_map=i18n_guid_map, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 errors, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
         expected = """-- MAGIC %md-sandbox\n-- MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
@@ -213,10 +244,61 @@ class MyTestCase(unittest.TestCase):
         notebook = self.create_notebook()
         notebook.update_md_cells(language="SQL", command=command, i=4, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
 
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 1 errors, found {len(notebook.errors)}")
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
 
         self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code with i18n enabled: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title", notebook.errors[0].message)
+
+    def test_parse_links(self):
+        notebook = self.create_notebook()
+
+        links = notebook.parse_html_links("""
+            # MAGIC %md --i18n-TBD
+            # MAGIC # Bla bla bla""".strip())
+        self.assertEqual(0, len(links))
+
+        links = notebook.parse_html_links("""
+            # MAGIC %md --i18n-TBD
+            # MAGIC # <a href="https://example.com" target="_blank">some link</a>
+            # MAGIC # Bla bla bla""".strip())
+        self.assertEqual(1, len(links))
+
+        links = notebook.parse_html_links("""
+            # MAGIC %md --i18n-TBD
+            # MAGIC # <a href="https://example.com" target="_blank">some link</a>
+            # MAGIC # <a href="https://google.com" target="_blank">some link</a>
+            # MAGIC # Bla bla bla""".strip())
+        self.assertEqual(2, len(links))
+
+        links = notebook.parse_html_links("""
+            # MAGIC %md --i18n-TBD
+            # MAGIC # <a href="https://example.com" target="_blank">some link</a><a href="https://google.com" target="_blank">some link</a><a href="https://databricks.com" target="_blank">some link</a>
+            # MAGIC # Bla bla bla""".strip())
+        self.assertEqual(3, len(links))
+
+    def test_validate_html_link_with_target(self):
+        command = """
+        # MAGIC %md --i18n-TBD
+        # MAGIC # <a href="https://example.com" target="_blank">some link</a>""".strip()
+
+        notebook = self.create_notebook()
+        notebook.validate_html_link(3, command)
+
+        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(0, notebook)
+
+    def test_validate_html_link_no_target(self):
+        command = """
+        # MAGIC %md --i18n-TBD
+        # MAGIC # <a href="https://example.com">some link</a>""".strip()
+
+        notebook = self.create_notebook()
+        notebook.validate_html_link(3, command)
+
+        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(1, notebook)
+
+        self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
     @staticmethod
     def test_replacement():

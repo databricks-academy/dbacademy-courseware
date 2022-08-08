@@ -141,13 +141,12 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.test(lambda: len(notebooks) != 0, message)
 
-    def test_pip_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
+    def test_pip_cells(self, language: str, command: str, i: int) -> None:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
         :param language: The language of the corresponding notebook
         :param command: The %run command string to be evaluated
         :param i: The zero-based index to the command within the notebook
-        :param other_notebooks: A complete list of notebooks for cross-validation
         :return: None
         """
         import re
@@ -227,14 +226,17 @@ class NotebookDef:
                 pass
                 # This is not a notebook link, need to validate that the link exists.
 
+    @staticmethod
+    def parse_html_links(command):
+        import re
+        return re.findall(r"<a .*?</a>", command)
+
     def validate_html_link(self, i, command):
         """Test all HTML links to ensure they have a target set to _blank"""
 
-        import re
-
-        for link in re.findall(r"<a .*?<\/a>", command):
+        for link in self.parse_html_links(command):
             if "target=\"_blank\"" not in link:
-                self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": \"{link}\"")
+                self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": {link}")
 
             # Need to validate that the link exists.
 
@@ -485,7 +487,7 @@ class NotebookDef:
             self.test_run_cells(language, command, i, other_notebooks)
 
             # Misc tests specific to %pip cells
-            self.test_pip_cells(language, command, i, other_notebooks)
+            self.test_pip_cells(language, command, i)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
