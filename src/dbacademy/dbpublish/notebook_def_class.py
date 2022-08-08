@@ -164,7 +164,7 @@ class NotebookDef:
         for library in libraries:
             # Not all libraries should be pinned, such as the build tools themselves.
             if library != "git+https://github.com/databricks-academy/dbacademy-courseware":
-                self.test(lambda: "@" in library, f"The library is not pinned to a specific version: {library}")
+                self.test(lambda: "@" in library, f"Cmd #{i + 1} | The library is not pinned to a specific version: {library}")
 
     def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
         """
