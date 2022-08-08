@@ -1,5 +1,6 @@
 import dbacademy
 dbacademy.dbtest = __import__("dbacademy_courseware.dbtest")
+dbacademy.dbtest.TestConfig = __import__("dbacademy_courseware.dbtest.TestConfig")
 
 print("*" * 80)
 print("* DEPRECATION WARNING")
