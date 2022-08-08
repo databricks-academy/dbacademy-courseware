@@ -1,6 +1,3 @@
-from typing import Union
-
-
 def to_job_url(cloud, job_id, run_id):
     import dbacademy.dbgems as dbgems
 
@@ -39,13 +36,13 @@ class TestConfig:
                  include_solutions: bool = True,
                  i18n: bool = False,
                  i18n_language: str = None,
-                 ignoring: list = []):
+                 ignoring: list = None):
 
         import uuid, time
         from dbacademy import dbrest
         from dbacademy import dbgems
 
-        self.ignoring = ignoring
+        self.ignoring = [] if ignoring is None else ignoring
 
         self.i18n = i18n
         self.i18n_language = i18n_language
@@ -227,10 +224,10 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
 
     test_config.spark_conf["dbacademy.smoke-test"] = "true"
 
-    course_name = re.sub("[^a-zA-Z0-9]", "-", test_config.name.lower())
+    course_name = re.sub(r"[^a-zA-Z\d]", "-", test_config.name.lower())
     while "--" in course_name: course_name = course_name.replace("--", "-")
 
-    test_type = re.sub("[^a-zA-Z0-9]", "-", test_config.test_type.lower())
+    test_type = re.sub(r"[^a-zA-Z\d]", "-", test_config.test_type.lower())
     while "--" in test_type: test_type = test_type.replace("--", "-")
 
     params = {
@@ -395,7 +392,7 @@ class TestSuite:
 
         return passed
 
-    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None, policy_id: str = None) -> bool:
+    def test_all_asynchronously(self, test_round, owner=None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]

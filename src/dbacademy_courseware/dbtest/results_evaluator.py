@@ -22,7 +22,8 @@ class ResultsEvaluator:
         html += "</body>"
         return html
 
-    def add_row(self, style, cloud, job, duration):
+    @staticmethod
+    def add_row(style, cloud, job, duration):
         return f"""
       <tr>
           <td style="{style}">{cloud}</td>
@@ -31,7 +32,8 @@ class ResultsEvaluator:
       </tr>
       """
 
-    def format_duration(self, duration):
+    @staticmethod
+    def format_duration(duration):
         from math import floor
         seconds = floor(duration / 1000) % 60
         minutes = floor(duration / (1000 * 60)) % 60

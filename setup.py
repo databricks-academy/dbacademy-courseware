@@ -2,7 +2,8 @@ import setuptools
 from setuptools import find_packages
 
 reqs = [
-    'dbacademy-rest@git+https://github.com/databricks-academy/dbacademy-rest',
+    "requests",
+    "dbacademy-rest@git+https://github.com/databricks-academy/dbacademy-rest",
 ]
 
 

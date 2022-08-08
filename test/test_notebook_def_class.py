@@ -1,6 +1,6 @@
 import unittest
 import typing
-from dbacademy.dbpublish.notebook_def_class import NotebookDef, NotebookError
+from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef, NotebookError
 
 class MyTestCase(unittest.TestCase):
 
@@ -26,7 +26,6 @@ class MyTestCase(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
         return NotebookDef(path="Agenda",
                            replacements={},
                            include_solution=False,

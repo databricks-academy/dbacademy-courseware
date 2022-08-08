@@ -745,7 +745,8 @@ class NotebookDef:
 
         return contents
 
-    def get_comment_marker(self, language):
+    @staticmethod
+    def get_comment_marker(language):
         language = language.replace("%", "")
 
         if language.lower() in "python":
@@ -863,7 +864,8 @@ class NotebookDef:
 
         return directives
 
-    def skipping(self, i, label):
+    @staticmethod
+    def skipping(i, label):
         if label:
             print(f"Cmd #{i+1} | Skipping: {label}")
         return 1
