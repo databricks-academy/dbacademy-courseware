@@ -9,6 +9,7 @@ reqs = [
 
 def find_dbacademy_packages():
     packages = find_packages(where="src")
+    del packages["dbacademy"]
     print("-"*80)
     print(packages)
     print("-"*80)
