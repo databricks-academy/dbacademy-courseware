@@ -1,5 +1,5 @@
 import dbacademy
-dbacademy.dbpublish = __import__("dbacademy_courseware.dbtest")
+dbacademy.dbtest = __import__("dbacademy_courseware.dbtest")
 
 print("*" * 80)
 print("* DEPRECATION WARNING")
