@@ -1,6 +1,5 @@
 import sys
-print(f"[[[ {__name__} ]]]")
-sys.modules["dbacademy.dbtest"] = __import__("dbacademy_courseware.dbtest")
+sys.modules[__name__] = __import__("dbacademy_courseware.dbtest")
 
 print("*" * 80)
 print("* DEPRECATION WARNING")
