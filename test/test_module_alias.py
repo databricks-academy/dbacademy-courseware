@@ -4,6 +4,14 @@ import unittest
 # noinspection PyUnresolvedReferences
 class MyTestCase(unittest.TestCase):
 
+    def test_module(self):
+        pass
+        # import sys
+        # from pkgutil import iter_modules
+        #
+        # module = sys.modules["dbacademy"]
+        # return None
+
     def test_dbpublish(self):
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
         notebook = NotebookDef(path="Agenda",

@@ -8,8 +8,7 @@ print("-"*80)
 help(dbacademy_courseware)
 
 print("-"*80)
-for module in sys.modules:
-    if module.startswith("d"):
-        print(module)
+module = sys.modules["dbacademy"]
+print(type(module))
 
 print("-"*80)
