@@ -1,5 +1,7 @@
+import typing
+
 class ResultsEvaluator:
-    def __init__(self, results):
+    def __init__(self, results: typing.List[dict]):
 
         results.sort(key=lambda r: r.get("notebook_path"))
 

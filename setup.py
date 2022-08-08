@@ -19,6 +19,6 @@ setuptools.setup(
     name="dbacademy-courseware",
     version="0.1",
     install_requires=reqs,
-    package_dir={"dbacademy_courseware": "src/dbacademy_courseware"},
+    package_dir={"": "src"},
     packages=find_dbacademy_packages()
 )
