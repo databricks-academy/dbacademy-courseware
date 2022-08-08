@@ -8,11 +8,9 @@ reqs = [
 
 def find_dbacademy_packages():
     packages = find_packages(where="src")
-    if "dbacademy" in packages:
-        del packages[packages.index("dbacademy")]
-    # print("-"*80)
-    # print(packages)
-    # print("-"*80)
+    print("-"*80)
+    print(packages)
+    print("-"*80)
     return packages
 
 
@@ -20,6 +18,6 @@ setuptools.setup(
     name="dbacademy-courseware",
     version="0.1",
     install_requires=reqs,
-    package_dir={"dbacademy": "src/dbacademy"},
+    package_dir={"dbacademy_courseware": "src/dbacademy_courseware"},
     packages=find_dbacademy_packages()
 )
