@@ -150,7 +150,7 @@ class NotebookDef:
 
         return response.json().get("sha")
 
-    def test_pip_cells(self, language: str, command: str, i: int) -> None:
+    def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
         :param language: The language of the corresponding notebook
@@ -164,7 +164,7 @@ class NotebookDef:
         cm = self.get_comment_marker(language)
         prefix = f"{cm} MAGIC %pip"
         if not command.startswith(prefix):
-            return
+            command
 
         github_repos = [
             {
