@@ -1,5 +1,6 @@
 import sys
-sys.modules[__name__] = __import__("dbacademy_courseware.dbpublish")
+print(f"[[[ {__name__} ]]]")
+sys.modules["dbacademy.dbpublish"] = __import__("dbacademy_courseware.dbpublish")
 
 print("*" * 80)
 print("* DEPRECATION WARNING")
