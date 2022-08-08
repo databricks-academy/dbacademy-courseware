@@ -141,6 +141,15 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.test(lambda: len(notebooks) != 0, message)
 
+    @staticmethod
+    def get_latest_commit_id(repo_name):
+        import requests
+        repo_url = f"https://api.github.com/repos/databricks-academy/{repo_name}/commits/published"
+        response = requests.get(repo_url)
+        assert response.status_code == 200, f"Expected 200, received {response.status_code}"
+
+        return response.json().get("sha")
+
     def test_pip_cells(self, language: str, command: str, i: int) -> None:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
@@ -157,6 +166,28 @@ class NotebookDef:
         if not command.startswith(prefix):
             return
 
+        github_repos = [
+            {
+                "name": "dbacademy-gems",
+                "url": "git+https://github.com/databricks-academy/dbacademy-gems",
+             },
+            {
+                "name": "dbacademy-rest",
+                "url": "git+https://github.com/databricks-academy/dbacademy-rest",
+            },
+            {
+                "name": "dbacademy-helper",
+                "url": "git+https://github.com/databricks-academy/dbacademy-helper",
+            }
+        ]
+
+        for github_repo in github_repos:
+            url = github_repo.get("url")
+            name = github_repo.get("name")
+            if url in command:
+                commit_id = self.get_latest_commit_id(name)
+                command = command.replace(url, f"{url}@{commit_id}")
+
         # Assuming that %pip is a one-liner or at least should be
         pattern = re.compile(r"^# MAGIC ", re.MULTILINE)
         libraries = [r for r in pattern.sub("", command).replace("\n", " ").split(" ") if r.startswith("git+https://github.com/databricks-academy")]
@@ -164,6 +195,8 @@ class NotebookDef:
             # Not all libraries should be pinned, such as the build tools themselves.
             if library != "git+https://github.com/databricks-academy/dbacademy-courseware":
                 self.test(lambda: "@" in library, f"Cmd #{i + 1} | The library is not pinned to a specific version: {library}")
+
+        return command
 
     def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
         """
@@ -487,7 +520,7 @@ class NotebookDef:
             self.test_run_cells(language, command, i, other_notebooks)
 
             # Misc tests specific to %pip cells
-            self.test_pip_cells(language, command, i)
+            command = self.test_pip_cells(language, command, i)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())

@@ -299,6 +299,16 @@ class MyTestCase(unittest.TestCase):
 
         self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
+    def test_resolve_latest_git(self):
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-gems")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-gems")
+
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-rest")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-rest")
+
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-helper")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-helper")
+
     @staticmethod
     def test_replacement():
         command ="""# Databricks notebook source
