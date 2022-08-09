@@ -18,6 +18,6 @@ setuptools.setup(
     packages=find_dbacademy_packages(),
     install_requires=[
         "requests",
-        "dbacademy-rest@git+https://github.com/databricks-academy/dbacademy-rest",
+        # "dbacademy-rest@git+https://github.com/databricks-academy/dbacademy-rest",
     ],
 )
