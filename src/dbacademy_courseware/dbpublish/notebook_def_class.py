@@ -150,6 +150,16 @@ class NotebookDef:
 
         return response.json().get("sha")
 
+    @staticmethod
+    def update_git_commit(command: str, url: str) -> str:
+
+        if url in command:
+            name = url.split("/")[-1]
+            commit_id = NotebookDef.get_latest_commit_id(name)
+            command = command.replace(url, f"{url}@{commit_id}")
+
+        return command
+
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
@@ -164,29 +174,17 @@ class NotebookDef:
         cm = self.get_comment_marker(language)
         prefix = f"{cm} MAGIC %pip"
         if not command.startswith(prefix):
-            command
+            return command
 
-        github_repos = [
-            {
-                "name": "dbacademy-gems",
-                "url": "git+https://github.com/databricks-academy/dbacademy-gems",
-             },
-            {
-                "name": "dbacademy-rest",
-                "url": "git+https://github.com/databricks-academy/dbacademy-rest",
-            },
-            {
-                "name": "dbacademy-helper",
-                "url": "git+https://github.com/databricks-academy/dbacademy-helper",
-            }
-        ]
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-gems")
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-rest")
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-helper")
 
-        for github_repo in github_repos:
-            url = github_repo.get("url")
-            name = github_repo.get("name")
-            if url in command:
-                commit_id = self.get_latest_commit_id(name)
-                command = command.replace(url, f"{url}@{commit_id}")
+        if "https://github.com/databricks-academy/dbacademy-helper" in command:
+            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-gems"
+            assert "https://github.com/databricks-academy/dbacademy-rest" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-rest"
+        elif "https://github.com/databricks-academy/dbacademy-rest" in command:
+            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-rest without including dbacademy-gems"
 
         # Assuming that %pip is a one-liner or at least should be
         pattern = re.compile(r"^# MAGIC ", re.MULTILINE)
