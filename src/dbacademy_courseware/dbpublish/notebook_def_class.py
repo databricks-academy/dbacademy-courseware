@@ -181,8 +181,8 @@ class NotebookDef:
         command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-helper")
 
         if "https://github.com/databricks-academy/dbacademy-helper" in command:
-            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-gems"
             assert "https://github.com/databricks-academy/dbacademy-rest" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-rest"
+            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-gems"
         elif "https://github.com/databricks-academy/dbacademy-rest" in command:
             assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-rest without including dbacademy-gems"
 
