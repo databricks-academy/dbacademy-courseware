@@ -313,7 +313,7 @@ class TestInstance:
 
 
 class TestSuite:
-    def __init__(self, test_config, test_dir, test_type):
+    def __init__(self, test_config, test_dir, test_type, keep_success=False):
         self.test_dir = test_dir
         self.test_config = test_config
         self.client = test_config.client
@@ -323,6 +323,8 @@ class TestSuite:
         self.test_results = list()
         self.slack_thread_ts = None
         self.slack_first_message = None
+
+        self.keep_success = keep_success
 
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
 
@@ -340,10 +342,17 @@ class TestSuite:
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
-    def delete_all_jobs(self, success_only=False):
+    def delete_all_jobs(self, success_only=None):
+
+        if success_only is not None:
+            print("*" * 80)
+            print("* DEPRECATION WARNING")
+            print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
+            print("*" * 80)
+
         for test_round in self.test_rounds:
             job_names = [j.job_name for j in self.test_rounds[test_round]]
-            self.client.jobs().delete_by_name(job_names, success_only=success_only)
+            self.client.jobs().delete_by_name(job_names, success_only=not self.keep_success)
         # print()
 
     def test_all_synchronously(self, test_round, fail_fast=True, owner=None, policy_id: str = None) -> bool:
@@ -447,7 +456,7 @@ class TestSuite:
 
     def to_results_evaluator(self):
         from .results_evaluator import ResultsEvaluator
-        return ResultsEvaluator(self.test_results)
+        return ResultsEvaluator(self.test_results, self.keep_success)
 
     def log_run(self, test, response):
         import time, uuid, requests, json
