@@ -141,7 +141,26 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.test(lambda: len(notebooks) != 0, message)
 
-    def test_pip_cells(self, language: str, command: str, i: int) -> None:
+    @staticmethod
+    def get_latest_commit_id(repo_name):
+        import requests
+        repo_url = f"https://api.github.com/repos/databricks-academy/{repo_name}/commits/published"
+        response = requests.get(repo_url)
+        assert response.status_code == 200, f"Expected 200, received {response.status_code}"
+
+        return response.json().get("sha")
+
+    @staticmethod
+    def update_git_commit(command: str, url: str) -> str:
+
+        if url in command:
+            name = url.split("/")[-1]
+            commit_id = NotebookDef.get_latest_commit_id(name)
+            command = command.replace(url, f"{url}@{commit_id}")
+
+        return command
+
+    def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
         :param language: The language of the corresponding notebook
@@ -155,7 +174,17 @@ class NotebookDef:
         cm = self.get_comment_marker(language)
         prefix = f"{cm} MAGIC %pip"
         if not command.startswith(prefix):
-            return
+            return command
+
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-gems")
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-rest")
+        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-helper")
+
+        if "https://github.com/databricks-academy/dbacademy-helper" in command:
+            assert "https://github.com/databricks-academy/dbacademy-rest" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-rest"
+            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-gems"
+        elif "https://github.com/databricks-academy/dbacademy-rest" in command:
+            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-rest without including dbacademy-gems"
 
         # Assuming that %pip is a one-liner or at least should be
         pattern = re.compile(r"^# MAGIC ", re.MULTILINE)
@@ -164,6 +193,8 @@ class NotebookDef:
             # Not all libraries should be pinned, such as the build tools themselves.
             if library != "git+https://github.com/databricks-academy/dbacademy-courseware":
                 self.test(lambda: "@" in library, f"Cmd #{i + 1} | The library is not pinned to a specific version: {library}")
+
+        return command
 
     def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
         """
@@ -487,7 +518,7 @@ class NotebookDef:
             self.test_run_cells(language, command, i, other_notebooks)
 
             # Misc tests specific to %pip cells
-            self.test_pip_cells(language, command, i)
+            command = self.test_pip_cells(language, command, i)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
@@ -745,7 +776,8 @@ class NotebookDef:
 
         return contents
 
-    def get_comment_marker(self, language):
+    @staticmethod
+    def get_comment_marker(language):
         language = language.replace("%", "")
 
         if language.lower() in "python":
@@ -863,7 +895,8 @@ class NotebookDef:
 
         return directives
 
-    def skipping(self, i, label):
+    @staticmethod
+    def skipping(i, label):
         if label:
             print(f"Cmd #{i+1} | Skipping: {label}")
         return 1

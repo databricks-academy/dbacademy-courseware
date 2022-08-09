@@ -1,6 +1,6 @@
 import unittest
 import typing
-from dbacademy.dbpublish.notebook_def_class import NotebookDef, NotebookError
+from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef, NotebookError
 
 class MyTestCase(unittest.TestCase):
 
@@ -26,7 +26,6 @@ class MyTestCase(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
         return NotebookDef(path="Agenda",
                            replacements={},
                            include_solution=False,
@@ -53,21 +52,17 @@ class MyTestCase(unittest.TestCase):
 
     def test_test_pip_cells_not_pinned(self):
         command = r"""
-# MAGIC %pip install \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-helper \
-# MAGIC --quiet --disable-pip-version-check""".strip()
+            # MAGIC %pip install \
+            # MAGIC git+https://github.com/databricks-academy/dbacademy-moo \
+            # MAGIC --quiet --disable-pip-version-check""".strip()
 
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
 
         self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(3, notebook)
+        self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-gems", notebook.errors[0].message)
-        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-rest", notebook.errors[1].message)
-        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-helper", notebook.errors[2].message)
+        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-moo", notebook.errors[0].message)
 
     def test_good_single_space_i18n(self):
         command = """
@@ -299,6 +294,16 @@ class MyTestCase(unittest.TestCase):
         self.assert_n_warnings(1, notebook)
 
         self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
+
+    def test_resolve_latest_git(self):
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-gems")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-gems")
+
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-rest")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-rest")
+
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy-helper")
+        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-helper")
 
     @staticmethod
     def test_replacement():

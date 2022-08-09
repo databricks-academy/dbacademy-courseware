@@ -1,6 +1,3 @@
+requests
+git+https://github.com/databricks-academy/dbacademy-gems
 git+https://github.com/databricks-academy/dbacademy-rest
-
-# pyspark
-# pytest
-# urllib3
-# IPython

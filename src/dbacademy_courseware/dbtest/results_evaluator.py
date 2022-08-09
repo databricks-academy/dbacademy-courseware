@@ -1,5 +1,9 @@
+import typing
+
 class ResultsEvaluator:
-    def __init__(self, results):
+    def __init__(self, results: typing.List[dict], keep_success):
+
+        self.keep_success = keep_success
 
         results.sort(key=lambda r: r.get("notebook_path"))
 
@@ -14,15 +18,22 @@ class ResultsEvaluator:
     def passed(self) -> bool:
         return len(self.failed_set) == 0
 
-    def to_html(self, print_success_links=False) -> str:
+    def to_html(self, print_success_links=None) -> str:
+        if print_success_links is not None:
+            print("*" * 80)
+            print("* DEPRECATION WARNING")
+            print("* print_success_links is no longer supported, initialize TestSuite with keep_success=True instead")
+            print("*" * 80)
+
         html = "</body>"
         html += self.add_section("Failed", self.failed_set)
         html += self.add_section("Ignored", self.ignored_set)
-        html += self.add_section("Success", self.success_set, print_links=print_success_links)
+        html += self.add_section("Success", self.success_set, print_links=self.keep_success)
         html += "</body>"
         return html
 
-    def add_row(self, style, cloud, job, duration):
+    @staticmethod
+    def add_row(style, cloud, job, duration):
         return f"""
       <tr>
           <td style="{style}">{cloud}</td>
@@ -31,7 +42,8 @@ class ResultsEvaluator:
       </tr>
       """
 
-    def format_duration(self, duration):
+    @staticmethod
+    def format_duration(duration):
         from math import floor
         seconds = floor(duration / 1000) % 60
         minutes = floor(duration / (1000 * 60)) % 60
