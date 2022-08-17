@@ -36,8 +36,10 @@ class ResourceDiff:
         </style>
         </head>
         <body style="font-size:16px">
-            <p>Original: <b>{self.original_resource}</b></p>
-            <p>Latest: <b>{self.latest_resource}</b></p>
+            <table>
+                <tr><td>Original:&nbsp;</td><td><b>{self.original_resource}</b></td></tr>
+                <tr><td>Latest:&nbsp;</td><td><b>{self.latest_resource}</b></td></tr>
+            </table>            
             <table style="border-collapse: collapse; border-spacing:0">"""
 
         html += f"""<thead><tr><td>Change Type</td><td>Message</td></tr></thead>"""
