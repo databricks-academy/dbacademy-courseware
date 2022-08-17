@@ -37,7 +37,7 @@ class ResourceDiff:
         </style>
         </head>
         <body style="font-size:16px">
-            <table>
+            <table style="border-collapse: collapse; border-spacing:0">
                 <tr><td>Original:&nbsp;</td><td><b>{self.original_resource}</b></td></tr>
                 <tr><td>Latest:&nbsp;</td><td><b>{self.latest_resource}</b></td></tr>
             </table>            
