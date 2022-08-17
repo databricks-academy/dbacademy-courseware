@@ -28,7 +28,8 @@ class ResourceDiff:
         self.all_files = []
         self.all_files.extend(self.files_a)
         self.all_files.extend(self.files_b)
-        self.all_files = list(set(self.all_files)).sort()
+        self.all_files = list(set(self.all_files))
+        self.all_files.sort()
 
         html = f"""<!DOCTYPE html><html>
         <head>
