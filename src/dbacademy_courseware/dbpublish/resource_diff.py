@@ -59,12 +59,12 @@ class ResourceDiff:
                         rows = max(len(change.original_text.split("\n")), len(change.latest_text.split("\n")))+2
 
                         html += f"""<tr><td colspan="2" style="padding:0">
-                            <table style="width:1600px; border-collapse: collapse; border-spacing:0"><tr>
-                                <td style="width:800px; vertical-align:top; padding:0">
-                                    <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.original_text}</textarea>
+                            <table style="width:100%; border-collapse: collapse; border-spacing:0"><tr>
+                                <td style="width:50%; vertical-align:top; padding:0">
+                                    <textarea rows="{rows}" style="padding:2px; width:100%; white-space:pre; border:0">{change.original_text}</textarea>
                                 </td>
-                                <td style="width:800px; vertical-align:top; padding:0">
-                                    <textarea rows="{rows}" style="padding:2px; width:800px; white-space:pre; border:0">{change.latest_text}</textarea>
+                                <td style="width:50%; vertical-align:top; padding:0">
+                                    <textarea rows="{rows}" style="padding:2px; width:100%; white-space:pre; border:0">{change.latest_text}</textarea>
                                 </td>
                             </tr></table>
                         </td></tr>"""
