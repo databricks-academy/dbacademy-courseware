@@ -337,7 +337,7 @@ class NotebookDef:
                     # Because of this problem, we are going to leave it in and use the existing lines as-is, i18n directive and all
                     msg = f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"
                     for key in i18n_guid_map:
-                        msg += f"\n{key}: {i18n_guid_map[key]}"
+                        msg += f"\n{key}"
                     self.warn(lambda: False, msg)
                 else:
                     lines = i18n_guid_map.get(guid).split("\n")
