@@ -297,6 +297,56 @@ class NotebookDef:
 
         return command
 
+    def replace_guid(self, cm: str, command: str, i: int, i18n_guid_map: dict):
+
+        lines = command.strip().split("\n")
+        line_0 = lines[0][7+len(cm):]
+
+        parts = line_0.strip().split(" ")
+        for index, part in enumerate(parts):
+            if part.strip() == "":
+                del parts[index]
+        md_tag = None if len(parts) < 1 else parts[0]
+        guid = None if len(parts) < 2 else parts[1]
+
+        debug_info = line_0
+
+        passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
+
+        if len(parts) == 1:
+            passed = passed and self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive: {debug_info}")
+        else:
+            passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i + 1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
+            passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i + 1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
+            passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
+
+        if passed:
+            passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
+
+        if passed:
+            self.i18n_guids.append(guid)
+
+            if not self.i18n_language:
+                # This is a "standard" publish, just update the one cell
+                del lines[0]  # Remove the i18n directive
+            else:
+                # print(f"Processing GUID {guid}")
+                if guid not in i18n_guid_map:
+                    # This is a "standard" publish, just update the one cell
+                    # del lines[0]  # Remove the i18n directive
+                    # Because of this problem, we are going to leave it in and use the existing lines as-is, i18n directive and all
+                    msg = f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"
+                    for key in i18n_guid_map:
+                        msg += f"\n{key}: {i18n_guid_map[key]}"
+                    self.warn(lambda: False, msg)
+                else:
+                    lines = i18n_guid_map.get(guid).split("\n")
+
+            lines.insert(0, f"{cm} MAGIC {md_tag}")
+            command = "\n".join(lines)
+
+        return command
+
     def update_md_cells(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list):
 
         # First verify that the specified command is a mark-down cell
@@ -310,53 +360,13 @@ class NotebookDef:
         self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
-        lines = command.strip().split("\n")
-        line_0 = lines[0][7+len(cm):]
-
-        if self.i18n:
-            parts = line_0.strip().split(" ")
-            for index, part in enumerate(parts):
-                if part.strip() == "":
-                    del parts[index]
-            md_tag = None if len(parts) < 1 else parts[0]
-            guid = None if len(parts) < 2 else parts[1]
-
-            debug_info = line_0
-
-            passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
-
-            if len(parts) == 1:
-                passed = passed and self.test(lambda: False, f"Cmd #{i+1} | Missing the i18n directive: {debug_info}")
-            else:
-                passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i+1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
-                passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i+1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
-                passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i+1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
-
-            if passed:
-                passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i+1} | Duplicate i18n GUID found: {guid}")
-
-            if passed:
-                self.i18n_guids.append(guid)
-
-                if not self.i18n_language:
-                    # This is a "standard" publish, just update the one cell
-                    del lines[0]  # Remove the i18n directive
-                else:
-                    # print(f"Processing GUID {guid}")
-                    if guid not in i18n_guid_map:
-                        # This is a "standard" publish, just update the one cell
-                        # del lines[0]  # Remove the i18n directive
-                        # Because of this problem, we are going to leave it in and use the existing lines as-is, i18n directive and all
-                        self.warn(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
-                    else:
-                        lines = i18n_guid_map.get(guid).split("\n")
-
-                lines.insert(0, f"{cm} MAGIC {md_tag}")
-                command = "\n".join(lines)
-
+        if not self.i18n:
             return command
-
-        return command
+        else:
+            return self.replace_guid(cm=cm,
+                                       command=command,
+                                       i=i,
+                                       i18n_guid_map=i18n_guid_map)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         from dbacademy.dbrest import DBAcademyRestClient
@@ -438,12 +448,6 @@ class NotebookDef:
             # for sandbox_part in sandbox_parts[1:]:
             #     guid, value = self.parse_guid_and_value(sandbox_part)
             #     i18n_guid_map[guid] = value
-
-        print("-"*80)
-        print(self.path)
-        for key in i18n_guid_map:
-            print(key)
-        print("-"*80)
 
         return i18n_guid_map
 
