@@ -439,6 +439,12 @@ class NotebookDef:
             #     guid, value = self.parse_guid_and_value(sandbox_part)
             #     i18n_guid_map[guid] = value
 
+        print("-"*80)
+        print(self.path)
+        for key in i18n_guid_map:
+            print(key)
+        print("-"*80)
+
         return i18n_guid_map
 
     @staticmethod
