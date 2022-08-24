@@ -307,7 +307,7 @@ class NotebookDef:
             if part.strip() == "":
                 del parts[index]
         md_tag = None if len(parts) < 1 else parts[0]
-        guid = None if len(parts) < 2 else parts[1]
+        guid = None if len(parts) < 2 else parts[1].strip()
 
         debug_info = line_0
 
