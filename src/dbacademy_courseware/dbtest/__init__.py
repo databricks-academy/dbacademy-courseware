@@ -409,7 +409,8 @@ class TestSuite:
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
-                print(f"""/{test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
+                host_name = dbgems.get_notebooks_api_endpoint() if dbgems.get_browser_host_name() is None else f"https://{dbgems.get_browser_host_name()}"
+                print(f"""/{test.notebook.path}\n - {host_name}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
 
                 response = self.client.runs().wait_for(run_id)
                 passed = False if not self.conclude_test(test, response) else passed
