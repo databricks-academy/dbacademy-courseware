@@ -388,11 +388,9 @@ class TestSuite:
 
             else:
                 self.send_status_update("info", f"Starting */{test.notebook.path}*")
-                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
 
-                if owner:
-                    assert owner_type in ["user_name", "group_name", "service_principal_name"], f"Expected owner_type to be one of \"user_name\", \"group_name\", or \"service_principal_name\", found \"{owner_type}\"."
-                    self.client.permissions.jobs.change_owner(job_id, owner_type)
+                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
+                if owner: self.client.permissions.jobs.change_owner(job_id=job_id, owner=owner, owner_type=owner_type)
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
@@ -418,9 +416,7 @@ class TestSuite:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
-            if owner:
-                assert owner_type in ["user_name", "group_name", "service_principal_name"], f"Expected owner_type to be one of \"user_name\", \"group_name\", or \"service_principal_name\", found \"{owner_type}\"."
-                self.client.permissions.jobs.change_owner(test.job_id, owner_type)
+            if owner: self.client.permissions.jobs.change_owner(job_id=test.job_id, owner=owner, owner_type=owner_type)
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
