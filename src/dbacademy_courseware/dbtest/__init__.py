@@ -352,6 +352,7 @@ class TestSuite:
     def reset_test_suite(self):
         # Delete all jobs, even those that were successful
         self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=False)
+        print()
 
     @staticmethod
     def delete_all_jobs(success_only=None):
