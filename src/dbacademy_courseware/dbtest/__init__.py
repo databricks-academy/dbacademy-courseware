@@ -355,7 +355,7 @@ class TestSuite:
 
     def delete_successful_jobs(self):
         if self.keep_success:
-            print(f"Skipping deletion of all jobs: self.keep_success == {self.keep_success}")
+            print(f"Skipping deletion of all jobs: TestSuite.keep_success == {self.keep_success}")
         else:
             for test_round in self.test_rounds:
                 job_names = [j.job_name for j in self.test_rounds[test_round]]
