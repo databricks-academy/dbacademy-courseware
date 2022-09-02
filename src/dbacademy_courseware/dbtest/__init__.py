@@ -355,7 +355,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=not self.keep_success)
         # print()
 
-    def test_all_synchronously(self, test_round, fail_fast=True, owner: str = None, owner_type: str = None, policy_id: str = None) -> bool:
+    def test_all_synchronously(self, test_round, fail_fast=True, owner: str = None, owner_type: str = "service_principal", policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
@@ -401,7 +401,7 @@ class TestSuite:
 
         return passed
 
-    def test_all_asynchronously(self, test_round: int, owner: str = None, owner_type: str = None, policy_id: str = None) -> bool:
+    def test_all_asynchronously(self, test_round: int, owner: str = None, owner_type: str = "service_principal", policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
