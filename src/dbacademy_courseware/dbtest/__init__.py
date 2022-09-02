@@ -342,7 +342,7 @@ class TestSuite:
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
-    def purge_all_jobs(self):
+    def reset_test_suite(self):
         for test_round in self.test_rounds:
             job_names = [j.job_name for j in self.test_rounds[test_round]]
             self.client.jobs().delete_by_name(job_names, success_only=False)
