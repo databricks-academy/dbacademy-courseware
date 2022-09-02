@@ -348,15 +348,14 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=False)
 
     def delete_all_jobs(self, success_only=None):
+        print("*" * 80)
+        print("* DEPRECATION WARNING")
+        print("* delete_all_jobs() has been replaced by delete_successful_jobs()")
+        print("*" * 80)
 
-        if success_only is not None:
-            print("*" * 90)
-            print("* DEPRECATION WARNING")
-            print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
-            print("*" * 90)
-
+    def delete_successful_jobs(self):
         if self.keep_success:
-            print(f"Skipping delete of all jobs: self.keep_success == {self.keep_success}")
+            print(f"Skipping deletion of all jobs: self.keep_success == {self.keep_success}")
         else:
             for test_round in self.test_rounds:
                 job_names = [j.job_name for j in self.test_rounds[test_round]]
