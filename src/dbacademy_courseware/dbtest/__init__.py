@@ -350,10 +350,10 @@ class TestSuite:
     def delete_all_jobs(self, success_only=None):
 
         if success_only is not None:
-            print("*" * 80)
+            print("*" * 90)
             print("* DEPRECATION WARNING")
             print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
-            print("*" * 80)
+            print("*" * 90)
 
         success_only = not self.keep_success
         print(f"Deleting only successful jobs: {success_only}")
