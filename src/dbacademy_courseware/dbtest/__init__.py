@@ -342,12 +342,16 @@ class TestSuite:
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
-    def reset_test_suite(self):
+    def get_all_job_names(self):
         job_names = list()
         for test_round in self.test_rounds:
             job_names.extend([j.job_name for j in self.test_rounds[test_round]])
 
-        self.client.jobs().delete_by_name(job_names, success_only=False)
+        return job_names
+
+    def reset_test_suite(self):
+        # Delete all jobs, even those that were successful
+        self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=False)
 
     @staticmethod
     def delete_all_jobs(success_only=None):
@@ -360,9 +364,8 @@ class TestSuite:
         if self.keep_success:
             print(f"Skipping deletion of all jobs: TestSuite.keep_success == {self.keep_success}")
         else:
-            for test_round in self.test_rounds:
-                job_names = [j.job_name for j in self.test_rounds[test_round]]
-                self.client.jobs().delete_by_name(job_names, success_only=False)
+            # Delete all successful jobs, keeping those jobs that failed
+            self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=True)
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
         from dbacademy_gems import dbgems
