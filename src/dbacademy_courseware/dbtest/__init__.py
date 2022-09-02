@@ -350,6 +350,8 @@ class TestSuite:
     def delete_all_jobs(self, success_only=None):
 
         print(f"self.keep_success: {self.keep_success}")
+        success_only = not self.keep_success
+        print(f"success_only: {success_only}")
 
         if success_only is not None:
             print("*" * 90)
@@ -357,8 +359,6 @@ class TestSuite:
             print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
             print("*" * 90)
 
-        success_only = not self.keep_success
-        print(f"Deleting only successful jobs: {success_only}")
 
         for test_round in self.test_rounds:
             job_names = [j.job_name for j in self.test_rounds[test_round]]
