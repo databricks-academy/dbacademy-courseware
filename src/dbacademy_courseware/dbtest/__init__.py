@@ -343,11 +343,14 @@ class TestSuite:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
     def reset_test_suite(self):
+        job_names = list()
         for test_round in self.test_rounds:
-            job_names = [j.job_name for j in self.test_rounds[test_round]]
-            self.client.jobs().delete_by_name(job_names, success_only=False)
+            job_names.extend([j.job_name for j in self.test_rounds[test_round]])
 
-    def delete_all_jobs(self, success_only=None):
+        self.client.jobs().delete_by_name(job_names, success_only=False)
+
+    @staticmethod
+    def delete_all_jobs(success_only=None):
         print("*" * 80)
         print("* DEPRECATION WARNING")
         print("* delete_all_jobs() has been replaced by delete_successful_jobs()")
