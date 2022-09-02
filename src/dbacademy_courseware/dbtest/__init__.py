@@ -384,7 +384,7 @@ class TestSuite:
 
         print(f"Round #{test_round} test order:")
         for i, test in enumerate(tests):
-            print(f"  {i+1:>2} {test.notebook.path}")
+            print(f"{i+1:>4}: {test.notebook.path}")
         print()
 
         # Assume that all tests passed
