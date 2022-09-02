@@ -355,7 +355,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=not self.keep_success)
         # print()
 
-    def test_all_synchronously(self, test_round, fail_fast=True, owner: str = None, owner_type: str = "service_principal", policy_id: str = None) -> bool:
+    def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
@@ -390,7 +390,9 @@ class TestSuite:
                 self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
-                if owner: self.client.permissions.jobs.change_owner(job_id=job_id, owner=owner, owner_type=owner_type)
+                if service_principal:
+                    sp = self.client.scim.service_principals.get_by_name(service_principal)
+                    self.client.permissions.jobs.change_owner(job_id=job_id, owner=sp.get("applicationId"), owner_type="service_principal")
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
@@ -401,7 +403,7 @@ class TestSuite:
 
         return passed
 
-    def test_all_asynchronously(self, test_round: int, owner: str = None, owner_type: str = "service_principal", policy_id: str = None) -> bool:
+    def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
@@ -416,7 +418,9 @@ class TestSuite:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
-            if owner: self.client.permissions.jobs.change_owner(job_id=test.job_id, owner=owner, owner_type=owner_type)
+            if service_principal:
+                sp = self.client.scim.service_principals.get_by_name(service_principal)
+                self.client.permissions.jobs.change_owner(job_id=test.job_id, owner=sp.get("applicationId"), owner_type="service_principal")
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
