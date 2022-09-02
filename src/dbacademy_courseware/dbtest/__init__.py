@@ -349,6 +349,8 @@ class TestSuite:
 
     def delete_all_jobs(self, success_only=None):
 
+        print(f"self.keep_success: {self.keep_success}")
+
         if success_only is not None:
             print("*" * 90)
             print("* DEPRECATION WARNING")
