@@ -342,17 +342,20 @@ class TestSuite:
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
+    def purge_all_jobs(self):
+        for test_round in self.test_rounds:
+            job_names = [j.job_name for j in self.test_rounds[test_round]]
+            self.client.jobs().delete_by_name(job_names, success_only=False)
+
     def delete_all_jobs(self, success_only=None):
 
-        # if success_only is not None:
-        #     print("*" * 80)
-        #     print("* DEPRECATION WARNING")
-        #     print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
-        #     print("*" * 80)
+        if success_only is not None:
+            print("*" * 80)
+            print("* DEPRECATION WARNING")
+            print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
+            print("*" * 80)
 
-        if success_only is None:
-            success_only = not self.keep_success
-
+        success_only = not self.keep_success
         print(f"Deleting only successful jobs: {success_only}")
 
         for test_round in self.test_rounds:
