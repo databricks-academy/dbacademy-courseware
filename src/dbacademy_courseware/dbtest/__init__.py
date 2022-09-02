@@ -353,7 +353,7 @@ class TestSuite:
         print("* delete_all_jobs() has been replaced by delete_successful_jobs()")
         print("*" * 80)
 
-    def delete_successful_jobs(self):
+    def cleanup(self):
         if self.keep_success:
             print(f"Skipping deletion of all jobs: TestSuite.keep_success == {self.keep_success}")
         else:
