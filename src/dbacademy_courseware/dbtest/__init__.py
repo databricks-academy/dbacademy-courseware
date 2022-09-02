@@ -392,7 +392,7 @@ class TestSuite:
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
                 if service_principal:
                     sp = self.client.scim.service_principals.get_by_name(service_principal)
-                    self.client.permissions.jobs.change_owner(job_id=job_id, owner=sp.get("applicationId"), owner_type="service_principal")
+                    self.client.permissions.jobs.change_owner(job_id=job_id, owner_type="service_principal", owner_id=sp.get("applicationId"))
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
@@ -420,7 +420,7 @@ class TestSuite:
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path, policy_id=policy_id)
             if service_principal:
                 sp = self.client.scim.service_principals.get_by_name(service_principal)
-                self.client.permissions.jobs.change_owner(job_id=test.job_id, owner=sp.get("applicationId"), owner_type="service_principal")
+                self.client.permissions.jobs.change_owner(job_id=test.job_id, owner_type="service_principal", owner_id=sp.get("applicationId"))
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
