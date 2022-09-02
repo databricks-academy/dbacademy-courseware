@@ -40,7 +40,7 @@ class TestConfig:
 
         import uuid, time
         from dbacademy import dbrest
-        from dbacademy import dbgems
+        from dbacademy_gems import dbgems
 
         self.ignoring = [] if ignoring is None else ignoring
 
@@ -362,7 +362,7 @@ class TestSuite:
                 self.client.jobs().delete_by_name(job_names, success_only=False)
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy import dbgems
+        from dbacademy_gems import dbgems
 
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
@@ -410,7 +410,7 @@ class TestSuite:
         return passed
 
     def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy import dbgems
+        from dbacademy_gems import dbgems
 
         tests = self.test_rounds[test_round]
 
