@@ -355,13 +355,12 @@ class TestSuite:
             print("* success_only is no longer supported, initialize TestSuite with keep_success=True instead")
             print("*" * 90)
 
-        print(f"self.keep_success: {self.keep_success}")
-        success_only = not self.keep_success
-        print(f"success_only: {success_only}")
-
-        for test_round in self.test_rounds:
-            job_names = [j.job_name for j in self.test_rounds[test_round]]
-            self.client.jobs().delete_by_name(job_names, success_only=success_only)
+        if self.keep_success:
+            print(f"Skipping delete of all jobs: self.keep_success == {self.keep_success}")
+        else:
+            for test_round in self.test_rounds:
+                job_names = [j.job_name for j in self.test_rounds[test_round]]
+                self.client.jobs().delete_by_name(job_names, success_only=False)
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
