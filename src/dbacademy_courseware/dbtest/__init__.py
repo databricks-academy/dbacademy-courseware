@@ -358,7 +358,7 @@ class TestSuite:
     def delete_all_jobs(success_only=None):
         print("*" * 80)
         print("* DEPRECATION WARNING")
-        print("* delete_all_jobs() has been replaced by delete_successful_jobs()")
+        print("* delete_all_jobs() has been replaced by reset_test_suite() and cleanup()")
         print("*" * 80)
 
     def cleanup(self):
