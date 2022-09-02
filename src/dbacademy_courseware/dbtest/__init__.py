@@ -313,7 +313,7 @@ class TestInstance:
 
 
 class TestSuite:
-    def __init__(self, test_config, test_dir, test_type, keep_success=False):
+    def __init__(self, test_config: TestConfig, test_dir: str, test_type: str, keep_success: bool = False):
         self.test_dir = test_dir
         self.test_config = test_config
         self.client = test_config.client
