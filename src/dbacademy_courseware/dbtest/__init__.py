@@ -383,8 +383,8 @@ class TestSuite:
         self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  synchronously")
 
         print(f"Round #{test_round} test order:")
-        for test in tests:
-            print(f" {test.notebook.path}")
+        for i, test in enumerate(tests):
+            print(f"  {i+1:>2} {test.notebook.path}")
         print()
 
         # Assume that all tests passed
