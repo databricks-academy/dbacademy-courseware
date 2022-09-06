@@ -67,16 +67,11 @@ class Publisher:
         found_version_info = False
 
         for notebook in self.notebooks:
-            if notebook.path in self.black_list:
-                # Don't do anything with this notebook
-                print(f"Excluding: {notebook.path}")
-            else:
+            if notebook.path not in self.black_list:
                 found_version_info = True if notebook.path == self.version_info_notebook else found_version_info
                 main_notebooks.append(notebook)
 
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
-
-        if len(self.black_list) > 0: print("-"*80)
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
@@ -87,9 +82,9 @@ class Publisher:
         print(f"  debugging = {debugging}")
         print(f"  testing =   {testing}")
         if self.black_list is not None:
-            print(f"  exclude: {self.black_list[0]}")
+            print(f"  exclude:    {self.black_list[0]}")
             for path in self.black_list[1:]:
-                print(f"           {path}")
+                print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
