@@ -47,33 +47,41 @@ class BuildConfig:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
 
+                print(f"Updating {notebook}")
+
                 param = "include_solution"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, bool, overrides.get(param))
                     notebook.include_solution = value
 
                 param = "test_round"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, int, overrides.get(param))
                     notebook.test_round = value
 
                 param = "ignored"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, bool, overrides.get(param))
                     notebook.ignored = value
 
                 param = "order"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, int, overrides.get(param))
                     notebook.order = value
 
                 param = "replacements"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, int, overrides.get(param))
                     notebook.replacements = value
 
                 param = "ignored_errors"
                 if param in overrides:
+                    print(f"   applying {param}")
                     value = validate_type(param, List, overrides.get(param))
                     notebook.ignoring = value
 
