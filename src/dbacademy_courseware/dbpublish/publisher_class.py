@@ -37,11 +37,11 @@ class Publisher:
         # Validate white and black lists
         for path in white_list:
             assert path not in black_list, f"The white-list path \"{path}\" was also found in the black-list."
-            assert path not in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+            assert path in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
 
         for path in black_list:
             assert path not in white_list, f"The black-list path \"{path}\" was also found in the white-list."
-            assert path not in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+            assert path in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
 
     def create_resource_bundle(self, natural_language: str, target_dir: str):
         for notebook in self.notebooks:
