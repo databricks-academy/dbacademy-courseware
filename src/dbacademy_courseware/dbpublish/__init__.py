@@ -41,7 +41,7 @@ def from_build_config(build_config: BuildConfig, target_dir: str = None):
 
     i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
     if target_dir is None:
-        target_dir = f"{build_config.source_repo}/Published/{build_config.name} - {build_config.version}"
+        target_dir = f"{build_config.source_repo}/Published/{build_config.name} - v{build_config.version}"
 
     publisher = Publisher(client=build_config.client,
                           version=build_config.version,
