@@ -15,7 +15,8 @@ class Publisher:
 
         self.version_info_notebook = "Version Info"
 
-        self.notebooks = self._init_notebooks(notebooks)
+        self.notebooks = []
+        self._init_notebooks(notebooks)
 
         self.white_list = white_list
         self.black_list = black_list
@@ -31,7 +32,7 @@ class Publisher:
             notebook.replacements["version_number"] = self.version
             notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
-        return notebooks
+            self.notebooks.append(notebook)
 
     def _validate_white_black_list(self):
         if self.white_list or self.black_list:
