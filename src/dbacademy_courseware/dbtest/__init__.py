@@ -29,7 +29,6 @@ class BuildConfig:
 
         with open("build-config.json") as f:
             config = json.load(f)
-            print(json.dumps(config, indent=4))
             return BuildConfig(**config)
 
     def __init__(self,
