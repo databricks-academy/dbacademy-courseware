@@ -28,6 +28,10 @@ class BuildConfig:
     def load(file):
         import json
 
+        def validate_type(key: str, expected_type: Type, actual_value):
+            assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+            return actual_value
+
         with open("build-config.json") as f:
             config = json.load(f)
 
@@ -41,19 +45,35 @@ class BuildConfig:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
 
-                def apply(key: str, param: Union[None, str], expected: Type):
-                    param = param or key
-                    if key in overrides:
-                        value = overrides.get(key)
-                        assert type(value) == expected, f"Expected the value \"{key}\" to be of type \"{expected}\", found \"{type(value)}\"."
-                        notebook[param] = value
+                param = "include_solution"
+                if param in overrides:
+                    value = validate_type(param, bool, overrides.get(param))
+                    notebook.include_solution = value
 
-                apply("include_solution", None, bool)
-                apply("test_round", None, int)
-                apply("ignored", None, bool)
-                apply("order", None, int)
-                apply("replacements", None, int)
-                apply("ignore_errors", "ignoring", List)
+                param = "test_round"
+                if param in overrides:
+                    value = validate_type(param, int, overrides.get(param))
+                    notebook.test_round = value
+
+                param = "ignored"
+                if param in overrides:
+                    value = validate_type(param, bool, overrides.get(param))
+                    notebook.ignored = value
+
+                param = "order"
+                if param in overrides:
+                    value = validate_type(param, int, overrides.get(param))
+                    notebook.order = value
+
+                param = "replacements"
+                if param in overrides:
+                    value = validate_type(param, int, overrides.get(param))
+                    notebook.replacements = value
+
+                param = "ignored_errors"
+                if param in overrides:
+                    value = validate_type(param, List, overrides.get(param))
+                    notebook.ignoring = value
 
             return build_config
 
