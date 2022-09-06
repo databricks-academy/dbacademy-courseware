@@ -33,6 +33,7 @@ class BuildConfig:
             return actual_value
 
         with open("build-config.json") as f:
+            print("-"*80)
             config = json.load(f)
 
             notebook_config = config.get("notebook_config", dict())
@@ -85,6 +86,7 @@ class BuildConfig:
                     value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
+            print("-"*80)
             return build_config
 
     def __init__(self,
