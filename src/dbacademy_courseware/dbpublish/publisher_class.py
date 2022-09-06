@@ -86,7 +86,10 @@ class Publisher:
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
         print(f"  testing =   {testing}")
-        print(f"  exclude =   {self.black_list}")
+        if self.black_list is not None:
+            print(f"  exclude: {self.black_list[0]}")
+            for path in self.black_list[1:]:
+                print(f"           {path}")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
