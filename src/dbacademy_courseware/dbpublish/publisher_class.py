@@ -1,9 +1,11 @@
-import typing
+from typing import List
 from .notebook_def_class import NotebookDef
 
 
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language: str):
+    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language: str, white_list: List[str], black_list: List[str], notebooks: List[NotebookDef]):
+        from datetime import datetime
+
         self.client = client
         self.version = version
 
@@ -13,56 +15,58 @@ class Publisher:
         self.i18n_language = i18n_language
         self.i18n_resources_dir = i18n_resources_dir
 
-        self.notebooks: typing.List[NotebookDef] = []
-
         self.version_info_notebook = "Version Info"
 
-    def add_all(self, notebooks):
+        self.white_list = white_list
+        self.black_list = black_list
 
-        if type(notebooks) == dict:
-            print(f"DEBUG: Converting dict to list in Publisher.add_all")
-            notebooks = list(notebooks.values())
+        if self.white_list or self.black_list:
+            assert self.white_list is not None, "The white_list must be specified when specifying a black_list"
+            assert self.black_list is not None, "The black_list must be specified when specifying a white_list"
 
+        self.notebooks = []
         for notebook in notebooks:
-            self.add_notebook(notebook)
+            assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
 
-    def add_notebook(self, notebook):
-        from datetime import datetime
+            # Add the universal replacements
+            notebook.replacements["version_number"] = self.version
+            notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+            self.notebooks.append(notebook)
 
-        assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
+        notebook_paths = [n.path for n in notebooks]
+        # Validate white and black lists
+        for path in white_list:
+            assert path not in black_list, f"The white-list path \"{path}\" was also found in the black-list."
+            assert path not in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks."
 
-        # Add the universal replacements
-        notebook.replacements["version_number"] = self.version
-        notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-
-        self.notebooks.append(notebook)
+        for path in black_list:
+            assert path not in white_list, f"The black-list path \"{path}\" was also found in the white-list."
+            assert path not in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks."
 
     def create_resource_bundle(self, natural_language: str, target_dir: str):
         for notebook in self.notebooks:
             notebook.create_resource_bundle(natural_language, self.source_dir, target_dir)
 
-    def publish(self, testing, mode=None, verbose=False, debugging=False, exclude=None):
-        main_notebooks: typing.List[NotebookDef] = []
+    def publish(self, testing, mode=None, verbose=False, debugging=False):
+        main_notebooks: List[NotebookDef] = []
 
         mode = str(mode).lower()
         expected_modes = ["delete", "overwrite", "no-overwrite"]
         assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
 
-        excluding = False
         found_version_info = False
-        exclude = list() if exclude is None else exclude
 
         for notebook in self.notebooks:
-            if notebook.path in exclude:
-                excluding = True
-                print(f"Excluding: {notebook.path}")  # Don't do anything with this notebook
+            if notebook.path in self.black_list:
+                # Don't do anything with this notebook
+                print(f"Excluding: {notebook.path}")
             else:
-                if notebook.path == self.version_info_notebook: found_version_info = True
+                found_version_info = True if notebook.path == self.version_info_notebook else found_version_info
                 main_notebooks.append(notebook)
 
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
 
-        if excluding: print("-"*80)
+        if len(self.black_list) > 0: print("-"*80)
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
@@ -72,7 +76,7 @@ class Publisher:
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
         print(f"  testing =   {testing}")
-        print(f"  exclude =   {exclude}")
+        print(f"  exclude =   {self.black_list}")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)

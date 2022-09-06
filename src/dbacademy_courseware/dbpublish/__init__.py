@@ -48,10 +48,10 @@ def from_build_config(build_config: BuildConfig, target_dir: str = None):
                           source_dir=build_config.source_dir,
                           target_dir=target_dir,
                           i18n_resources_dir=i18n_resources_dir,
-                          i18n_language=build_config.i18n_language)
-
-    notebooks = list(build_config.notebooks.values())
-    publisher.add_all(notebooks)
+                          i18n_language=build_config.i18n_language,
+                          white_list=build_config.white_list,
+                          black_list=build_config.black_list,
+                          notebooks=build_config.notebooks.values())
     return publisher
 
 

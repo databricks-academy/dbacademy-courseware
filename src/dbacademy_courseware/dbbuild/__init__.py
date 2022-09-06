@@ -54,6 +54,14 @@ class BuildConfig:
                     value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
+            publish_only = config.get("publish_only", None)
+            if publish_only is not None:
+                build_config.white_list = config.get("white_list", None)
+                assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
+
+                build_config.black_list = config.get("black_list", None)
+                assert build_config.black_list is not None, "The black_list must be specified when specifying publish_only"
+
             return build_config
 
     def __init__(self,
@@ -128,6 +136,9 @@ class BuildConfig:
         # may or may not exists. The implication being that this will fail if called explicitly
         self.include_solutions = include_solutions
         self.index_notebooks(include_solutions=include_solutions, fail_fast=source_dir is not None)
+
+        self.white_list = None
+        self.black_list = None
 
     def get_distribution_name(self, version):
         distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
