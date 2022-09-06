@@ -48,17 +48,21 @@ class Publisher:
         expected_modes = ["delete", "overwrite", "no-overwrite"]
         assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
 
+        excluding = False
         found_version_info = False
         exclude = list() if exclude is None else exclude
 
         for notebook in self.notebooks:
             if notebook.path in exclude:
+                excluding = True
                 print(f"Excluding: {notebook.path}")  # Don't do anything with this notebook
             else:
                 if notebook.path == self.version_info_notebook: found_version_info = True
                 main_notebooks.append(notebook)
 
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
+
+        if excluding: print("-"*80)
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
