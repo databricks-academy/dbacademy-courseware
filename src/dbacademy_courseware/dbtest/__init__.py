@@ -21,26 +21,23 @@ def to_job_link(cloud, job_id, run_id, label):
     url = to_job_url(cloud, job_id, run_id)
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
-
 class BuildConfig:
 
     @staticmethod
     def load(file):
         import json
 
-        def validate_type(key: str, expected_type: Type, actual_value):
-            assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
-            return actual_value
-
         with open("build-config.json") as f:
-            print("-"*80)
             config = json.load(f)
+            build_config = BuildConfig(**config)
 
             configurations = config.get("notebook_config", dict())
-            if "notebook_config" in config:
-                del config["notebook_config"]
+            # if "notebook_config" in config:
+            #     del config["notebook_config"]
 
-            build_config = BuildConfig(**config)
+            def validate_type(key: str, expected_type: Type, actual_value):
+                assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+                return actual_value
 
             for name in configurations:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
@@ -77,7 +74,6 @@ class BuildConfig:
                     value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
-            print("-"*80)
             return build_config
 
     def __init__(self,
