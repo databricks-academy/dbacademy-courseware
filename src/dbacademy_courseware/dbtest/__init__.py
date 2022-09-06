@@ -38,7 +38,6 @@ class BuildConfig:
 
             configurations = config.get("notebook_config", dict())
             if "notebook_config" in config:
-                print(f"notebook_config: {json.dumps(configurations, indent=4)}")
                 del config["notebook_config"]
 
             build_config = BuildConfig(**config)
@@ -46,43 +45,35 @@ class BuildConfig:
             for name in configurations:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
-
-                print(f"Updating {notebook}")
                 notebook_config = configurations.get(name)
 
                 param = "include_solution"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, bool, notebook_config.get(param))
                     notebook.include_solution = value
 
                 param = "test_round"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, int, notebook_config.get(param))
                     notebook.test_round = value
 
                 param = "ignored"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, bool, notebook_config.get(param))
                     notebook.ignored = value
 
                 param = "order"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, int, notebook_config.get(param))
                     notebook.order = value
 
                 param = "replacements"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, int, notebook_config.get(param))
                     notebook.replacements = value
 
                 param = "ignored_errors"
                 if param in notebook_config:
-                    print(f"   applying {param}")
                     value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
