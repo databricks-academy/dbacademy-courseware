@@ -32,6 +32,8 @@ class BuildConfig:
             config = json.load(f)
             build_config = BuildConfig(**config)
             overrides = config.get("overrides", dict())
+            if "comment" in overrides: del overrides["comment"]
+            
             for name in overrides:
                 assert notebook in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
