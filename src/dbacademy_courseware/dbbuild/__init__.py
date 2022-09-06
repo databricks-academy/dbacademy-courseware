@@ -13,6 +13,9 @@ class BuildConfig:
             configurations = config.get("notebook_config", dict())
             if "notebook_config" in config: del config["notebook_config"]
 
+            publish_only = config.get("publish_only", None)
+            if "publish_only" in config: del config["publish_only"]
+
             build_config = BuildConfig(**config)
 
             def validate_type(key: str, expected_type: Type, actual_value):
@@ -54,7 +57,6 @@ class BuildConfig:
                     value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
-            publish_only = config.get("publish_only", None)
             if publish_only is not None:
                 build_config.white_list = config.get("white_list", None)
                 assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
