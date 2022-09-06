@@ -81,9 +81,19 @@ class Publisher:
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
         print(f"  testing =   {testing}")
-        if self.black_list is not None:
+
+        if self.black_list is None:
+            print(f"  exclude:    none")
+        else:
             print(f"  exclude:    {self.black_list[0]}")
             for path in self.black_list[1:]:
+                print(f"              {path}")
+
+        if self.white_list is None:
+            print(f"  include:    none")
+        else:
+            print(f"  include:    {self.white_list[0]}")
+            for path in self.white_list[1:]:
                 print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
