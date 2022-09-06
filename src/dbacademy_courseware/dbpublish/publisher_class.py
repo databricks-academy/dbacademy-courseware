@@ -85,14 +85,16 @@ class Publisher:
         if self.black_list is None:
             print(f"  exclude:    none")
         else:
-            print(f"  exclude:    {self.black_list[0]}")
+            self.black_list.sort()
+            print(f"\n  exclude:    {self.black_list[0]}")
             for path in self.black_list[1:]:
                 print(f"              {path}")
 
         if self.white_list is None:
             print(f"  include:    none")
         else:
-            print(f"  include:    {self.white_list[0]}")
+            self.white_list.sort()
+            print(f"\n  include:    {self.white_list[0]}")
             for path in self.white_list[1:]:
                 print(f"              {path}")
 
