@@ -58,6 +58,10 @@ class BuildConfig:
                     notebook.ignoring = value
 
             if publish_only is not None:
+                print("-"*80)
+                print(json.dumps(publish_only, indent=4))
+                print("-"*80)
+
                 build_config.white_list = config.get("white_list", None)
                 assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
 
