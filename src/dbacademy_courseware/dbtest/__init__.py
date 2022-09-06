@@ -1,3 +1,4 @@
+from typing import Type, Union, List
 from deprecated.classic import deprecated
 
 def to_job_url(cloud, job_id, run_id):
@@ -29,7 +30,25 @@ class BuildConfig:
 
         with open("build-config.json") as f:
             config = json.load(f)
-            return BuildConfig(**config)
+            build_config = BuildConfig(**config)
+            overrides = config.get("overrides", dict())
+            for name in overrides:
+                assert notebook in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
+                notebook = build_config.notebooks[name]
+
+                def apply(key: str, param: Union[None, str], expected: Type):
+                    param = param or key
+                    if key in overrides:
+                        value = overrides.get(key)
+                        assert type(value) == expected, f"Expected the value \"{key}\" to be of type \"{expected}\", found \"{type(value)}\"."
+                        notebook[param] = value
+
+                apply("include_solution", None, bool)
+                apply("test_round", None, int)
+                apply("ignored", None, bool)
+                apply("order", None, int)
+                apply("replacements", None, int)
+                apply("ignore_errors", "ignoring", List)
 
     def __init__(self,
                  name: str,
