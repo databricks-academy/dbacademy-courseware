@@ -35,54 +35,54 @@ class BuildConfig:
         with open("build-config.json") as f:
             config = json.load(f)
 
-            overrides = config.get("overrides", dict())
-            if "overrides" in config:
-                print(f"Overrides: {json.dumps(overrides, indent=4)}")
-                del config["overrides"]
+            notebook_config = config.get("notebook_config", dict())
+            if "notebook_config" in config:
+                print(f"notebook_config: {json.dumps(notebook_config, indent=4)}")
+                del config["notebook_config"]
 
             build_config = BuildConfig(**config)
-            if "comment" in overrides: del overrides["comment"]
+            if "comment" in notebook_config: del notebook_config["comment"]
 
-            for name in overrides:
+            for name in notebook_config:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
 
                 print(f"Updating {notebook}")
 
                 param = "include_solution"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, bool, overrides.get(param))
+                    value = validate_type(param, bool, notebook_config.get(param))
                     notebook.include_solution = value
 
                 param = "test_round"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, int, overrides.get(param))
+                    value = validate_type(param, int, notebook_config.get(param))
                     notebook.test_round = value
 
                 param = "ignored"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, bool, overrides.get(param))
+                    value = validate_type(param, bool, notebook_config.get(param))
                     notebook.ignored = value
 
                 param = "order"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, int, overrides.get(param))
+                    value = validate_type(param, int, notebook_config.get(param))
                     notebook.order = value
 
                 param = "replacements"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, int, overrides.get(param))
+                    value = validate_type(param, int, notebook_config.get(param))
                     notebook.replacements = value
 
                 param = "ignored_errors"
-                if param in overrides:
+                if param in notebook_config:
                     print(f"   applying {param}")
-                    value = validate_type(param, List, overrides.get(param))
+                    value = validate_type(param, List, notebook_config.get(param))
                     notebook.ignoring = value
 
             return build_config
