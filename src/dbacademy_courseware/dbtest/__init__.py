@@ -55,6 +55,8 @@ class BuildConfig:
                 apply("replacements", None, int)
                 apply("ignore_errors", "ignoring", List)
 
+            return build_config
+
     def __init__(self,
                  name: str,
                  version: str = 0,
