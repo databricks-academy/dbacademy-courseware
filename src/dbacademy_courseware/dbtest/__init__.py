@@ -38,7 +38,7 @@ class BuildConfig:
             if "comment" in overrides: del overrides["comment"]
 
             for name in overrides:
-                assert notebook in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
+                assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
 
                 def apply(key: str, param: Union[None, str], expected: Type):
