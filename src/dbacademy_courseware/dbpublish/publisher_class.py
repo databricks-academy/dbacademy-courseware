@@ -17,13 +17,6 @@ class Publisher:
 
         self.version_info_notebook = "Version Info"
 
-        self.white_list = white_list
-        self.black_list = black_list
-
-        if self.white_list or self.black_list:
-            assert self.white_list is not None, "The white_list must be specified when specifying a black_list"
-            assert self.black_list is not None, "The black_list must be specified when specifying a white_list"
-
         self.notebooks = []
         for notebook in notebooks:
             assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
@@ -33,15 +26,26 @@ class Publisher:
             notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
             self.notebooks.append(notebook)
 
-        notebook_paths = [n.path for n in notebooks]
-        # Validate white and black lists
-        for path in white_list:
-            assert path not in black_list, f"The white-list path \"{path}\" was also found in the black-list."
-            assert path in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+        self.white_list = white_list
+        self.black_list = black_list
 
-        for path in black_list:
-            assert path not in white_list, f"The black-list path \"{path}\" was also found in the white-list."
-            assert path in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+        if self.white_list or self.black_list:
+            assert self.white_list is not None, "The white_list must be specified when specifying a black_list"
+            assert self.black_list is not None, "The black_list must be specified when specifying a white_list"
+
+            notebook_paths = [n.path for n in notebooks]
+
+            # Validate white and black lists
+            for path in white_list:
+                assert path not in black_list, f"The white-list path \"{path}\" was also found in the black-list."
+                assert path in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+
+            for path in black_list:
+                assert path not in white_list, f"The black-list path \"{path}\" was also found in the white-list."
+                assert path in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
+
+            for path in notebook_paths:
+                assert path in white_list or path in black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
 
     def create_resource_bundle(self, natural_language: str, target_dir: str):
         for notebook in self.notebooks:
