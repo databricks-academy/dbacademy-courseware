@@ -1,3 +1,4 @@
+from dbacademy_courseware.dbbuild import BuildConfig
 from deprecated.classic import deprecated
 
 def help_html():
@@ -31,22 +32,25 @@ def help_html():
     return html
 
 @deprecated(reason="Use from_build_config instead")
-def from_test_config(test_config, target_dir):
-    from_build_config(test_config, target_dir)
+def from_test_config(build_config: BuildConfig, target_dir: str):
+    from_build_config(build_config=build_config,
+                      target_dir=target_dir)
 
-def from_build_config(test_config, target_dir):
+def from_build_config(build_config: BuildConfig, target_dir: str = None):
     from .publisher_class import Publisher
 
-    i18n_resources_dir = f"{test_config.source_repo}/Resources/{test_config.i18n_language}"
+    i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
+    if target_dir is None:
+        target_dir = f"{build_config.source_repo}/Published/{build_config.name} - {build_config.version}"
 
-    publisher = Publisher(client=test_config.client,
-                          version=test_config.version,
-                          source_dir=test_config.source_dir,
+    publisher = Publisher(client=build_config.client,
+                          version=build_config.version,
+                          source_dir=build_config.source_dir,
                           target_dir=target_dir,
                           i18n_resources_dir=i18n_resources_dir,
-                          i18n_language=test_config.i18n_language)
+                          i18n_language=build_config.i18n_language)
 
-    notebooks = list(test_config.notebooks.values())
+    notebooks = list(build_config.notebooks.values())
     publisher.add_all(notebooks)
     return publisher
 

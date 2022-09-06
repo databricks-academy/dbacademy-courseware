@@ -189,7 +189,7 @@ class BuildConfig:
 
     def print(self):
         print("-" * 100)
-        print("Test Configuration")
+        print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
         print(f"name:              {self.name}")
         print(f"version:           {self.version}")
