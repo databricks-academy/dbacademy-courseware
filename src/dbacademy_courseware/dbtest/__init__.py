@@ -36,7 +36,9 @@ class BuildConfig:
             config = json.load(f)
 
             overrides = config.get("overrides", dict())
-            if "overrides" in config: del config["overrides"]
+            if "overrides" in config:
+                print(f"Overrides: {json.dumps(overrides, indent=4)}")
+                del config["overrides"]
 
             build_config = BuildConfig(**config)
             if "comment" in overrides: del overrides["comment"]
