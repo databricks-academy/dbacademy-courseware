@@ -32,8 +32,7 @@ class BuildConfig:
             build_config = BuildConfig(**config)
 
             configurations = config.get("notebook_config", dict())
-            # if "notebook_config" in config:
-            #     del config["notebook_config"]
+            if "notebook_config" in config: del config["notebook_config"]
 
             def validate_type(key: str, expected_type: Type, actual_value):
                 assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
