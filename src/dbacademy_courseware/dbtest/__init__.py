@@ -21,8 +21,16 @@ def to_job_link(cloud, job_id, run_id, label):
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
 
-@deprecated(reason="Use BuildConfig instead")
-class TestConfig:
+class BuildConfig:
+
+    @staticmethod
+    def load(file):
+        import json
+
+        with open("build-config.json") as f:
+            config = json.load(f)
+            return BuildConfig(**config)
+
     def __init__(self,
                  name: str,
                  version: str = 0,
@@ -216,10 +224,25 @@ class TestConfig:
         print("-" * 100)
 
 
-# class TestConfig(BuildConfig):
-#     def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, results_table: str = None, results_database: str = None, include_solutions: bool = True, i18n: bool = False):
-#         super().__init__(name, version, spark_version, cloud, instance_pool, workers, libraries, client, source_dir, source_repo, spark_conf, results_table, results_database, include_solutions, i18n)
-#         print(f"DEPRECATION WARNING: TestConfig has been repalced by BuildConfig, please update your code accordingly.")
+@deprecated(reason="Use BuildConfig instead")
+class TestConfig(BuildConfig):
+    def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, job_arguments: dict = None, include_solutions: bool = True, i18n: bool = False, i18n_language: str = None, ignoring: list = None):
+        super().__init__(name=name,
+                         version=version,
+                         spark_version=spark_version,
+                         cloud=cloud,
+                         instance_pool=instance_pool,
+                         workers=workers,
+                         libraries=libraries,
+                         client=client,
+                         source_dir=source_dir,
+                         source_repo=source_repo,
+                         spark_conf=spark_conf,
+                         job_arguments=job_arguments,
+                         include_solutions=include_solutions,
+                         i18n=i18n,
+                         i18n_language=i18n_language,
+                         ignoring=ignoring)
 
 
 def create_test_job(client, test_config, job_name, notebook_path, policy_id=None):
@@ -273,26 +296,6 @@ def create_test_job(client, test_config, job_name, notebook_path, policy_id=None
 
     json_response = client.jobs().create(params)
     return json_response["job_id"]
-
-
-# DEPRECATED - use TestSuite instead
-# class SuiteBuilder:
-#     def __init__(self, client, course_name, test_type):
-#         self.client = client
-#         self.course_name = course_name
-#         self.test_type = test_type
-#         self.jobs = dict()
-# 
-#     def add(self, notebook_path, ignored=False):
-#         import hashlib
-# 
-#         if self.client.workspace().get_status(notebook_path) is None:
-#             raise Exception(f"Notebook not found: {notebook_path}")
-# 
-#         hash_code = hashlib.sha256(notebook_path.encode()).hexdigest()
-#         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash_code}"
-#         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
-
 
 class TestInstance:
     def __init__(self, test_config, notebook, test_dir, test_type):
