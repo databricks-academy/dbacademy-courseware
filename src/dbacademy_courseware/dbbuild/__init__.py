@@ -62,10 +62,10 @@ class BuildConfig:
                 print(json.dumps(publish_only, indent=4))
                 print("-"*80)
 
-                build_config.white_list = config.get("white_list", None)
+                build_config.white_list = publish_only.get("white_list", None)
                 assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
 
-                build_config.black_list = config.get("black_list", None)
+                build_config.black_list = publish_only.get("black_list", None)
                 assert build_config.black_list is not None, "The black_list must be specified when specifying publish_only"
 
             return build_config
