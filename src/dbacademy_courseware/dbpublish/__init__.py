@@ -1,3 +1,5 @@
+from deprecated.classic import deprecated
+
 def help_html():
     from .notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
     from .notebook_def_class import SUPPORTED_DIRECTIVES
@@ -28,8 +30,11 @@ def help_html():
     html += "</body>"
     return html
 
-
+@deprecated(reason="Use from_build_config instead")
 def from_test_config(test_config, target_dir):
+    from_build_config(test_config, target_dir)
+
+def from_build_config(test_config, target_dir):
     from .publisher_class import Publisher
 
     i18n_resources_dir = f"{test_config.source_repo}/Resources/{test_config.i18n_language}"

@@ -136,7 +136,7 @@ class BuildConfig:
     def index_notebooks(self, include_solutions=True, fail_fast=True):
         from ..dbpublish.notebook_def_class import NotebookDef
 
-        assert self.source_dir is not None, "TestConfig.source_dir must be specified"
+        assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 
         self.notebooks = dict()
         entities = self.client.workspace().ls(self.source_dir, recursive=True)
