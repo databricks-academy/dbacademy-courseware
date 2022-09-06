@@ -1,3 +1,4 @@
-requests
+requests~=2.27.1
+Deprecated~=1.2.13
 git+https://github.com/databricks-academy/dbacademy-gems
 git+https://github.com/databricks-academy/dbacademy-rest

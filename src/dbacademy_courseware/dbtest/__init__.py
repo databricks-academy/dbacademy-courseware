@@ -1,3 +1,5 @@
+from deprecated.classic import deprecated
+
 def to_job_url(cloud, job_id, run_id):
     import dbacademy.dbgems as dbgems
 
@@ -19,6 +21,7 @@ def to_job_link(cloud, job_id, run_id, label):
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
 
+@deprecated(reason="Use BuildConfig instead")
 class TestConfig:
     def __init__(self,
                  name: str,
