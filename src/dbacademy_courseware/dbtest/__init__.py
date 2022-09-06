@@ -36,19 +36,19 @@ class BuildConfig:
             print("-"*80)
             config = json.load(f)
 
-            notebook_config = config.get("notebook_config", dict())
+            configurations = config.get("notebook_config", dict())
             if "notebook_config" in config:
-                print(f"notebook_config: {json.dumps(notebook_config, indent=4)}")
+                print(f"notebook_config: {json.dumps(configurations, indent=4)}")
                 del config["notebook_config"]
 
             build_config = BuildConfig(**config)
-            if "comment" in notebook_config: del notebook_config["comment"]
 
-            for name in notebook_config:
+            for name in configurations:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
                 notebook = build_config.notebooks[name]
 
                 print(f"Updating {notebook}")
+                notebook_config = configurations.get(name)
 
                 param = "include_solution"
                 if param in notebook_config:
