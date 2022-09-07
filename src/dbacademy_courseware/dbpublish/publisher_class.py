@@ -208,10 +208,11 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         print(f"Source: {source_docs_path}")
         print(f"Target: {target_docs_path}")
 
-        if os.path.exists(target_docs_path):
-            shutil.rmtree(target_docs_path)
+        if os.path.exists(f"/Workspace/{target_docs_path}"):
+            shutil.rmtree(f"/Workspace/{target_docs_path}")
 
-        shutil.copytree(src=source_docs_path, dst=target_docs_path)
+        shutil.copytree(src=f"/Workspace/{source_docs_path}",
+                        dst=f"/Workspace/{target_docs_path}")
 
         print("-" * 80)
         for file in os.listdir(target_docs_path):
