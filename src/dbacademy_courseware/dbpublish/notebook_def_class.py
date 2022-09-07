@@ -336,7 +336,7 @@ class NotebookDef:
                     # This is a "standard" publish, just update the one cell
                     # del lines[0]  # Remove the i18n directive
                     # Because of this problem, we are going to leave it in and use the existing lines as-is, i18n directive and all
-                    self.test(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
+                    self.warn(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
                 else:
                     lines = i18n_guid_map.get(guid).split("\n")
 
