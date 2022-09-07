@@ -358,8 +358,10 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         if not self.i18n:
+            print(f"Skipping Cmd #{i+1}, not i18n")
             return command
         else:
+            print(f"i18n Update for Cmd #{i+1}")
             return self.replace_guid(cm=cm,
                                      command=command,
                                      i=i,
@@ -489,11 +491,6 @@ class NotebookDef:
 
         i18n_source = self.load_i18n_source(i18n_resources_dir)
         i18n_guid_map = self.load_i18n_guid_map(i18n_source)
-
-        import json
-        print("-"*80)
-        print(json.dumps(i18n_guid_map, indent=4))
-        print("-"*80)
 
         skipped = 0
         students_commands = []
