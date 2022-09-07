@@ -123,7 +123,7 @@ class Publisher:
 
             self.print_if(verbose, f"...{len(deleted)} files")
             for path in deleted:
-                print(f" - {path}")
+                self.print_if(verbose, print(f" - {path}"))
 
         elif mode.lower() != "overwrite":
             self.print_if(verbose, "-"*80)
