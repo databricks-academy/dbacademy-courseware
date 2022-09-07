@@ -1,4 +1,4 @@
-from typing import Type, List
+from typing import Type, List, Dict, Union
 
 class BuildConfig:
 
@@ -99,6 +99,7 @@ class BuildConfig:
         import uuid, time, re
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
+        from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
 
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
@@ -107,7 +108,7 @@ class BuildConfig:
         self.i18n_language = i18n_language
 
         self.test_type = None
-        self.notebooks = None
+        self.notebooks: Union[None, Dict[str, NotebookDef]] = None
         self.client = dbrest.DBAcademyRestClient() if client is None else client
 
         # The instance of this test run
@@ -304,6 +305,9 @@ class BuildConfig:
         self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
 
         assert self.i18n_language is None or self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
+
+        for notebook in self.notebooks.values():
+            notebook.i18n_language = self.i18n_language
 
         if self.i18n_language is not None:
             # Include the i18n code in the version.
