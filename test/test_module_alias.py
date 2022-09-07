@@ -1,7 +1,6 @@
 import unittest
 
 
-# noinspection PyUnresolvedReferences
 class MyTestCase(unittest.TestCase):
 
     def test_module(self):
@@ -13,7 +12,7 @@ class MyTestCase(unittest.TestCase):
         # return None
 
     def test_dbpublish(self):
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+        from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
         notebook = NotebookDef(path="Agenda",
                                replacements={},
                                include_solution=False,
@@ -26,8 +25,8 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNotNone(notebook)
 
     def test_dbtest(self):
-        from dbacademy.dbtest.results_evaluator import ResultsEvaluator
-        results_evaluator = ResultsEvaluator([])
+        from dbacademy_courseware.dbtest.results_evaluator import ResultsEvaluator
+        results_evaluator = ResultsEvaluator([], False)
         self.assertIsNotNone(results_evaluator)
 
 
