@@ -4,7 +4,7 @@ from dbacademy_courseware.dbbuild import BuildConfig
 
 
 class Publisher:
-    def __init__(self, build_config: BuildConfig, target_dir: str):
+    def __init__(self, build_config: BuildConfig, target_dir: str = None):
         assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
 
         self.version_info_notebook = "Version Info"
