@@ -175,17 +175,17 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
     def reset_repo(self, target_dir, target_url):
         self.target_dir = target_dir
 
-        print(f"Resetting repo: {target_url}")
+        print(f"Resetting git repo:")
+        print(f" - {self.target_dir}")
+        print(f" - {target_url}")
+
         status = self.client.workspace().get_status(self.target_dir)
 
         if status is None:
-            print(f"Not found: {self.target_dir}")
+            print(f"...not found: {self.target_dir}")
         else:
-            print(f"Resetting {self.target_dir}")
-
             target_repo_id = status["object_id"]
             self.client.repos().delete(target_repo_id)
-
             print(f"...removed")
 
         # Re-create the repo to progress in testing
