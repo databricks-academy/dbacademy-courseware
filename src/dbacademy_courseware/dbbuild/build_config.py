@@ -1,5 +1,4 @@
 from typing import Type, List
-from deprecated.classic import deprecated
 
 class BuildConfig:
 
@@ -229,7 +228,7 @@ class BuildConfig:
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
         print(f"i18n:              {self.i18n}")
-        print(f"i18n_language:     {self.i18n_language}")
+        print(f"i18n_language:     " + self.i18n_language if self.i18n_language else "None (English)")
 
         max_name_length = 0
         for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
