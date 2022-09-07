@@ -84,7 +84,7 @@ class BuildConfig:
                  i18n_language: str = None,
                  ignoring: list = None):
 
-        import uuid, time
+        import uuid, time, re
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
 
@@ -106,6 +106,7 @@ class BuildConfig:
         # Course Name
         self.name = name
         assert self.name is not None, "The course's name must be specified."
+        self.clean_name = re.sub(r"[^a-zA-Z\d]", "-", name)
 
         # The Distribution's version
         self.version = version
