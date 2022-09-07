@@ -19,6 +19,13 @@ class Publisher:
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
 
+        if build_config.i18n_language is None:
+            self.common_language = "english"
+        else:
+            # Include the i18n code in the version.
+            # This hack just happens to work for japanese and korean
+            self.common_language = build_config.i18n_language.split("-")[0]
+
         self.notebooks = []
         self._init_notebooks(build_config.notebooks.values())
 
