@@ -172,10 +172,10 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         if condition:
             print(text)
 
-    def reset_repo(self, target_dir, target_repo_url):
+    def reset_repo(self, target_dir, target_url):
         self.target_dir = target_dir
 
-        print(f"Resetting repo: {target_repo_url}")
+        print(f"Resetting repo: {target_url}")
         status = self.client.workspace().get_status(self.target_dir)
 
         if status is None:
@@ -189,5 +189,5 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
             print(f"...removed")
 
         # Re-create the repo to progress in testing
-        self.client.repos().create(self.target_dir, url=target_repo_url)
+        self.client.repos().create(path=self.target_dir, url=target_url)
         print(f"...imported")
