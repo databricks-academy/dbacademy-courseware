@@ -18,12 +18,12 @@ class Publisher:
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
 
+        self.notebooks = []
+        self._init_notebooks(build_config.notebooks.values())
+
         self.white_list = build_config.white_list
         self.black_list = build_config.black_list
         self._validate_white_black_list()
-
-        self.notebooks = []
-        self._init_notebooks(build_config.notebooks.values())
 
     def _init_notebooks(self, notebooks):
         from datetime import datetime
