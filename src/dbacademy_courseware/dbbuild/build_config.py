@@ -264,6 +264,13 @@ class BuildConfig:
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
 
+    def to_test_suite(self, test_type: str, keep_success: bool = False):
+        from dbacademy_courseware.dbtest import TestSuite
+        return TestSuite(build_config=self,
+                         test_dir=self.source_dir,
+                         test_type=test_type,
+                         keep_success=keep_success)
+
 @deprecated(reason="Use BuildConfig instead")
 class TestConfig(BuildConfig):
     def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, job_arguments: dict = None, include_solutions: bool = True, i18n: bool = False, i18n_language: str = None, ignoring: list = None):

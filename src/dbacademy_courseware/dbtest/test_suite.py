@@ -1,5 +1,5 @@
 class TestInstance:
-    def __init__(self, test_config, notebook, test_dir, test_type):
+    def __init__(self, build_config, notebook, test_dir, test_type):
         import hashlib
 
         self.notebook = notebook
@@ -12,19 +12,19 @@ class TestInstance:
             self.notebook_path = f"{test_dir}/{notebook.path}"
 
         hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
-        test_name = test_config.name.lower().replace(" ", "-")
+        test_name = build_config.name.lower().replace(" ", "-")
         self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
 
-        # Hack to bring the test type down into the test results via the test_config
-        test_config.test_type = test_type
+        # Hack to bring the test type down into the test results via the build_config
+        build_config.test_type = test_type
 
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
 
-    def __init__(self, test_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
+    def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
         self.test_dir = test_dir
-        self.test_config = test_config
-        self.client = test_config.client
+        self.build_config = build_config
+        self.client = build_config.client
         self.test_type = test_type
         self.test_rounds = dict()
 
@@ -37,14 +37,14 @@ class TestSuite:
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
 
         # Define each test_round first to make the next step full-proof
-        for notebook in test_config.notebooks.values():
+        for notebook in build_config.notebooks.values():
             self.test_rounds[notebook.test_round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in test_config.notebooks.values():
+        for notebook in build_config.notebooks.values():
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(test_config, notebook, test_dir, test_type)
+                test_instance = TestInstance(build_config, notebook, test_dir, test_type)
                 self.test_rounds[notebook.test_round].append(test_instance)
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
@@ -72,12 +72,12 @@ class TestSuite:
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         import re
 
-        self.test_config.spark_conf["dbacademy.smoke-test"] = "true"
+        self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
 
-        course_name = re.sub(r"[^a-zA-Z\d]", "-", self.test_config.name.lower())
+        course_name = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.name.lower())
         while "--" in course_name: course_name = course_name.replace("--", "-")
 
-        test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_config.test_type.lower())
+        test_type = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.test_type.lower())
         while "--" in test_type: test_type = test_type.replace("--", "-")
 
         params = {
@@ -95,16 +95,16 @@ class TestSuite:
                 {
                     "task_key": "Smoke-Test",
                     "description": "Executes a single notebook, hoping that the magic smoke doesn't escape",
-                    "libraries": self.test_config.libraries,
+                    "libraries": self.build_config.libraries,
                     "notebook_task": {
                         "notebook_path": f"{notebook_path}",
-                        "base_parameters": self.test_config.job_arguments
+                        "base_parameters": self.build_config.job_arguments
                     },
                     "new_cluster": {
-                        "num_workers": self.test_config.workers,
-                        "spark_version": f"{self.test_config.spark_version}",
-                        "spark_conf": self.test_config.spark_conf,
-                        "instance_pool_id": f"{self.test_config.instance_pool}",
+                        "num_workers": self.build_config.workers,
+                        "spark_version": f"{self.build_config.spark_version}",
+                        "spark_conf": self.build_config.spark_conf,
+                        "instance_pool_id": f"{self.build_config.instance_pool}",
                         "spark_env_vars": {
                             "WSFS_ENABLE_WRITE_SUPPORT": "true"
                         },
@@ -249,33 +249,33 @@ class TestSuite:
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
         self.test_results.append({
-            "suite_id": self.test_config.suite_id,
+            "suite_id": self.build_config.suite_id,
             "test_id": test_id,
-            "name": self.test_config.name,
+            "name": self.build_config.name,
             "result_state": result_state,
             "execution_duration": execution_duration,
-            "cloud": self.test_config.cloud,
+            "cloud": self.build_config.cloud,
             "job_name": test.job_name,
             "job_id": job_id,
             "run_id": run_id,
             "notebook_path": notebook_path,
-            "spark_version": self.test_config.spark_version,
-            "test_type": self.test_config.test_type
+            "spark_version": self.build_config.spark_version,
+            "test_type": self.build_config.test_type
         })
 
         response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
-            "suite_id": self.test_config.suite_id,
+            "suite_id": self.build_config.suite_id,
             "test_id": test_id,
-            "name": self.test_config.name,
+            "name": self.build_config.name,
             "result_state": result_state,
             "execution_duration": execution_duration,
-            "cloud": self.test_config.cloud,
+            "cloud": self.build_config.cloud,
             "job_name": test.job_name,
             "job_id": job_id,
             "run_id": run_id,
             "notebook_path": notebook_path,
-            "spark_version": self.test_config.spark_version,
-            "test_type": self.test_config.test_type,
+            "spark_version": self.build_config.spark_version,
+            "test_type": self.build_config.test_type,
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
@@ -290,7 +290,7 @@ class TestSuite:
 
     def send_first_message(self):
         if self.slack_first_message is None:
-            self.send_status_update("info", f"*{self.test_config.name}*\nCloud: *{self.test_config.cloud}* | Mode: *{self.test_type}*")
+            self.send_status_update("info", f"*{self.build_config.name}*\nCloud: *{self.build_config.cloud}* | Mode: *{self.test_type}*")
 
     def send_status_update(self, message_type, message):
         import requests, json
