@@ -139,7 +139,7 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
-        html = """<html><body><p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p></body></html>"""
+        html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p></body></html>"""
         dbgems.display_html(html)
 
     def create_new_resource_message(self, language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
