@@ -215,5 +215,5 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
                         dst=f"/Workspace/{target_docs_path}")
 
         print("-" * 80)
-        for file in os.listdir(target_docs_path):
+        for file in os.listdir(f"/Workspace/{target_docs_path}"):
             print(file)
