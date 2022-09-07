@@ -283,7 +283,7 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    def select_language(self):
+    def select_i18n_language(self):
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
 
