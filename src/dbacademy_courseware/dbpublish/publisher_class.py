@@ -113,14 +113,17 @@ class Publisher:
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Deleting from {self.target_dir}...")
 
+            deleted = []
             keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE", "docs"]]
 
-            deleted_count = 0
             for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
-                deleted_count += 1
+                deleted.append(path)
                 self.print_if(verbose, f"...{path}")
                 self.client.workspace().delete_path(path)
-            self.print_if(verbose, f"...{deleted_count} files")
+
+            self.print_if(verbose, f"...{len(deleted)} files")
+            for path in deleted:
+                print(f" - {path}")
 
         elif mode.lower() != "overwrite":
             self.print_if(verbose, "-"*80)
@@ -193,3 +196,5 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         # Re-create the repo to progress in testing
         self.client.repos().create(path=self.target_dir, url=target_url)
         print(f"...re-imported")
+
+    # def copy_docs(self):
