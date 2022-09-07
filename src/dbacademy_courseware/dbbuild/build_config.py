@@ -4,8 +4,19 @@ from deprecated.classic import deprecated
 class BuildConfig:
 
     @staticmethod
-    def load(file):
+    def load(file: str, *, version: str):
         import json
+
+        assert type(file) == str, f"Expected the parameter \"file\" to be of type str, found {file}."
+        assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
+
+        if version not in ["BUILD", "TEST"]:
+            msg = f"The version parameter must be BUILD, TEST or of the for N.N.N where N is an integral value."
+            parts = version.split(".")
+            assert len(parts) == 3, msg
+            assert parts[0].isnumeric(), msg
+            assert parts[1].isnumeric(), msg
+            assert parts[2].isnumeric(), msg
 
         with open(file) as f:
             config = json.load(f)
