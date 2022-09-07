@@ -190,4 +190,4 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
         # Re-create the repo to progress in testing
         self.client.repos().create(path=self.target_dir, url=target_url)
-        print(f"...imported")
+        print(f"...re-imported")
