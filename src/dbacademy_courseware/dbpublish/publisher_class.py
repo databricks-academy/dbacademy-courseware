@@ -61,7 +61,7 @@ class Publisher:
         for notebook in self.notebooks:
             notebook.create_resource_bundle(natural_language, self.source_dir, target_dir)
 
-    def publish(self, *, mode, verbose=False, debugging=False):
+    def publish_notebooks(self, *, mode, verbose=False, debugging=False):
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
@@ -199,4 +199,20 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         self.client.repos().create(path=self.target_dir, url=target_url)
         print(f"...re-imported")
 
-    # def copy_docs(self):
+    def publish_docs(self):
+        import os, shutil
+
+        source_docs_path = f"{self.build_config.source_repo}/docs"
+        target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
+
+        print(f"Source: {source_docs_path}")
+        print(f"Target: {target_docs_path}")
+
+        if os.path.exists(target_docs_path):
+            shutil.rmtree(target_docs_path)
+
+        shutil.copytree(src=source_docs_path, dst=target_docs_path)
+
+        print("-" * 80)
+        for file in os.listdir(target_docs_path):
+            print(file)
