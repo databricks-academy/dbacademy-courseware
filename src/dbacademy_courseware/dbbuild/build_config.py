@@ -27,7 +27,7 @@ class BuildConfig:
             publish_only = config.get("publish_only", None)
             if "publish_only" in config: del config["publish_only"]
 
-            build_config = BuildConfig(**config)
+            build_config = BuildConfig(version=version, **config)
 
             def validate_type(key: str, expected_type: Type, actual_value):
                 assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
