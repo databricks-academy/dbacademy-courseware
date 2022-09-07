@@ -303,7 +303,7 @@ class BuildConfig:
         self.i18n_language = dbgems.get_dbutils().widgets.get("i18n_language")
         self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
 
-        assert self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
+        assert self.i18n_language is None or self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
 
         if self.i18n_language is not None:
             # Include the i18n code in the version.
