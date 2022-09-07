@@ -201,7 +201,6 @@ class BuildConfig:
                                                    ignoring=self.ignoring)
 
     def print(self):
-        print("-" * 100)
         print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
         print(f"name:              {self.name}")
