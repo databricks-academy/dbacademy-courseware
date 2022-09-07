@@ -144,12 +144,12 @@ class Publisher:
                     <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/{self.version_info_notebook}.md" target="_blank">Resource Bundle: {language}</a></p>
                 </body>"""
 
-    def create_publish_message(self, build_config: BuildConfig):
+    def create_publish_message(self):
         from dbacademy_courseware import get_workspace_url
 
-        name = build_config.name
-        version = build_config.version
-        source_repo = build_config.source_repo
+        name = self.build_config.name
+        version = self.build_config.version
+        source_repo = self.build_config.source_repo
 
         message = f"""
 @channel Published {name}, v{version}
