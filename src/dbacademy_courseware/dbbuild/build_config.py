@@ -3,6 +3,8 @@ from deprecated.classic import deprecated
 
 class BuildConfig:
 
+    LANGUAGE_OPTIONS_DEFAULT = "Default"
+
     @staticmethod
     def load(file: str, *, version: str):
         import json
@@ -99,6 +101,7 @@ class BuildConfig:
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
 
+        self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
 
         self.i18n = i18n
@@ -281,22 +284,34 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-@deprecated(reason="Use BuildConfig instead")
-class TestConfig(BuildConfig):
-    def __init__(self, name: str, version: str = 0, spark_version: str = None, cloud: str = None, instance_pool: str = None, workers: int = None, libraries: list = None, client=None, source_dir: str = None, source_repo: str = None, spark_conf: dict = None, job_arguments: dict = None, include_solutions: bool = True, i18n: bool = False, i18n_language: str = None, ignoring: list = None):
-        super().__init__(name=name,
-                         version=version,
-                         spark_version=spark_version,
-                         cloud=cloud,
-                         instance_pool=instance_pool,
-                         workers=workers,
-                         libraries=libraries,
-                         client=client,
-                         source_dir=source_dir,
-                         source_repo=source_repo,
-                         spark_conf=spark_conf,
-                         job_arguments=job_arguments,
-                         include_solutions=include_solutions,
-                         i18n=i18n,
-                         i18n_language=i18n_language,
-                         ignoring=ignoring)
+    def enumerate_languages(self):
+        from dbacademy import dbrest
+        from dbacademy_gems import dbgems
+
+        client = dbrest.DBAcademyRestClient()
+        resources_folder = f"{self.source_repo}/Resources"
+
+        resources = client.workspace().ls(resources_folder)
+        self.language_options = [r.get("path").split("/")[-1] for r in resources]
+        self.language_options.sort()
+        self.language_options.insert(0, BuildConfig.LANGUAGE_OPTIONS_DEFAULT)
+
+        dbgems.get_dbutils().widgets.dropdown("i18n_language",
+                                              BuildConfig.LANGUAGE_OPTIONS_DEFAULT,
+                                              self.language_options,
+                                              "i18n Language")
+        return self.language_options
+
+    def select_language(self):
+        from dbacademy_gems import dbgems
+        self.i18n_language = dbgems.get_dbutils().widgets.get("i18n_language")
+        self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
+
+        if self.i18n_language is None:
+            course_version = self.version
+        else:
+            # Include the i18n code in the version.
+            # This hack just happens to work for japanese and korean
+            course_version = f"{self.version}-{self.i18n_language[0:2]}".upper()
+
+        return self.i18n_language, course_version
