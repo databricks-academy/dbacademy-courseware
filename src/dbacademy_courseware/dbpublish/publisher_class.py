@@ -74,7 +74,7 @@ class Publisher:
         found_version_info = False
 
         for notebook in self.notebooks:
-            if notebook.path not in self.black_list:
+            if self.black_list is None or notebook.path not in self.black_list:
                 found_version_info = True if notebook.path == self.version_info_notebook else found_version_info
                 main_notebooks.append(notebook)
 
