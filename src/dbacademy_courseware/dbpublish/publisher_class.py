@@ -237,3 +237,26 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
                          test_dir=self.target_dir,
                          test_type=test_type,
                          keep_success=keep_success)
+
+    def _generate_html(self, notebook):
+        import time
+        from dbacademy_gems import dbgems
+
+        if notebook.test_round < 2:
+            return  # Skip for rounds 0 & 1
+
+        start = int(time.time())
+
+        path = f"../Source/{notebook.path}"
+        dbgems.get_dbutils().notebook.run(path, timeout_seconds=60 * 5, arguments={
+            "version": self.build_config.version,
+            "generating_docs": True
+        })
+
+        print(f"Completed {notebook.path} in {int(time.time()) - start} seconds")
+
+    def generate_docs(self):
+        from multiprocessing.pool import ThreadPool
+
+        with ThreadPool(len(self.build_config.notebooks)) as pool:
+            pool.map(self._generate_html, self.build_config.notebooks.values())
