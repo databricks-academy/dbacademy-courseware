@@ -171,3 +171,21 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
     def print_if(condition, text):
         if condition:
             print(text)
+
+    def reset_git_repo(self, target_repo_url):
+        print(f"Resetting repo: {target_repo_url}")
+        status = self.client.workspace().get_status(self.target_dir)
+
+        if status is None:
+            print(f"Not found: {self.target_dir}")
+        else:
+            print(f"Resetting {self.target_dir}")
+
+            target_repo_id = status["object_id"]
+            self.client.repos().delete(target_repo_id)
+
+            print(f"...removed")
+
+        # Re-create the repo to progress in testing
+        self.client.repos().create(self.target_dir, url=target_repo_url)
+        print(f"...imported")
