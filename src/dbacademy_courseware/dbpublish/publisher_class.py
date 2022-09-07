@@ -4,16 +4,16 @@ from dbacademy_courseware.dbbuild import BuildConfig
 
 
 class Publisher:
-    def __init__(self, build_config: BuildConfig, target_dir: str = None):
+    def __init__(self, build_config: BuildConfig):
         assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
 
+        self.build_config = build_config
         self.version_info_notebook = "Version Info"
 
         self.client = build_config.client
         self.version = build_config.version
 
         self.source_dir = build_config.source_dir
-        self.target_dir = target_dir or f"{build_config.source_repo}/Published/{build_config.name} - v{build_config.version}"
 
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
@@ -60,8 +60,11 @@ class Publisher:
         for notebook in self.notebooks:
             notebook.create_resource_bundle(natural_language, self.source_dir, target_dir)
 
-    def publish(self, testing, mode=None, verbose=False, debugging=False):
+    def publish(self, *, mode, verbose=False, debugging=False, target_dir=None):
         main_notebooks: List[NotebookDef] = []
+
+        if target_dir is None:
+            target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
 
         mode = str(mode).lower()
         expected_modes = ["delete", "overwrite", "no-overwrite"]
@@ -77,13 +80,12 @@ class Publisher:
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
 
         print(f"Source: {self.source_dir}")
-        print(f"Target: {self.target_dir}")
+        print(f"Target: {target_dir}")
         print()
         print("Arguments:")
         print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
-        print(f"  testing =   {testing}")
 
         if self.black_list is None:
             print(f"  exclude:    none")
@@ -102,7 +104,7 @@ class Publisher:
                 print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
-        target_status = self.client.workspace().get_status(self.target_dir)
+        target_status = self.client.workspace().get_status(target_dir)
         if target_status is None:
             pass  # Who cares, it doesn't already exist.
 
@@ -111,12 +113,12 @@ class Publisher:
 
         elif mode == "delete":
             self.print_if(verbose, "-"*80)
-            self.print_if(verbose, f"Deleting from {self.target_dir}...")
+            self.print_if(verbose, f"Deleting from {target_dir}...")
 
-            keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE", "docs"]]
+            keepers = [f"{target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE", "docs"]]
 
             deleted_count = 0
-            for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
+            for path in [p.get("path") for p in self.client.workspace.ls(target_dir) if p.get("path") not in keepers]:
                 deleted_count += 1
                 self.print_if(verbose, f"...{path}")
                 self.client.workspace().delete_path(path)
@@ -129,7 +131,7 @@ class Publisher:
 
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
-                             target_dir=self.target_dir,
+                             target_dir=target_dir,
                              i18n_resources_dir=self.i18n_resources_dir,
                              verbose=verbose, 
                              debugging=debugging,
@@ -144,10 +146,12 @@ class Publisher:
                     <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/{self.version_info_notebook}.md" target="_blank">Resource Bundle: {language}</a></p>
                 </body>"""
 
-    def create_publish_message(self, test_config, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
-        name = test_config.name
-        version = test_config.version
-        source_repo = test_config.source_repo
+    def create_publish_message(self, build_config: BuildConfig, target_dir):
+        from dbacademy_courseware import get_workspace_url
+
+        name = build_config.name
+        version = build_config.version
+        source_repo = build_config.source_repo
 
         message = f"""
 @channel Published {name}, v{version}
@@ -161,7 +165,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
         return f"""
         <body>
-            <p><a href="https://{domain}/?o={workspace_id}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
+            <p><a href="{get_workspace_url()}#workspace{target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows=11> \n{message}</textarea>
         </body>"""
 

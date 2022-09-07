@@ -58,7 +58,7 @@ class ResultsEvaluator:
 
     @staticmethod
     def to_job_link(*, job_id, run_id, label):
-        from dbacademy_courseware.dbtest import to_job_url
+        from dbacademy_courseware import to_job_url
         url = to_job_url(job_id=job_id, run_id=run_id)
         return f"""<a href="{url}" target="_blank">{label}</a>"""
 

@@ -235,7 +235,7 @@ class TestSuite:
 
     def log_run(self, test, response):
         import time, uuid, requests, json
-        from dbacademy_courseware.dbtest import to_job_url
+        from dbacademy_courseware import to_job_url
 
         job_id = response.get("job_id", 0)
         run_id = response.get("run_id", 0)
