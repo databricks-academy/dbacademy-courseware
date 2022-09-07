@@ -361,9 +361,9 @@ class NotebookDef:
             return command
         else:
             return self.replace_guid(cm=cm,
-                                       command=command,
-                                       i=i,
-                                       i18n_guid_map=i18n_guid_map)
+                                     command=command,
+                                     i=i,
+                                     i18n_guid_map=i18n_guid_map)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         from dbacademy.dbrest import DBAcademyRestClient

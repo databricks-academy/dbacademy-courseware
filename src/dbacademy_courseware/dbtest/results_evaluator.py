@@ -33,7 +33,7 @@ class ResultsEvaluator:
         return html
 
     @staticmethod
-    def add_row(style, cloud, job, duration):
+    def add_row(*, style, cloud, job, duration):
         return f"""
       <tr>
           <td style="{style}">{cloud}</td>
@@ -56,17 +56,23 @@ class ResultsEvaluator:
         else:
             return f"{seconds}s"
 
+    @staticmethod
+    def to_job_link(*, job_id, run_id, label):
+        from dbacademy_courseware.dbtest import to_job_url
+        url = to_job_url(job_id=job_id, run_id=run_id)
+        return f"""<a href="{url}" target="_blank">{label}</a>"""
+
     def add_section(self, title, rows, print_links=True):
-        from . import to_job_link
-        
         html = f"""<h1>{title}</h1>"""
         if len(rows) == 0:
             html += "<p>No records found</p>"
             return html
 
         html += f"""<table style="border-collapse: collapse; width:100%">"""
-        html += self.add_row(self.header_style, "Cloud", "Job", "Duration")
-
+        html += self.add_row(style=self.header_style,
+                             cloud="Cloud",
+                             job="Job",
+                             duration="Duration")
         for row in rows:
 
             # self.test_results.append({
@@ -86,9 +92,14 @@ class ResultsEvaluator:
 
             link = row["notebook_path"]
             if print_links:
-                link = to_job_link(row["cloud"], row["job_id"], row["run_id"], row["notebook_path"])
+                link = self.to_job_link(job_id=row["job_id"],
+                                        run_id=row["run_id"],
+                                        label=row["notebook_path"])
 
-            html += self.add_row(self.cell_style, row["cloud"], link, self.format_duration(row["execution_duration"]))
+            html += self.add_row(style=self.cell_style,
+                                 cloud=row["cloud"],
+                                 job=link,
+                                 duration=self.format_duration(row["execution_duration"]))
             html += """<tbody></tbody><tbody>"""
 
         html += "</table>"

@@ -1,26 +1,29 @@
 from typing import List
 from .notebook_def_class import NotebookDef
+from dbacademy_courseware.dbbuild import BuildConfig
 
 
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, i18n_resources_dir: str, i18n_language: str, white_list: List[str], black_list: List[str], notebooks: List[NotebookDef]):
-        self.client = client
-        self.version = version
-
-        self.source_dir = source_dir
-        self.target_dir = target_dir
-
-        self.i18n_language = i18n_language
-        self.i18n_resources_dir = i18n_resources_dir
+    def __init__(self, build_config: BuildConfig, target_dir: str):
+        assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
 
         self.version_info_notebook = "Version Info"
 
-        self.notebooks = []
-        self._init_notebooks(notebooks)
+        self.client = build_config.client
+        self.version = build_config.version
 
-        self.white_list = white_list
-        self.black_list = black_list
+        self.source_dir = build_config.source_dir
+        self.target_dir = target_dir or f"{build_config.source_repo}/Published/{build_config.name} - v{build_config.version}"
+
+        self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
+        self.i18n_language = build_config.i18n_language
+
+        self.white_list = build_config.white_list
+        self.black_list = build_config.black_list
         self._validate_white_black_list()
+
+        self.notebooks = []
+        self._init_notebooks(build_config.notebooks.values())
 
     def _init_notebooks(self, notebooks):
         from datetime import datetime
