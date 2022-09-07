@@ -145,6 +145,7 @@ class Publisher:
                 </body>"""
 
     def create_publish_message(self):
+        from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
         name = self.build_config.name
@@ -161,11 +162,12 @@ Release notes, course-specific requirements, issue-tracking, and test results fo
 
 Please feel free to reach out to me (via Slack), or anyone on the curriculum team should you have any questions.""".strip()
 
-        return f"""
+        html = f"""
         <body>
             <p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows=11> \n{message}</textarea>
         </body>"""
+        dbgems.display_html(html)
 
     @staticmethod
     def print_if(condition, text):
