@@ -261,6 +261,9 @@ class BuildConfig:
 
         print("-" * 100)
 
+    def to_publisher(self):
+        from dbacademy_courseware.dbpublish import Publisher
+        return Publisher(self)
 
 @deprecated(reason="Use BuildConfig instead")
 class TestConfig(BuildConfig):
