@@ -258,8 +258,6 @@ class BuildConfig:
                                 print(f": {value}")
                             print("      }")
 
-        print("-" * 100)
-
     def to_publisher(self):
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
