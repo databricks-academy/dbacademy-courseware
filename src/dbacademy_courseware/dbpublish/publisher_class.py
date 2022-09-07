@@ -172,7 +172,9 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         if condition:
             print(text)
 
-    def reset_git_repo(self, target_repo_url):
+    def reset_git_repo(self, target_dir, target_repo_url):
+        self.target_dir = target_dir
+        
         print(f"Resetting repo: {target_repo_url}")
         status = self.client.workspace().get_status(self.target_dir)
 
