@@ -260,3 +260,22 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
         with ThreadPool(len(self.build_config.notebooks)) as pool:
             pool.map(self._generate_html, self.build_config.notebooks.values())
+
+    def create_dbc(self, target_file: str = None):
+        import os, shutil
+        from dbacademy_gems import dbgems
+
+        data = self.build_config.client.workspace.export_dbc(self.target_dir)
+
+        target_file = target_file or f"dbfs:/FileStore/tmp/{self.build_config.build_name}.dbc"
+        target_file = target_file.replace("dbfs:/", "/dbfs/")
+        target_dir = "/".join(target_file.split("/")[:-1])
+
+        if os.path.exists(target_dir): shutil.rmtree(target_dir)
+        os.mkdir(target_dir)
+
+        with open(target_file, "wb") as f:
+            f.write(data)
+
+        url = target_file.replace("/dbfs/FileStore/", "/files/")
+        dbgems.display_html(f"""<a href="{url}" target="_blank">Download</a>""")
