@@ -106,7 +106,7 @@ class BuildConfig:
         # Course Name
         self.name = name
         assert self.name is not None, "The course's name must be specified."
-        self.clean_name = re.sub(r"[^a-zA-Z\d]", "-", name)
+        self.clean_name = re.sub(r"[^a-zA-Z\d]", "-", name).lower()
 
         # The Distribution's version
         self.version = version
