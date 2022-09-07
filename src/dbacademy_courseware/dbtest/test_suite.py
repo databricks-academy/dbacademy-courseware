@@ -22,6 +22,7 @@ class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
+        self.build_config = build_config
         self.test_dir = test_dir
         self.build_config = build_config
         self.client = build_config.client

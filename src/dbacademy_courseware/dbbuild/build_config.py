@@ -24,7 +24,7 @@ class BuildConfig:
 
             for name in configurations:
                 assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
-                notebook = build_config.notebooks[name]
+                notebook = build_config.notebooks.get(name)
                 notebook_config = configurations.get(name)
 
                 param = "include_solution"
@@ -225,7 +225,7 @@ class BuildConfig:
         else:
             print(f"notebooks:         {len(self.notebooks)}")
 
-            rounds = list(map(lambda notebook_path: self.notebooks[notebook_path].test_round, self.notebooks))
+            rounds = list(map(lambda notebook_path: self.notebooks.get(notebook_path).test_round, self.notebooks))
             rounds.sort()
             rounds = set(rounds)
 

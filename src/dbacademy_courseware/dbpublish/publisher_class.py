@@ -220,7 +220,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
     def to_test_suite(self, test_type: str, keep_success: bool = False):
         from dbacademy_courseware.dbtest import TestSuite
-        return TestSuite(build_config=self,
+        return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
                          test_type=test_type,
                          keep_success=keep_success)
