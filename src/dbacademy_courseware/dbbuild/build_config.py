@@ -105,7 +105,6 @@ class BuildConfig:
 
         self.i18n = i18n
         self.i18n_language = i18n_language
-        self.common_language = None
 
         self.test_type = None
         self.notebooks = None
@@ -306,11 +305,8 @@ class BuildConfig:
 
         assert self.i18n_language is None or self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
 
-        if self.i18n_language is None:
-            self.common_language = "english"
-        else:
+        if self.i18n_language is not None:
             # Include the i18n code in the version.
             # This hack just happens to work for japanese and korean
             code = self.i18n_language[0:2]
             self.version = f"{self.version}-{code}".upper()
-            self.common_language = self.i18n_language.split("-")[0]
