@@ -358,10 +358,8 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         if not self.i18n:
-            print(f"Skipping Cmd #{i+1}, not i18n")
             return command
         else:
-            print(f"i18n Update for Cmd #{i+1}")
             return self.replace_guid(cm=cm,
                                      command=command,
                                      i=i,
