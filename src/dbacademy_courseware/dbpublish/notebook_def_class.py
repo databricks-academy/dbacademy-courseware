@@ -330,7 +330,6 @@ class NotebookDef:
             if not self.i18n_language:
                 # This is a "standard" publish, just update the one cell
                 del lines[0]  # Remove the i18n directive
-                print(f"SKIPPED: {guid}")
             else:
                 # print(f"Processing GUID {guid}")
                 if guid not in i18n_guid_map:
@@ -340,9 +339,6 @@ class NotebookDef:
                     self.test(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
                 else:
                     lines = i18n_guid_map.get(guid).split("\n")
-                    print("-"*80)
-                    print(guid)
-                    for line in lines: print(line)
 
             lines.insert(0, f"{cm} MAGIC {md_tag}")
             command = "\n".join(lines)
