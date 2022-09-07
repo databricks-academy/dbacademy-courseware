@@ -123,10 +123,6 @@ class Publisher:
                 self.print_if(verbose, f"...{path}")
                 self.client.workspace().delete_path(path)
 
-            self.print_if(verbose, f"...{len(deleted)} files")
-            for path in deleted:
-                self.print_if(verbose, print(f" - {path}"))
-
         elif mode.lower() != "overwrite":
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Overwriting target directory (unused files will not be removed)...")
