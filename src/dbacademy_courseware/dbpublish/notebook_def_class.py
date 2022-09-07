@@ -306,6 +306,7 @@ class NotebookDef:
         for index, part in enumerate(parts):
             if part.strip() == "":
                 del parts[index]
+
         md_tag = None if len(parts) < 1 else parts[0]
         guid = None if len(parts) < 2 else parts[1].strip()
 
@@ -324,6 +325,7 @@ class NotebookDef:
             passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
 
         if passed:
+            print(f"PASSED - Replacing GUID {guid}")
             self.i18n_guids.append(guid)
 
             if not self.i18n_language:
@@ -341,6 +343,8 @@ class NotebookDef:
 
             lines.insert(0, f"{cm} MAGIC {md_tag}")
             command = "\n".join(lines)
+        else:
+            print(f"FAILED - Replacing GUID {guid}")
 
         return command
 
