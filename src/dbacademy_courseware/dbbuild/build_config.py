@@ -283,7 +283,7 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    def enumerate_languages(self):
+    def select_language(self):
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
 
@@ -299,18 +299,12 @@ class BuildConfig:
                                               BuildConfig.LANGUAGE_OPTIONS_DEFAULT,
                                               self.language_options,
                                               "i18n Language")
-        return self.language_options
 
-    def select_language(self):
-        from dbacademy_gems import dbgems
         self.i18n_language = dbgems.get_dbutils().widgets.get("i18n_language")
         self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
 
-        if self.i18n_language is None:
-            course_version = self.version
-        else:
+        if self.i18n_language is not None:
             # Include the i18n code in the version.
             # This hack just happens to work for japanese and korean
-            course_version = f"{self.version}-{self.i18n_language[0:2]}".upper()
-
-        return self.i18n_language, course_version
+            code = self.i18n_language[0:2]
+            self.version = f"{self.version}-{code}".upper()
