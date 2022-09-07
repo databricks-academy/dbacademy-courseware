@@ -267,7 +267,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
-        target_file = target_file or f"dbfs:/FileStore/tmp/{self.build_config.build_name}.dbc"
+        target_file = target_file or f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}.dbc"
         target_file = target_file.replace("dbfs:/", "/dbfs/")
         target_dir = "/".join(target_file.split("/")[:-1])
 
