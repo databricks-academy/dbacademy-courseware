@@ -330,6 +330,7 @@ class NotebookDef:
             if not self.i18n_language:
                 # This is a "standard" publish, just update the one cell
                 del lines[0]  # Remove the i18n directive
+                print(f"SKIPPED: {guid}")
             else:
                 # print(f"Processing GUID {guid}")
                 if guid not in i18n_guid_map:
