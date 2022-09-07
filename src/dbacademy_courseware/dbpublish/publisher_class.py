@@ -63,6 +63,7 @@ class Publisher:
 
     def publish(self, *, mode, verbose=False, debugging=False):
         from dbacademy_gems import dbgems
+        from dbacademy_courseware import get_workspace_url
 
         main_notebooks: List[NotebookDef] = []
 
