@@ -4,6 +4,12 @@ from dbacademy_courseware.dbbuild import BuildConfig
 
 
 class Publisher:
+
+    MODE_DELETE = "delete"
+    MODE_OVERWRITE = "overwrite"
+    MODE_NO_OVERWRITE = "no-overwrite"
+    EXPECTED_MODES = [MODE_DELETE, MODE_OVERWRITE, MODE_NO_OVERWRITE]
+
     def __init__(self, build_config: BuildConfig):
         assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
 
@@ -75,8 +81,8 @@ class Publisher:
         main_notebooks: List[NotebookDef] = []
 
         mode = str(mode).lower()
-        expected_modes = ["delete", "overwrite", "no-overwrite"]
-        assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
+
+        assert mode in Publisher.EXPECTED_MODES, f"Expected mode {mode} to be one of {Publisher.EXPECTED_MODES}"
 
         found_version_info = False
 
@@ -116,10 +122,10 @@ class Publisher:
         if target_status is None:
             pass  # Who cares, it doesn't already exist.
 
-        elif mode == "no-overwrite":
-            assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
+        elif mode == Publisher.MODE_NO_OVERWRITE:
+            assert target_status is None, f"The target path already exists and the build is configured for {Publisher.MODE_NO_OVERWRITE}"
 
-        elif mode == "delete":
+        elif mode == Publisher.MODE_DELETE:
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Deleting from {self.target_dir}...")
 
@@ -131,7 +137,7 @@ class Publisher:
                 self.print_if(verbose, f"...{path}")
                 self.client.workspace().delete_path(path)
 
-        elif mode.lower() != "overwrite":
+        elif mode.lower() != Publisher.MODE_OVERWRITE:
             self.print_if(verbose, "-"*80)
             self.print_if(verbose, f"Overwriting target directory (unused files will not be removed)...")
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
