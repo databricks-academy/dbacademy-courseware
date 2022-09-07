@@ -325,7 +325,6 @@ class NotebookDef:
             passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
 
         if passed:
-            print(f"PASSED - Replacing GUID {guid}")
             self.i18n_guids.append(guid)
 
             if not self.i18n_language:
@@ -343,8 +342,6 @@ class NotebookDef:
 
             lines.insert(0, f"{cm} MAGIC {md_tag}")
             command = "\n".join(lines)
-        else:
-            print(f"FAILED - Replacing GUID {guid}")
 
         return command
 
