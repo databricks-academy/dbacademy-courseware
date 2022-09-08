@@ -100,7 +100,8 @@ class BuildConfig:
                  include_solutions: bool = True,
                  i18n: bool = False,
                  i18n_language: str = None,
-                 ignoring: list = None):
+                 ignoring: list = None,
+                 publishing_info: dict = None):
 
         import uuid, time, re
         from dbacademy import dbrest
@@ -164,6 +165,7 @@ class BuildConfig:
         self.black_list = None
 
         self.change_log = []
+        self.publishing_info = publishing_info or {}
 
     def get_distribution_name(self, version):
         distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
