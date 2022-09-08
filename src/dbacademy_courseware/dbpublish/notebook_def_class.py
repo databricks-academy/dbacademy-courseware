@@ -20,10 +20,10 @@ class NotebookError:
         self.message = message
 
     def __str__(self):
-        print(self.message)
+        return self.message
 
     def __repr__(self):
-        print(self.message)
+        return self.message
 
 
 class NotebookDef:
@@ -63,7 +63,7 @@ class NotebookDef:
         result = self.path
         result += f"\n - include_solution = {self.include_solution}"
         result += f"\n - replacements = {self.replacements}"
-        return result
+        return result or ""
 
     def test(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
