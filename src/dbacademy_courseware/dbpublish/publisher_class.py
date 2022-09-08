@@ -172,16 +172,14 @@ class Publisher:
 
         message = f"""@channel Published {name}, v{version}
 
-Release Notes:"""
+Change Log:\n"""
 
         for entry in self.build_config.change_log:
             message += entry
             message += "\n"
 
         message += f"""
-* UPDATE FROM CHANGE LOG
-
-Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+\nRelease notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
 Please feel free to reach out to me (via Slack), or anyone on the curriculum team should you have any questions.""".strip()
 
