@@ -305,7 +305,7 @@ class BuildConfig:
                 current_date = datetime.today().strftime("%-m-%-d-%Y")
                 assert date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
 
-            elif version_index and i > version_index:
+            elif version_index and i > version_index and not line.startswith("#"):
                 self.change_log.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
