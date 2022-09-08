@@ -175,6 +175,7 @@ class Publisher:
             content += f"""<div style="margin-bottom:1em">"""
             content += f"""<div style="font-size:16px;">{group_name}</div>"""
             for link_name, url in group.items():
+                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}"
                 content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
             content += "</div>"
         content += "</div>"
