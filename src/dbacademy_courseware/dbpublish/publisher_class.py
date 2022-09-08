@@ -172,7 +172,7 @@ class Publisher:
 
         content = "<div>"
         for group_name, group in self.build_config.publishing_info.items():
-            content += f"""<div style="font-size:16px">{group_name}</div>"""
+            content += f"""<div style="font-size:16px; margin-bottom:1em">{group_name}</div>"""
             for link_name, url in group.items():
                 content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
         content += "</div>"
