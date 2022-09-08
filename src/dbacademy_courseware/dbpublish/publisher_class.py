@@ -207,16 +207,12 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
         status = self.client.workspace().get_status(self.target_dir)
 
-        if status is None:
-            print(f"...not found: {self.target_dir}")
-        else:
+        if status is not None:
             target_repo_id = status["object_id"]
             self.client.repos().delete(target_repo_id)
-            print(f"...removed")
 
         # Re-create the repo to progress in testing
         self.client.repos().create(path=self.target_dir, url=target_url)
-        print(f"...re-imported")
 
     def publish_docs(self):
         import os, shutil
