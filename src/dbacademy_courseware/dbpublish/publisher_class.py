@@ -95,7 +95,7 @@ class Publisher:
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
-        
+        print()
         print("Arguments:")
         print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")
