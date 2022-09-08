@@ -242,6 +242,8 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
 
     def publish_docs(self):
         import os, shutil
+        from dbacademy_gems import dbgems
+        from dbacademy_courseware import get_workspace_url
 
         source_docs_path = f"{self.build_config.source_repo}/docs"
         target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
@@ -258,6 +260,9 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         print("-" * 80)
         for file in os.listdir(f"/Workspace/{target_docs_path}"):
             print(file)
+
+        html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">Published Version</a></p></body></html>"""
+        dbgems.display_html(html)
 
     def to_test_suite(self, test_type: str, keep_success: bool = False):
         from dbacademy_courseware.dbtest import TestSuite
