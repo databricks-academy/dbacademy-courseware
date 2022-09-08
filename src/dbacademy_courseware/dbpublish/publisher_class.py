@@ -176,7 +176,8 @@ class Publisher:
 Release Notes:"""
 
         for entry in self.build_config.change_log:
-            print(entry)
+            message += entry
+            message += "\n"
 
         message += f"""
 * UPDATE FROM CHANGE LOG
