@@ -53,7 +53,7 @@ class TestSuite:
         for notebook in build_config.notebooks.values():
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(build_config, notebook, test_dir, test_type)
+                test_instance = TestInstance(build_config, notebook, test_dir, self.test_type)
                 self.test_rounds[notebook.test_round].append(test_instance)
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
@@ -86,15 +86,15 @@ class TestSuite:
         course_name = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.name.lower())
         while "--" in course_name: course_name = course_name.replace("--", "-")
 
-        test_type = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.test_type.lower())
-        while "--" in test_type: test_type = test_type.replace("--", "-")
+        self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.test_type.lower())
+        while "--" in self.test_type: self.test_type = self.test_type.replace("--", "-")
 
         params = {
             "name": f"{job_name}",
             "tags": {
                 "dbacademy.course": course_name,
                 "dbacademy.source": "dbacadmey-smoke-test",
-                "dbacademy.test-type": test_type
+                "dbacademy.test-type": self.test_type
             },
             "email_notifications": {},
             "timeout_seconds": 7200,
