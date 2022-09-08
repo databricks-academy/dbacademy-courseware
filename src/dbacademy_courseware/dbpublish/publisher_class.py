@@ -86,7 +86,7 @@ class Publisher:
         for notebook in self.notebooks:
             notebook.create_resource_bundle(folder_name, self.source_dir, target_dir)
 
-        html = f"""<body><p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {target_dir}</a></p></body>"""
+        html = f"""<body><p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p></body>"""
         dbgems.display_html(html)
 
     def publish_notebooks(self, *, mode, verbose=False, debugging=False):
