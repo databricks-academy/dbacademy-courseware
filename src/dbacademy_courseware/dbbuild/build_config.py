@@ -219,7 +219,7 @@ class BuildConfig:
                                                    ignoring=self.ignoring,
                                                    version=self.version)
 
-    def print(self):
+    def validate(self):
         print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
         print(f"name:              {self.name}")
