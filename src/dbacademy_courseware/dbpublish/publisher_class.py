@@ -170,6 +170,13 @@ class Publisher:
         version = self.build_config.version
         source_repo = self.build_config.source_repo
 
+        content = "<div>"
+        for group_name, group in self.build_config.publishing_info.items():
+            content += f"<div>{group_name}</div>"
+            for link_name, url in group.items():
+                content += f"""<li><a href="{url}" target="_blank">{link_name}</a></li>"""
+        content += "</div>"
+
         message = f"""@channel Published {name}, v{version}
 
 Change Log:\n"""
@@ -186,6 +193,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         rows = len(message.split("\n"))+1
         html = f"""
         <body>
+            {content}
             <p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows={rows}>{message}</textarea>
         </body>"""
