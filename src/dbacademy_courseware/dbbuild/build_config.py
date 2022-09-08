@@ -309,8 +309,7 @@ class BuildConfig:
                 self.change_log.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
-
-                print("Change Log:")
+                print("\nChange Log:")
                 for entry in self.change_log:
                     print(f"  {entry}")
                 return
