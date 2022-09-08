@@ -286,7 +286,7 @@ class BuildConfig:
                     assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
                     assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                    assert version == f"v{self.version}", f"The change log entry's version is not \"{self.version}\", found \"{version}\"."
+                    assert version == f"v{self.version}", f"The change log entry's version is not \"v{self.version}\", found \"{version}\"."
 
                     date = parts[3]
                     assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
@@ -296,7 +296,7 @@ class BuildConfig:
                     assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
                     assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
 
-                    current_date = datetime.today().strftime("%m-%d-%Y")
+                    current_date = datetime.today().strftime("%-m-%-d-%Y")
                     assert date == f"v{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
                     break
 
