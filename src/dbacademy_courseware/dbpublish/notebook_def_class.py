@@ -28,6 +28,7 @@ class NotebookError:
 
 class NotebookDef:
     def __init__(self,
+                 *,
                  path: str,
                  replacements: dict,
                  include_solution: bool,
@@ -36,7 +37,8 @@ class NotebookDef:
                  order: int,
                  i18n: bool,
                  i18n_language: Union[None, str],
-                 ignoring: list):
+                 ignoring: list,
+                 version: str):
 
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
         assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
@@ -58,6 +60,7 @@ class NotebookDef:
         self.i18n_guids = list()
 
         self.ignoring = ignoring
+        self.version = version
 
     def __str__(self):
         result = self.path
@@ -335,7 +338,7 @@ class NotebookDef:
                 if self.test(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
                     lines = i18n_guid_map.get(guid).split("\n")
 
-            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
+            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\" version=\"{self.version}\" />")
             command = "\n".join(lines)
 
         return command

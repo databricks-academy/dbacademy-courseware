@@ -213,7 +213,8 @@ class BuildConfig:
                                                    order=order,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
-                                                   ignoring=self.ignoring)
+                                                   ignoring=self.ignoring,
+                                                   version=self.version)
 
     def print(self):
         print("Build Configuration")
