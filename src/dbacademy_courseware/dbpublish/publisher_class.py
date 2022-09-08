@@ -10,11 +10,12 @@ class Publisher:
     MODE_NO_OVERWRITE = "no-overwrite"
     EXPECTED_MODES = [MODE_DELETE, MODE_OVERWRITE, MODE_NO_OVERWRITE]
 
+    VERSION_INFO_NOTEBOOK = "Version Info"
+
     def __init__(self, build_config: BuildConfig):
         assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
 
         self.build_config = build_config
-        self.version_info_notebook = "Version Info"
 
         self.client = build_config.client
         self.version = build_config.version
@@ -70,9 +71,23 @@ class Publisher:
             for path in notebook_paths:
                 assert path in self.white_list or path in self.black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
 
-    def create_resource_bundle(self, natural_language: str, target_dir: str):
+    # def create_new_resource_message(self, language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
+    #     return f"""
+    #             <body>
+    #                 <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/{self.version_info_notebook}.md" target="_blank">Resource Bundle: {language}</a></p>
+    #             </body>"""
+
+    def create_resource_bundle(self, folder_name: str = None, target_dir: str = None):
+        from dbacademy_gems import dbgems
+
+        folder_name = folder_name or f"english-v{self.build_config.version}"
+        target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
+
         for notebook in self.notebooks:
-            notebook.create_resource_bundle(natural_language, self.source_dir, target_dir)
+            notebook.create_resource_bundle(folder_name, self.source_dir, target_dir)
+
+        html = f"""<body><p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {target_dir}</a></p></body>"""
+        dbgems.display_html(html)
 
     def publish_notebooks(self, *, mode, verbose=False, debugging=False):
         from dbacademy_gems import dbgems
@@ -88,10 +103,10 @@ class Publisher:
 
         for notebook in self.notebooks:
             if self.black_list is None or notebook.path not in self.black_list:
-                found_version_info = True if notebook.path == self.version_info_notebook else found_version_info
+                found_version_info = True if notebook.path == Publisher.VERSION_INFO_NOTEBOOK else found_version_info
                 main_notebooks.append(notebook)
 
-        assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
+        assert found_version_info, f"The required notebook \"{Publisher.VERSION_INFO_NOTEBOOK}\" was not found."
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
@@ -153,18 +168,11 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
-        html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p></body></html>"""
+        html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">Published Version</a></p></body></html>"""
         dbgems.display_html(html)
-
-    def create_new_resource_message(self, language, resource_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
-        return f"""
-                <body>
-                    <p><a href="https://{domain}/?o={workspace_id}#workspace{resource_dir}/{language}/{self.version_info_notebook}.md" target="_blank">Resource Bundle: {language}</a></p>
-                </body>"""
 
     def create_publish_message(self):
         from dbacademy_gems import dbgems
-        from dbacademy_courseware import get_workspace_url
 
         name = self.build_config.name
         version = self.build_config.version
