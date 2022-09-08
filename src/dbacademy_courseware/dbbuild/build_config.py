@@ -260,45 +260,58 @@ class BuildConfig:
         with open(readme_path, "r") as f:
             lines = f.readlines()
 
-            change_log_index = None
+        change_log = []
+        change_log_index: Union[None, int] = None
+        version_index: Union[None, int] = None
 
-            for i, line in enumerate(lines):
-                line = line.strip()
-                if line == BuildConfig.CHANGE_LOG_TAG:
-                    change_log_index = i
-                elif change_log_index and i > change_log_index and line == "":
-                    pass  # Just an empty line
-                elif change_log_index and i > change_log_index:
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if line == BuildConfig.CHANGE_LOG_TAG:
+                change_log_index = i
+            elif change_log_index and i > change_log_index and line == "":
+                pass  # Just an empty line
+            elif change_log_index and i > change_log_index:
 
-                    assert line.startswith(BuildConfig.CHANGE_LOG_VERSION), f"The next change log entry ({BuildConfig.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
+                version_index = i
+                assert line.startswith(BuildConfig.CHANGE_LOG_VERSION), f"The next change log entry ({BuildConfig.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
 
-                    parts = line.split(" ")  ### Version 1.0.2 (01-21-2022)
-                    assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
-                    assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
-                    assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
+                parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
+                assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
+                assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
+                assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
 
-                    version = parts[2]
-                    assert version.startswith("v"), f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found \"{version}\"."
+                version = parts[2]
+                assert version.startswith("v"), f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found \"{version}\"."
 
-                    v_parts = version[1:].split(".")
-                    assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
-                    assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
-                    assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
-                    assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
+                v_parts = version[1:].split(".")
+                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
+                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
+                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
+                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                    assert version == f"v{self.version}", f"The change log entry's version is not \"v{self.version}\", found \"{version}\"."
+                assert version == f"v{self.version}", f"The change log entry's version is not \"v{self.version}\", found \"{version}\"."
 
-                    date = parts[3]
-                    assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
-                    d_parts = date[1:-1].split("-")
-                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\"."
-                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\"."
-                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
-                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
+                date = parts[3]
+                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
+                d_parts = date[1:-1].split("-")
+                assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\"."
+                assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\"."
+                assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
+                assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
 
-                    current_date = datetime.today().strftime("%-m-%-d-%Y")
-                    assert date == f"v{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
-                    break
+                current_date = datetime.today().strftime("%-m-%-d-%Y")
+                assert date == f"v{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
+                break
+            elif version_index and i > version_index:
+                change_log.append(line)
+
+            elif version_index and i > version_index and line.startswith("#"):
+                break
+
+        print("-"*80)
+        print("Change Log:")
+        for entry in change_log:
+            print(entry)
 
     def _validate_version(self):
         if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
