@@ -315,7 +315,7 @@ class BuildConfig:
                     print(entry)
                 return
 
-        raise AssertionError(f"The Change Log section was not found in {readme_path}")
+        assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
 
     def _validate_version(self):
         if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
