@@ -309,10 +309,10 @@ class BuildConfig:
                 self.change_log.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
-                print("-"*80)
+
                 print("Change Log:")
                 for entry in self.change_log:
-                    print(entry)
+                    print(f"  {entry}")
                 return
 
         assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
