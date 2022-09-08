@@ -328,19 +328,15 @@ class NotebookDef:
             self.i18n_guids.append(guid)
 
             if not self.i18n_language:
-                # This is a "standard" publish, just update the one cell
+                # This is a "standard" publish, just remove the i18n directive
                 del lines[0]  # Remove the i18n directive
             else:
-                # print(f"Processing GUID {guid}")
-                if guid not in i18n_guid_map:
-                    # This is a "standard" publish, just update the one cell
-                    # del lines[0]  # Remove the i18n directive
-                    # Because of this problem, we are going to leave it in and use the existing lines as-is, i18n directive and all
-                    self.test(lambda: False, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
-                else:
-                    lines = i18n_guid_map.get(guid).split("\n")
+                # We must confirm that the replacement GUID actually exists
+                self.test(lambda: guid not in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
 
-            lines.insert(0, f"{cm} MAGIC {md_tag}")
+                lines = i18n_guid_map.get(guid).split("\n")
+
+            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n>{guid}</i18n>")
             command = "\n".join(lines)
 
         return command
