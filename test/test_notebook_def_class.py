@@ -191,7 +191,7 @@ class MyTestCase(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-    def test_md_i18n_guid_removal(self):
+    def test_md_i18n_guid_replacement(self):
         command = """# MAGIC %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
 
         i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "# MAGIC # Some Title"}
@@ -202,10 +202,10 @@ class MyTestCase(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """# MAGIC %md\n# MAGIC # Some Title""".strip()
+        expected = """# MAGIC %md <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
-    def test_md_sandbox_i18n_guid_removal(self):
+    def test_md_sandbox_i18n_guid_replacement(self):
         command = """# MAGIC %md-sandbox --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC # Some Title""".strip()
 
         i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "# MAGIC # Some Title"}
@@ -216,7 +216,7 @@ class MyTestCase(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """# MAGIC %md-sandbox\n# MAGIC # Some Title""".strip()
+        expected = """# MAGIC %md-sandbox <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
     def test_i18n_sql(self):
@@ -230,7 +230,7 @@ class MyTestCase(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """-- MAGIC %md-sandbox\n-- MAGIC # Some Title""".strip()
+        expected = """-- MAGIC %md-sandbox <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n-- MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
     def test_i18n_single_line(self):
