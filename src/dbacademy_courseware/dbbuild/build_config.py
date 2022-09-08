@@ -293,14 +293,16 @@ class BuildConfig:
 
                 date = parts[3]
                 assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
-                d_parts = date[1:-1].split("-")
+
+                date = date[1:-1]
+                d_parts = date.split("-")
                 assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\"."
                 assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\"."
                 assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
                 assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
 
                 current_date = datetime.today().strftime("%-m-%-d-%Y")
-                assert date == f"v{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
+                assert date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
                 break
             elif version_index and i > version_index:
                 change_log.append(line)
