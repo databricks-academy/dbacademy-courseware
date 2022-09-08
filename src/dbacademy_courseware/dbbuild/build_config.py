@@ -11,7 +11,7 @@ class BuildConfig:
         assert type(file) == str, f"Expected the parameter \"file\" to be of type str, found {file}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
 
-        if version not in ["BUILD", "TEST"]:
+        if version not in ["Build", "Test"]:
             msg = f"The version parameter must be BUILD, TEST or of the for N.N.N where N is an integral value."
             parts = version.split(".")
             assert len(parts) == 3, msg
