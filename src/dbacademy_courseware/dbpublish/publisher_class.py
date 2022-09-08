@@ -185,11 +185,11 @@ Release notes, course-specific requirements, issue-tracking, and test results fo
 
 Please feel free to reach out to me (via Slack), or anyone on the curriculum team should you have any questions.""".strip()
 
-        rows = len(message.split("\n"))
+        rows = len(message.split("\n"))+1
         html = f"""
         <body>
             <p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
-            <textarea style="width:100%" rows={rows}> \n{message}</textarea>
+            <textarea style="width:100%" rows={rows}>{message}</textarea>
         </body>"""
         dbgems.display_html(html)
 
