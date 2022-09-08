@@ -21,21 +21,29 @@ class TestInstance:
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
 
+    TEST_TYPE_INTERACTIVE = "Interactive"
+    TEST_TYPE_STOCK = "Stock"
+    TEST_TYPE_PHOTON = "Photon"
+    TEST_TYPE_ML = "ML"
+    TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
+
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
+        from dbacademy_gems import dbgems
         self.build_config = build_config
         self.test_dir = test_dir
         self.build_config = build_config
         self.client = build_config.client
-        self.test_type = test_type
-        self.test_rounds = dict()
 
+        self.test_rounds = dict()
         self.test_results = list()
+
         self.slack_thread_ts = None
         self.slack_first_message = None
 
         self.keep_success = keep_success
 
-        assert test_type is not None and test_type.strip() != "", "The test type must be specified."
+        if test_type is None and not dbgems.is_job(): self.test_type = TestSuite.TEST_TYPE_INTERACTIVE
+        assert self.test_type in TestSuite.TEST_TYPES, "The test type must be specified."
 
         # Define each test_round first to make the next step full-proof
         for notebook in build_config.notebooks.values():

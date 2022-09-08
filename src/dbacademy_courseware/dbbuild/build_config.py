@@ -65,10 +65,10 @@ class BuildConfig:
                     value = validate_type(param, int, notebook_config.get(param))
                     notebook.order = value
 
-                param = "replacements"
-                if param in notebook_config:
-                    value = validate_type(param, int, notebook_config.get(param))
-                    notebook.replacements = value
+                # param = "replacements"
+                # if param in notebook_config:
+                #     value = validate_type(param, int, notebook_config.get(param))
+                #     notebook.replacements = value
 
                 param = "ignored_errors"
                 if param in notebook_config:
@@ -367,7 +367,7 @@ class BuildConfig:
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
 
-    def to_test_suite(self, test_type: str, keep_success: bool = False):
+    def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy_courseware.dbtest import TestSuite
         return TestSuite(build_config=self,
                          test_dir=self.source_dir,

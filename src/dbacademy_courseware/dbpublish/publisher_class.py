@@ -264,7 +264,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">Published Version</a></p></body></html>"""
         dbgems.display_html(html)
 
-    def to_test_suite(self, test_type: str, keep_success: bool = False):
+    def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy_courseware.dbtest import TestSuite
         return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
