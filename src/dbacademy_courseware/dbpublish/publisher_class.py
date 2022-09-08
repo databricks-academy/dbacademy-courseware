@@ -93,6 +93,9 @@ class Publisher:
 
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
 
+        print(f"Source: {self.source_dir}")
+        print(f"Target: {self.target_dir}")
+        
         print("Arguments:")
         print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")
