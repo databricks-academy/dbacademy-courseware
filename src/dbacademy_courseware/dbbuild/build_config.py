@@ -282,15 +282,13 @@ class BuildConfig:
                 assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
 
                 version = parts[2]
-                assert version.startswith("v"), f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found \"{version}\"."
-
-                v_parts = version[1:].split(".")
+                v_parts = version.split(".")
                 assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
                 assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
                 assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
                 assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                assert version == f"v{self.version}", f"The change log entry's version is not \"v{self.version}\", found \"{version}\"."
+                assert version == self.version, f"The change log entry's version is not \"{self.version}\", found \"{version}\"."
 
                 date = parts[3]
                 assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
