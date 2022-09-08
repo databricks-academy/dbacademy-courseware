@@ -93,9 +93,6 @@ class Publisher:
 
         assert found_version_info, f"The required notebook \"{self.version_info_notebook}\" was not found."
 
-        print(f"Source: {self.source_dir}")
-        print(f"Target: {self.target_dir}")
-        print()
         print("Arguments:")
         print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")
@@ -197,6 +194,15 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
     def print_if(condition, text):
         if condition:
             print(text)
+
+    def validate(self):
+        print(f"Source: {self.source_dir}")
+        print(f"Target: {self.target_dir}")
+
+        print("\nChange Log:")
+        for entry in self.build_config.change_log:
+            print(f"  {entry}")
+        return
 
     def reset_repo(self, target_dir, target_url):
         self.target_dir = target_dir
