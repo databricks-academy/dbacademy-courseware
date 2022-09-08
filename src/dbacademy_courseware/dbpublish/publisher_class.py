@@ -178,6 +178,7 @@ class Publisher:
                 if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}"
                 content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
             content += "</div>"
+        # content += "<p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>"
         content += "</div>"
 
         message = f"""@channel Published {name}, v{version}
@@ -197,7 +198,6 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
         html = f"""
         <body>
             {content}
-            <p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>
             <textarea style="width:100%" rows={rows}>{message}</textarea>
         </body>"""
         dbgems.display_html(html)
