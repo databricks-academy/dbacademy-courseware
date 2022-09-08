@@ -163,6 +163,8 @@ class BuildConfig:
         self.white_list = None
         self.black_list = None
 
+        self.change_log = []
+
     def get_distribution_name(self, version):
         distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
         return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
@@ -260,7 +262,6 @@ class BuildConfig:
         with open(readme_path, "r") as f:
             lines = f.readlines()
 
-        change_log = []
         change_log_index: Union[None, int] = None
         version_index: Union[None, int] = None
 
@@ -270,7 +271,7 @@ class BuildConfig:
                 change_log_index = i
             elif change_log_index and i > change_log_index and line == "":
                 pass  # Just an empty line
-            elif change_log_index and i > change_log_index:
+            elif change_log_index and i > change_log_index and not version_index:
 
                 version_index = i
                 assert line.startswith(BuildConfig.CHANGE_LOG_VERSION), f"The next change log entry ({BuildConfig.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
@@ -305,17 +306,16 @@ class BuildConfig:
                 assert date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
 
             elif version_index and i > version_index:
-                # print(f"Building Change Log ({i+1}): {line}")
-                change_log.append(line)
+                self.change_log.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
-                # print(f"Concluding Change Log ({i+1}): {line}")
-                break
+                print("-"*80)
+                print("Change Log:")
+                for entry in self.change_log:
+                    print(entry)
+                return
 
-        print("-"*80)
-        print("Change Log:")
-        for entry in change_log:
-            print(entry)
+        raise AssertionError(f"The Change Log section was not found in {readme_path}")
 
     def _validate_version(self):
         if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
