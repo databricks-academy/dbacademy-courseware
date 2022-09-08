@@ -286,7 +286,7 @@ class BuildConfig:
                     assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
                     assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                    assert version == f"v{self.version}", "The change log entry's version is not \"{self.version}\", found \"{version}\"."
+                    assert version == f"v{self.version}", f"The change log entry's version is not \"{self.version}\", found \"{version}\"."
 
                     date = parts[3]
                     assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
