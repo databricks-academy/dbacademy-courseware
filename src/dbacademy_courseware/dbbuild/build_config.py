@@ -7,6 +7,9 @@ class BuildConfig:
     VERSION_TEST = "Test"
     VERSION_BUILD = "Build"
 
+    CHANGE_LOG_TAG = "## Change Log"
+    CHANGE_LOG_VERSION = "### Version "
+
     @staticmethod
     def load(file: str, *, version: str):
         import json
@@ -235,47 +238,114 @@ class BuildConfig:
         print(f"i18n:              {self.i18n}")
         print(f"i18n_language:     " + (self.i18n_language if self.i18n_language else "None (English)"))
 
-        max_name_length = 0
-        for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
-
         if len(self.notebooks) == 0:
             print(f"notebooks:         none")
         else:
             print(f"notebooks:         {len(self.notebooks)}")
+            self._index_notebooks()
 
-            rounds = list(map(lambda notebook_path: self.notebooks.get(notebook_path).test_round, self.notebooks))
-            rounds.sort()
-            rounds = set(rounds)
+        self._validate_version()
+        self._validate_readme()
 
-            for test_round in rounds:
-                if test_round == 0:
-                    print("\nRound #0: (published but not tested)")
-                else:
-                    print(f"\nRound #{test_round}")
+    def _validate_readme(self):
+        import os
+        from datetime import datetime
 
-                notebook_paths = list(self.notebooks.keys())
-                notebook_paths.sort()
+        if self.version not in [BuildConfig.VERSION_TEST, BuildConfig.VERSION_BUILD]:
+            return  # Implies we have an actual version of the form N.N.N
 
-                # for path in notebook_paths:
-                for notebook in sorted(self.notebooks.values(), key=lambda n: n.order):
-                    # notebook = self.notebooks[path]
-                    if test_round == notebook.test_round:
-                        path = notebook.path.ljust(max_name_length)
-                        ignored = str(notebook.ignored).ljust(5)
-                        include_solution = str(notebook.include_solution).ljust(5)
-                        if len(notebook.replacements.keys()) == 0:
-                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
-                        else:
-                            print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
-                            max_key_length = 0
-                            for key in notebook.replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+        readme_path = f"/Workspace/{self.source_repo}/README.md"
+        assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
 
-                            for key in notebook.replacements:
-                                value = notebook.replacements[key]
-                                print(f"        {key}", end="")
-                                print(" "*(max_key_length-len(key)), end="")
-                                print(f": {value}")
-                            print("      }")
+        with open(readme_path, "r") as f:
+            lines = f.readlines()
+
+            change_log_index = None
+
+            for i, line in enumerate(lines):
+                line = line.strip()
+                if line == BuildConfig.CHANGE_LOG_TAG:
+                    change_log_index = i
+                elif change_log_index and i > change_log_index and line == "":
+                    pass  # Just an empty line
+                elif change_log_index and i > change_log_index:
+
+                    assert line.startswith(BuildConfig.CHANGE_LOG_VERSION), f"The next change log entry ({BuildConfig.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
+
+                    parts = line.split(" ")  ### Version 1.0.2 (01-21-2022)
+                    assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
+                    assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
+                    assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
+
+                    version = parts[2]
+                    assert version.startswith("v"), f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found \"{version}\"."
+
+                    v_parts = version[1:].split(".")
+                    assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
+                    assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
+                    assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
+                    assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
+
+                    assert version == f"v{self.version}", "The change log entry's version is not \"{self.version}\", found \"{version}\"."
+
+                    date = parts[3]
+                    assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
+                    d_parts = date[1:-1].split("-")
+                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\"."
+                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\"."
+                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
+                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
+
+                    current_date = datetime.today().strftime("%m-%d-%Y")
+                    assert date == f"v{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
+                    break
+
+    def _validate_version(self):
+        if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
+            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value."
+            parts = self.version.split(".")
+            assert len(parts) == 3, msg
+            assert parts[0].isnumeric(), msg
+            assert parts[1].isnumeric(), msg
+            assert parts[2].isnumeric(), msg
+
+    def _index_notebooks(self):
+        max_name_length = 0
+        for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
+
+        rounds = list(map(lambda notebook_path: self.notebooks.get(notebook_path).test_round, self.notebooks))
+        rounds.sort()
+        rounds = set(rounds)
+
+        for test_round in rounds:
+            if test_round == 0:
+                print("\nRound #0: (published but not tested)")
+            else:
+                print(f"\nRound #{test_round}")
+
+            notebook_paths = list(self.notebooks.keys())
+            notebook_paths.sort()
+
+            # for path in notebook_paths:
+            for notebook in sorted(self.notebooks.values(), key=lambda n: n.order):
+                # notebook = self.notebooks[path]
+                if test_round == notebook.test_round:
+                    path = notebook.path.ljust(max_name_length)
+                    ignored = str(notebook.ignored).ljust(5)
+                    include_solution = str(notebook.include_solution).ljust(5)
+                    if len(notebook.replacements.keys()) == 0:
+                        print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
+                    else:
+                        print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
+                        max_key_length = 0
+                        for key in notebook.replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+
+                        for key in notebook.replacements:
+                            value = notebook.replacements[key]
+                            print(f"        {key}", end="")
+                            print(" " * (max_key_length - len(key)), end="")
+                            print(f": {value}")
+                        print("      }")
 
     def to_publisher(self):
         from dbacademy_courseware.dbpublish import Publisher
