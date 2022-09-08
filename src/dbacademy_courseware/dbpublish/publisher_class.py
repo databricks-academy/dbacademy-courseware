@@ -171,7 +171,7 @@ class Publisher:
         html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">Published Version</a></p></body></html>"""
         dbgems.display_html(html)
 
-    def create_publish_message(self):
+    def create_published_message(self):
         from dbacademy_gems import dbgems
 
         name = self.build_config.name
