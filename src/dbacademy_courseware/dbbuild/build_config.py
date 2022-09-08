@@ -251,7 +251,7 @@ class BuildConfig:
         import os
         from datetime import datetime
 
-        if self.version not in [BuildConfig.VERSION_TEST, BuildConfig.VERSION_BUILD]:
+        if self.version in [BuildConfig.VERSION_TEST, BuildConfig.VERSION_BUILD]:
             return  # Implies we have an actual version of the form N.N.N
 
         readme_path = f"/Workspace/{self.source_repo}/README.md"
