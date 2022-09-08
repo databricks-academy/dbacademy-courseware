@@ -336,7 +336,7 @@ class NotebookDef:
 
                 lines = i18n_guid_map.get(guid).split("\n")
 
-            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n>{guid}</i18n>")
+            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
             command = "\n".join(lines)
 
         return command
