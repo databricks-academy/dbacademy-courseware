@@ -4,6 +4,9 @@ class BuildConfig:
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
+    VERSION_TEST = "Test"
+    VERSION_BUILD = "Build"
+
     @staticmethod
     def load(file: str, *, version: str):
         import json
@@ -11,8 +14,8 @@ class BuildConfig:
         assert type(file) == str, f"Expected the parameter \"file\" to be of type str, found {file}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
 
-        if version not in ["Build", "Test"]:
-            msg = f"The version parameter must be BUILD, TEST or of the for N.N.N where N is an integral value."
+        if version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
+            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value."
             parts = version.split(".")
             assert len(parts) == 3, msg
             assert parts[0].isnumeric(), msg
