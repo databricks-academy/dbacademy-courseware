@@ -332,7 +332,7 @@ class NotebookDef:
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                if self.test(lambda: guid not in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                if self.test(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
                     lines = i18n_guid_map.get(guid).split("\n")
 
             lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
