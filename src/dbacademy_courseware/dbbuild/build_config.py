@@ -305,9 +305,11 @@ class BuildConfig:
                 assert date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
                 break
             elif version_index and i > version_index:
+                print(f"Building Change Log ({i+1}): {line}")
                 change_log.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
+                print(f"Concluding Change Log ({i+1}): {line}")
                 break
 
         print("-"*80)
