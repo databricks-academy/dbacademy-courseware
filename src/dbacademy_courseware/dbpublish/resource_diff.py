@@ -50,6 +50,8 @@ class ResourceDiff:
     def compare(self):
         import os
 
+        print(f"Comparing {self.old_resource} to {self.new_resource}")
+
         self.files_a = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.old_dir) for f in filenames]
         self.files_a = [r[len(self.old_dir) + 1:] for r in self.files_a]
 
