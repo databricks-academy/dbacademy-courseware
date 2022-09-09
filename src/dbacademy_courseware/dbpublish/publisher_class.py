@@ -172,22 +172,12 @@ class Publisher:
         dbgems.display_html(html)
 
     def create_published_message(self):
+        import urllib.parse
         from dbacademy_gems import dbgems
 
         name = self.build_config.name
         version = self.build_config.version
         source_repo = self.build_config.source_repo
-
-        content = "<div>"
-        for group_name, group in self.build_config.publishing_info.items():
-            content += f"""<div style="margin-bottom:1em">"""
-            content += f"""<div style="font-size:16px;">{group_name}</div>"""
-            for link_name, url in group.items():
-                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}"
-                content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
-            content += "</div>"
-        # content += "<p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>"
-        content += "</div>"
 
         message = f"""@channel Published {name}, v{version}
 
@@ -198,9 +188,21 @@ Change Log:\n"""
             message += "\n"
 
         message += f"""
-\nRelease notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
 Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions.""".rstrip()
+
+        email_body = urllib.parse.quote(message, safe="")
+        content = "<div>"
+        for group_name, group in self.build_config.publishing_info.items():
+            content += f"""<div style="margin-bottom:1em">"""
+            content += f"""<div style="font-size:16px;">{group_name}</div>"""
+            for link_name, url in group.items():
+                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}&body={email_body}"
+                content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
+            content += "</div>"
+        # content += "<p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>"
+        content += "</div>"
 
         rows = len(message.split("\n"))+1
         html = f"""
