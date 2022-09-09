@@ -2,15 +2,25 @@ from typing import Union
 
 
 class ResourceDiff:
-    def __init__(self, repo_dir, original_resource: str, latest_resource: str, resources_folder: str = "Resources"):
+    from dbacademy_courseware.dbbuild import BuildConfig
 
-        self.repo_dir = repo_dir
+    def __init__(self, build_config: BuildConfig, *, resources_folder: str = None, old_resource: str = None, new_resource: str = None):
+        import os
 
-        self.latest_resource = latest_resource
-        self.original_resource = original_resource
+        self.resources_folder = resources_folder or f"/Workspace/{build_config.source_repo}/Resources"
 
-        self.latest_dir =   f"{repo_dir}/{resources_folder}/{latest_resource}"
-        self.original_dir = f"{repo_dir}/{resources_folder}/{original_resource}"
+        if new_resource is None or old_resource is None:
+            versions = [f.split("-")[-1][1:] for f in os.listdir(self.resources_folder) if f.startswith("english-")]
+            versions.sort(key=lambda v: (int(v.split(".")[0]) * 10000) + (int(v.split(".")[1]) * 100) + int(v.split(".")[2]))
+
+            new_resource = new_resource or f"english-v{versions[-1]}"
+            old_resource = old_resource or f"english-v{versions[-2]}"
+
+        self.new_resource = new_resource
+        self.old_resource = old_resource
+
+        self.new_dir =   f"{self.resources_folder}/{self.new_resource}"
+        self.old_dir = f"{self.resources_folder}/{self.old_resource}"
 
         self.files_a = None
         self.files_b = None
@@ -19,11 +29,11 @@ class ResourceDiff:
     def compare(self):
         import os
 
-        self.files_a = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.original_dir) for f in filenames]
-        self.files_a = [r[len(self.original_dir) + 1:] for r in self.files_a]
+        self.files_a = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.old_dir) for f in filenames]
+        self.files_a = [r[len(self.old_dir) + 1:] for r in self.files_a]
 
-        self.files_b = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.latest_dir) for f in filenames]
-        self.files_b = [r[len(self.latest_dir) + 1:] for r in self.files_b]
+        self.files_b = [os.path.join(dp, f) for dp, dn, filenames in os.walk(self.new_dir) for f in filenames]
+        self.files_b = [r[len(self.new_dir) + 1:] for r in self.files_b]
 
         self.all_files = []
         self.all_files.extend(self.files_a)
@@ -39,15 +49,15 @@ class ResourceDiff:
         </head>
         <body style="font-size:16px">
             <table style="border-collapse: collapse; border-spacing:0">
-                <tr><td>Original:&nbsp;</td><td><b>{self.original_resource}</b></td></tr>
-                <tr><td>Latest:&nbsp;</td><td><b>{self.latest_resource}</b></td></tr>
+                <tr><td>Original:&nbsp;</td><td><b>{self.old_resource}</b></td></tr>
+                <tr><td>Latest:&nbsp;</td><td><b>{self.new_resource}</b></td></tr>
             </table>            
             <table style="border-collapse: collapse; border-spacing:0">"""
 
         html += f"""<thead><tr><td>Change Type</td><td>Message</td></tr></thead>"""
 
         for file in self.all_files:
-            sd = SegmentDiff(file, self.original_dir, self.latest_dir)
+            sd = SegmentDiff(file, self.old_dir, self.new_dir)
             sd.read_segments()
             
             if len(sd.diff()) > 0:

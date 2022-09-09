@@ -363,6 +363,10 @@ class BuildConfig:
                             print(f": {value}")
                         print("      }")
 
+    def to_resource_diff(self):
+        from dbacademy_courseware.dbpublish import ResourceDiff
+        return ResourceDiff(self)
+
     def to_publisher(self):
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
