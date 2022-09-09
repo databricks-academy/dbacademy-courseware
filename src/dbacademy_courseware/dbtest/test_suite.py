@@ -40,10 +40,13 @@ class TestSuite:
 
         self.keep_success = keep_success
 
-        if test_type is None and not dbgems.is_job(): test_type = TestSuite.TEST_TYPE_INTERACTIVE
+        if dbgems.is_job():
+            test_type = dbgems.get_parameter("test_type", None)
+        elif test_type is None:
+            test_type = TestSuite.TEST_TYPE_INTERACTIVE
+            
         assert test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
 
-        # Hack to bring the test type down into the test results via the build_config
         self.test_type = test_type
 
         # Define each test_round first to make the next step full-proof
