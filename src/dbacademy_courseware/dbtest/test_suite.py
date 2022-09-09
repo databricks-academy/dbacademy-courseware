@@ -19,10 +19,10 @@ class TestInstance:
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
 
-    TEST_TYPE_INTERACTIVE = "Interactive"
-    TEST_TYPE_STOCK = "Stock"
-    TEST_TYPE_PHOTON = "Photon"
-    TEST_TYPE_ML = "ML"
+    TEST_TYPE_INTERACTIVE = "interactive"
+    TEST_TYPE_STOCK = "stock"
+    TEST_TYPE_PHOTON = "photon"
+    TEST_TYPE_ML = "ml"
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
@@ -44,7 +44,7 @@ class TestSuite:
             test_type = dbgems.get_parameter("test_type", None)
         elif test_type is None:
             test_type = TestSuite.TEST_TYPE_INTERACTIVE
-            
+
         assert test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
 
         self.test_type = test_type
