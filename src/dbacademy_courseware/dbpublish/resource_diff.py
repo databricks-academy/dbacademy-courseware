@@ -41,7 +41,7 @@ class ResourceDiff:
             file.write(html)
 
         print(f"Wrote report to \"{target_file}\"")
-        return file_name
+        return file_name, html
 
     def compare_and_save(self, target_file: str = None):
         self.compare()
