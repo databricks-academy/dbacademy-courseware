@@ -7,6 +7,7 @@ class ResourceDiff:
     def __init__(self, build_config: BuildConfig, *, resources_folder: str = None, old_resource: str = None, new_resource: str = None):
         import os
 
+        self.build_config = build_config
         self.resources_folder = resources_folder or f"/Workspace/{build_config.source_repo}/Resources"
 
         if new_resource is None or old_resource is None:
@@ -25,6 +26,26 @@ class ResourceDiff:
         self.files_a = None
         self.files_b = None
         self.all_files = None
+
+    def save(self, target_file: str = None):
+        diff = self.build_config.to_resource_diff()
+        html = diff.compare()
+
+        if target_file is None:
+            # Write the file to the docs folder
+            target_file = f"/Workspace{self.build_config.source_repo}/docs/{diff.old_resource}_vs_{diff.new_resource}.html"
+
+        file_name = target_file.split("/")[-1]
+
+        with open(target_file, "w") as file:
+            file.write(html)
+
+        print(f"Wrote report to \"{target_file}\"")
+        return file_name
+
+    def compare_and_save(self, target_file: str = None):
+        self.compare()
+        return self.save(target_file)
 
     def compare(self):
         import os
