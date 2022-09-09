@@ -5,6 +5,7 @@ class TestInstance:
         self.notebook = notebook
         self.job_id = 0
         self.run_id = 0
+        self.test_type = test_type
 
         if notebook.include_solution:
             self.notebook_path = f"{test_dir}/Solutions/{notebook.path}"
@@ -14,9 +15,6 @@ class TestInstance:
         hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
         test_name = build_config.name.lower().replace(" ", "-")
         self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
-
-        # Hack to bring the test type down into the test results via the build_config
-        build_config.test_type = test_type
 
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
@@ -29,7 +27,7 @@ class TestSuite:
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
         from dbacademy_gems import dbgems
-        self.build_config = build_config
+
         self.test_dir = test_dir
         self.build_config = build_config
         self.client = build_config.client
@@ -42,18 +40,21 @@ class TestSuite:
 
         self.keep_success = keep_success
 
-        if test_type is None and not dbgems.is_job(): self.test_type = TestSuite.TEST_TYPE_INTERACTIVE
-        assert self.test_type in TestSuite.TEST_TYPES, "The test type must be specified."
+        if test_type is None and not dbgems.is_job(): test_type = TestSuite.TEST_TYPE_INTERACTIVE
+        assert test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
+
+        # Hack to bring the test type down into the test results via the build_config
+        self.test_type = test_type
 
         # Define each test_round first to make the next step full-proof
-        for notebook in build_config.notebooks.values():
+        for notebook in self.build_config.notebooks.values():
             self.test_rounds[notebook.test_round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in build_config.notebooks.values():
+        for notebook in self.build_config.notebooks.values():
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(build_config, notebook, test_dir, self.test_type)
+                test_instance = TestInstance(self.build_config, notebook, test_dir, self.test_type)
                 self.test_rounds[notebook.test_round].append(test_instance)
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
@@ -86,14 +87,14 @@ class TestSuite:
         course_name = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.name.lower())
         while "--" in course_name: course_name = course_name.replace("--", "-")
 
-        self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.test_type.lower())
+        self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
         while "--" in self.test_type: self.test_type = self.test_type.replace("--", "-")
 
         params = {
             "name": f"{job_name}",
             "tags": {
                 "dbacademy.course": course_name,
-                "dbacademy.source": "dbacadmey-smoke-test",
+                "dbacademy.source": "dbacademy-smoke-test",
                 "dbacademy.test-type": self.test_type
             },
             "email_notifications": {},
@@ -269,7 +270,7 @@ class TestSuite:
             "run_id": run_id,
             "notebook_path": notebook_path,
             "spark_version": self.build_config.spark_version,
-            "test_type": self.build_config.test_type
+            "test_type": self.test_type
         })
 
         response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
@@ -284,7 +285,7 @@ class TestSuite:
             "run_id": run_id,
             "notebook_path": notebook_path,
             "spark_version": self.build_config.spark_version,
-            "test_type": self.build_config.test_type,
+            "test_type": self.test_type,
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
