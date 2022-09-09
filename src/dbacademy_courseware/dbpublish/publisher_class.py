@@ -286,7 +286,7 @@ Please feel free to reach out to me (via Slack), or anyone on the curriculum tea
             "generating_docs": True
         })
 
-        print(f"Completed {notebook.path} in {int(time.time()) - start} seconds")
+        print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
 
     def generate_docs(self):
         from multiprocessing.pool import ThreadPool
