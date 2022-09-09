@@ -179,20 +179,18 @@ class Publisher:
         version = self.build_config.version
         source_repo = self.build_config.source_repo
 
-        message = f"""@channel Published {name}, v{version}
-
-Change Log:\n"""
-
+        core_message = f"Change Log:\n"
         for entry in self.build_config.change_log:
-            message += entry
-            message += "\n"
-
-        message += f"""
+            core_message += entry
+            core_message += "\n"
+        core_message += f"""
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
-Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions.""".rstrip()
+Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions."""
 
-        email_body = urllib.parse.quote(message, safe="")
+        email_body = urllib.parse.quote(core_message, safe="")
+        slack_message = f"""@channel Published {name}, v{version}\n\n{core_message.strip()}"""
+
         content = "<div>"
         for group_name, group in self.build_config.publishing_info.items():
             content += f"""<div style="margin-bottom:1em">"""
@@ -201,14 +199,13 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
                 if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}&body={email_body}"
                 content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
             content += "</div>"
-        # content += "<p><a href="{get_workspace_url()}#workspace{self.target_dir}/{self.version_info_notebook}" target="_blank">Published Version</a></p>"
         content += "</div>"
 
-        rows = len(message.split("\n"))+1
+        rows = len(slack_message.split("\n"))+1
         html = f"""
         <body>
             {content}
-            <textarea style="width:100%" rows={rows}>{message}</textarea>
+            <textarea style="width:100%; padding:1em" rows={rows}>{slack_message}</textarea>
         </body>"""
         dbgems.display_html(html)
 
