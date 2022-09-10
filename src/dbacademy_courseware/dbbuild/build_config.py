@@ -226,7 +226,7 @@ class BuildConfig:
                                                    ignoring=self.ignoring,
                                                    version=self.version)
 
-    def validate(self):
+    def validate(self, validate_version: bool = True, validate_readme: bool = True):
         print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
         print(f"name:              {self.name}")
@@ -248,8 +248,8 @@ class BuildConfig:
             print(f"notebooks:         {len(self.notebooks)}")
             self._index_notebooks()
 
-        self._validate_version()
-        self._validate_readme()
+        if validate_version: self._validate_version()
+        if validate_readme: self._validate_readme()
 
     def _validate_readme(self):
         import os
