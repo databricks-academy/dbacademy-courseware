@@ -122,8 +122,9 @@ class BuildConfig:
         self.build_name = re.sub(r"[^a-zA-Z\d]", "-", name).lower()
 
         # The Distribution's version
+        assert version is not None, "The course's version must be specified."
         self.version = version
-        assert self.version is not None, "The course's version must be specified."
+        self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
 
         # The runtime you wish to test against
         self.spark_version = self.client.clusters().get_current_spark_version() if spark_version is None else spark_version
@@ -159,9 +160,9 @@ class BuildConfig:
         self.change_log = []
         self.publishing_info = publishing_info or {}
 
-    def get_distribution_name(self, version):
-        distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
-        return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
+    # def get_distribution_name(self, version):
+    #     distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
+    #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def index_notebooks(self, include_solutions=True, fail_fast=True):
         from ..dbpublish.notebook_def_class import NotebookDef
@@ -198,11 +199,6 @@ class BuildConfig:
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
-            # if path.lower() == "version info":
-            #     order = 2                 # Version info to run second.
-            #     test_round = 1            # Add to test_round #1
-            #     include_solution = False  # Exclude from the solutions folder
-
             if "wip" in path.lower():
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
@@ -219,6 +215,9 @@ class BuildConfig:
                                                    version=self.version)
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
+        if validate_version: self._validate_version()
+        if validate_readme: self._validate_readme()
+
         print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
         print(f"name:              {self.name}")
@@ -239,9 +238,6 @@ class BuildConfig:
         else:
             print(f"notebooks:         {len(self.notebooks)}")
             self._index_notebooks()
-
-        if validate_version: self._validate_version()
-        if validate_readme: self._validate_readme()
 
     def _validate_readme(self):
         import os
@@ -282,7 +278,7 @@ class BuildConfig:
                 assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
                 assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                assert version == self.version, f"The change log entry's version is not \"{self.version}\", found \"{version}\"."
+                assert version == self.core_version, f"The change log entry's version is not \"{self.core_version}\", found \"{version}\"."
 
                 date = parts[3]
                 assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
@@ -403,5 +399,5 @@ class BuildConfig:
         if self.i18n_language is not None:
             # Include the i18n code in the version.
             # This hack just happens to work for japanese and korean
-            code = self.i18n_language[0:2]
-            self.version = f"{self.version}-{code}".upper()
+            code = self.i18n_language[0:2].upper()
+            self.version = f"{self.version}-{code}"
