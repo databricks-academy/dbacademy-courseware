@@ -27,7 +27,7 @@ class ResourceDiff:
         self.files_b = None
         self.all_files = None
 
-    def save(self, target_file: str = None):
+    def compare_and_save(self, target_file: str = None):
         diff = self.build_config.to_resource_diff()
         html = diff.compare()
 
@@ -42,10 +42,6 @@ class ResourceDiff:
 
         print(f"Wrote report to \"{target_file}\"")
         return file_name, html
-
-    def compare_and_save(self, target_file: str = None):
-        self.compare()
-        return self.save(target_file)
 
     def compare(self):
         import os
