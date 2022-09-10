@@ -80,6 +80,9 @@ class Publisher:
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None):
         from dbacademy_gems import dbgems
 
+        if self.i18n_language is not None:
+            print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
+
         folder_name = folder_name or f"english-v{self.build_config.version}"
         target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
 
