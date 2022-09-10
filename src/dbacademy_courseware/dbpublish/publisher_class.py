@@ -82,6 +82,7 @@ class Publisher:
 
         if self.i18n_language is not None:
             print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
+            return
 
         folder_name = folder_name or f"english-v{self.build_config.version}"
         target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
