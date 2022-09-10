@@ -82,7 +82,7 @@ class Publisher:
 
         if self.i18n_language is not None:
             print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
-            return
+            return False
 
         folder_name = folder_name or f"english-v{self.build_config.version}"
         target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
@@ -92,6 +92,8 @@ class Publisher:
 
         html = f"""<body><p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p></body>"""
         dbgems.display_html(html)
+
+        return True
 
     def publish_notebooks(self, *, mode, verbose=False, debugging=False):
         from dbacademy_gems import dbgems
