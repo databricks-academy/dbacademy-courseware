@@ -17,14 +17,6 @@ class BuildConfig:
         assert type(file) == str, f"Expected the parameter \"file\" to be of type str, found {file}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
 
-        if version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
-            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value, found {version}."
-            parts = version.split(".")
-            assert len(parts) == 3, msg
-            assert parts[0].isnumeric(), msg
-            assert parts[1].isnumeric(), msg
-            assert parts[2].isnumeric(), msg
-
         with open(file) as f:
             config = json.load(f)
 
@@ -318,12 +310,17 @@ class BuildConfig:
 
     def _validate_version(self):
         if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
-            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value, found {self.version}."
-            parts = self.version.split(".")
-            assert len(parts) == 3, msg
-            assert parts[0].isnumeric(), msg
-            assert parts[1].isnumeric(), msg
-            assert parts[2].isnumeric(), msg
+            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
+            self.version.split(".")
+
+            assert len(self.version.split(".")) == 3, msg
+            major, minor, bug = self.version.split(".")
+            bug, lang = bug.split("-") if "-" in bug else (bug, "NA")
+
+            assert major.isnumeric(), msg
+            assert minor.isnumeric(), msg
+            assert bug.isnumeric(), msg
+            assert len(lang) == 2 and lang.upper() == lang, msg
 
     def _index_notebooks(self):
         max_name_length = 0
