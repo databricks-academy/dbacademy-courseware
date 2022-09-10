@@ -18,7 +18,7 @@ class BuildConfig:
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
 
         if version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
-            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value."
+            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value, found {version}."
             parts = version.split(".")
             assert len(parts) == 3, msg
             assert parts[0].isnumeric(), msg
@@ -318,7 +318,7 @@ class BuildConfig:
 
     def _validate_version(self):
         if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
-            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value."
+            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" where \"N\" is an integral value, found {self.version}."
             parts = self.version.split(".")
             assert len(parts) == 3, msg
             assert parts[0].isnumeric(), msg
