@@ -64,7 +64,7 @@ class BuildConfig:
 
                 param = "ignored_errors"
                 if param in notebook_config:
-                    value = validate_type(param, List, notebook_config.get(param))
+                    value = validate_type(param, List[str], notebook_config.get(param))
                     notebook.ignoring = value
 
             if publish_only is not None:
