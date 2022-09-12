@@ -77,6 +77,7 @@ class BuildConfig:
             return build_config
 
     def __init__(self,
+                 *,
                  name: str,
                  version: str = 0,
                  spark_version: str = None,
@@ -92,6 +93,7 @@ class BuildConfig:
                  include_solutions: bool = True,
                  i18n: bool = False,
                  i18n_language: str = None,
+                 i18n_xml_tag_disabled: bool = False,
                  ignoring: list = None,
                  publishing_info: dict = None):
 
@@ -104,6 +106,7 @@ class BuildConfig:
         self.ignoring = [] if ignoring is None else ignoring
 
         self.i18n = i18n
+        self.i18n_xml_tag_disabled = i18n_xml_tag_disabled
         self.i18n_language = i18n_language
 
         self.test_type = None
@@ -202,7 +205,8 @@ class BuildConfig:
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDef(test_round=test_round,
+                self.notebooks[path] = NotebookDef(build_config=self,
+                                                   test_round=test_round,
                                                    path=path,
                                                    ignored=False,
                                                    include_solution=include_solution,
