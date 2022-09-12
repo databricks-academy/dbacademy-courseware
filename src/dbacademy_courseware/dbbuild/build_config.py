@@ -30,7 +30,7 @@ class BuildConfig:
 
             def validate_type(key: str, expected_type: Type, actual_value):
                 if expected_type == List[str]:
-                    assert type(actual_value) == List, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
+                    assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
                     for item in actual_value:
                         assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
                 else:
