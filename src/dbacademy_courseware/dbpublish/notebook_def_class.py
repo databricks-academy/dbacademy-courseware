@@ -345,7 +345,7 @@ class NotebookDef:
                     lines = i18n_guid_map.get(guid).split("\n")
 
             if self.build_config.i18n_xml_tag_disabled:
-                lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
+                lines.insert(0, f"{cm} MAGIC {md_tag}")
             else:
                 lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
 
