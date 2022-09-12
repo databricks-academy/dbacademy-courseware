@@ -29,7 +29,13 @@ class BuildConfig:
             build_config = BuildConfig(version=version, **config)
 
             def validate_type(key: str, expected_type: Type, actual_value):
-                assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+                if expected_type == List[str]:
+                    assert type(actual_value) == List, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
+                    for item in actual_value:
+                        assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
+                else:
+                    assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+
                 return actual_value
 
             for name in configurations:
@@ -64,7 +70,7 @@ class BuildConfig:
 
                 param = "ignored_errors"
                 if param in notebook_config:
-                    value = validate_type(param, list[str], notebook_config.get(param))
+                    value = validate_type(param, List[str], notebook_config.get(param))
                     notebook.ignoring = value
 
             if publish_only is not None:
