@@ -20,6 +20,7 @@ class Publisher:
 
         self.client = build_config.client
         self.version = build_config.version
+        self.core_version = build_config.core_version
         self.build_name = build_config.build_name
 
         self.source_dir = build_config.source_dir

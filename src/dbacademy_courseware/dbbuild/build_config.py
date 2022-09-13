@@ -133,6 +133,7 @@ class BuildConfig:
         # The Distribution's version
         assert version is not None, "The course's version must be specified."
         self.version = version
+        self.core_version = version
 
         # The runtime you wish to test against
         self.spark_version = self.client.clusters().get_current_spark_version() if spark_version is None else spark_version
@@ -287,8 +288,7 @@ class BuildConfig:
                 assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
                 assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
 
-                core_version = self.version if "-" not in self.version else self.version.split("-")[0]
-                assert version == core_version, f"The change log entry's version is not \"{core_version}\", found \"{version}\"."
+                assert version == self.core_version, f"The change log entry's version is not \"{self.core_version}\", found \"{version}\"."
 
                 date = parts[3]
                 assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
@@ -411,3 +411,4 @@ class BuildConfig:
             # This hack just happens to work for japanese and korean
             code = self.i18n_language[0:2].upper()
             self.version = f"{self.version}-{code}"
+            self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
