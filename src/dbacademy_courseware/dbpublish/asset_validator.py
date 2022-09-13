@@ -41,15 +41,15 @@ class AssetValidator:
         client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
-        self.validate_version_info(version, dbc_target_dir)
+        self._validate_version_info(version, dbc_target_dir)
 
-    def validate_version_info(self, version, dbc_dir):
+    def _validate_version_info(self, version, dbc_dir):
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.build_config.client.workspace.export_notebook(version_info_path)
         assert "# MAGIC * Version:  **2.3.5**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
-        print(f"PASSED: {version} at {version_info_path}")
+        print(f"PASSED: v{version} at {version_info_path}")
 
-    def validate_git_branch(self, version=None, branch="published"):
+    def validate_git_branch(self, branch="published", version=None):
         version = version or self.build_config.version
         build_name = self.build_config.build_name
         common_language = self.publisher.common_language
@@ -65,10 +65,4 @@ class AssetValidator:
                                       target_dir=target_dir,
                                       target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}.git")
         print()
-        self.validate_version_info(version, target_dir)
-
-    def validate_git_published_versioned_branch(self):
-        pass
-
-    def validate_distribution_dbc(self):
-        pass
+        self._validate_version_info(version, target_dir)
