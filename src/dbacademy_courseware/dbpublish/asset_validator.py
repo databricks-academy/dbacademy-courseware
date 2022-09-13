@@ -27,10 +27,11 @@ class AssetValidator:
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
 
-        version = version or self.core_version
+        version = version or self.version
+        core_version = version.split("-")[0]
 
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
-        dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{version}.dbc"
+        dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{core_version}.dbc"
 
         return self.validate_dbc(version=version,
                                  dbc_url=dbc_url)
