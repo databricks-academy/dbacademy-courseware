@@ -31,7 +31,7 @@ class AssetValidator:
         core_version = version.split("-")[0]
 
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
-        dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{core_version}.dbc"
+        dbc_url = f"{base_url}/releases/download/v{core_version}/{self.build_name}-v{version}.dbc"
 
         return self.validate_dbc(version=version,
                                  dbc_url=dbc_url)
@@ -53,15 +53,16 @@ class AssetValidator:
         self._validate_version_info(version, dbc_target_dir)
 
     def _validate_version_info(self, version, dbc_dir):
+        version = version or self.version
+        core_version = version.split("-")[0]
+
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.client.workspace.export_notebook(version_info_path)
-        assert f"# MAGIC * Version:  **{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
-        print(f"PASSED: v{version} found in \"{version_info_path}\"")
+        assert f"# MAGIC * Version:  **{core_version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{core_version}\""
+        print(f"PASSED: v{core_version} found in \"{version_info_path}\"")
 
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
-
-        version = version or self.version
 
         if self.common_language is None:
             target_dir = f"/Repos/Working/{self.build_name}-{branch}"
