@@ -1,6 +1,7 @@
 from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
+from dbacademy_courseware import validate_type
 
 
 class Publisher:
@@ -22,6 +23,7 @@ class Publisher:
 
         self.source_dir = build_config.source_dir
         self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
+        self.target_url = None
 
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
@@ -230,7 +232,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         return
 
     def reset_repo(self, target_dir: str, target_url: str, branch: str = "published"):
-        self.target_dir = target_dir
+        self.target_dir = validate_type(target_dir, "target_dir", str)
+        self.target_url = validate_type(target_url, "target_url", str)
 
         print(f"Resetting git repo:")
         print(f" - {self.target_dir}")
@@ -325,3 +328,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         url = target_file.replace("/dbfs/FileStore/", "/files/")
         dbgems.display_html(f"""<a href="{url}" target="_blank">Download</a>""")
+
+    def get_asset_validator(self):
+        from .asset_validator import AssetValidator
+        return AssetValidator(self)

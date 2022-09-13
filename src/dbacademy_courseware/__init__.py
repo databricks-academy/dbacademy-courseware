@@ -51,3 +51,6 @@ def to_job_url(*, job_id: str, run_id: str):
     base_url = get_workspace_url()
     return f"{base_url}#job/{job_id}/run/{run_id}"
 
+def validate_type(actual_value, name, expected_type):
+    assert type(actual_value) == expected_type, f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
+    return actual_value
