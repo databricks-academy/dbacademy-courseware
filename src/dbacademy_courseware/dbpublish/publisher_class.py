@@ -243,7 +243,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             self.client.repos().delete(target_repo_id)
 
         # Re-create the repo to progress in testing
-        self.client.repos().create(path=self.target_dir, url=target_url)
+        response = self.client.repos().create(path=self.target_dir, url=target_url)
+        branch = response.get("branch")
+        assert branch == "published", f"Expected the new branch to be published, found {branch}"
 
     def publish_docs(self):
         import os, shutil
