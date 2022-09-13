@@ -10,16 +10,21 @@ class AssetValidator:
         self.client = publisher.client
         self.target_repo_url = publisher.target_repo_url
 
-    def validate_distribution_dbc(self, version=None):
-        version = version or self.version
+    @staticmethod
+    def validate_distribution_dbc():
+        print("Validating the DBC in DBAcademy's distribution system\n")
 
-        dbc_url = f"s3://dbacademy-secured/distributions/{self.build_name}/{self.build_name}-v{version}.dbc"
+        print("NOT-IMPLEMENTED: This is projected to be implemented soon.")
 
-        return self.validate_dbc(version=version,
-                                 dbc_url=dbc_url)
+        # version = version or self.version
+        #
+        # dbc_url = f"s3://dbacademy-secured/distributions/{self.build_name}/{self.build_name}-v{version}.dbc"
+        #
+        # return self.validate_dbc(version=version,
+        #                          dbc_url=dbc_url)validate_distribution_dbc
 
     def validate_git_releases_dbc(self, version=None):
-        print("Validating DBC in GitHub's Releases page\n")
+        print("Validating the DBC in GitHub's Releases page\n")
 
         version = version or self.version
 
