@@ -4,16 +4,16 @@ class AssetValidator:
     from .publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
-        self.publisher = publisher
-        self.version = self.publisher.version
-        self.build_name = self.publisher.build_name
-        self.client = self.publisher.client
+        self.common_language = publisher.common_language
+        self.version = publisher.version
+        self.build_name = publisher.build_name
+        self.client = publisher.client
+        self.target_repo_url = publisher.target_repo_url
 
     def validate_distribution_dbc(self, version=None):
         version = version or self.version
-        build_name = self.build_name
 
-        dbc_url = f"s3://dbacademy-secured/distributions/{build_name}/{build_name}-v{version}.dbc"
+        dbc_url = f"s3://dbacademy-secured/distributions/{self.build_name}/{self.build_name}-v{version}.dbc"
 
         return self.validate_dbc(version=version,
                                  dbc_url=dbc_url)
@@ -22,20 +22,17 @@ class AssetValidator:
         print("Validating DBC in GitHub's Releases page\n")
 
         version = version or self.version
-        build_name = self.build_name
 
-        target_url = self.publisher.target_repo_url
-        base_url = target_url[:-4] if target_url.endswith(".git") else target_url
-        dbc_url = f"{base_url}/releases/download/v{version}/{build_name}-v{version}.dbc"
+        base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
+        dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{version}.dbc"
 
         return self.validate_dbc(version=version,
                                  dbc_url=dbc_url)
 
     def validate_dbc(self, version=None, dbc_url=None):
         version = version or self.version
-        build_name = self.build_name
 
-        dbc_target_dir = f"/Shared/Working/{build_name}-v{version}"
+        dbc_target_dir = f"/Shared/Working/{self.build_name}-v{version}"
 
         name = dbc_url.split("/")[-1]
         print(f"Importing {name}")
@@ -58,19 +55,17 @@ class AssetValidator:
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         version = version or self.version
-        build_name = self.build_name
-        common_language = self.publisher.common_language
 
-        if common_language is None:
-            target_dir = f"/Repos/Working/{build_name}"
+        if self.common_language is None:
+            target_dir = f"/Repos/Working/{self.build_name}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{build_name}-{branch}.git")
+                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{branch}.git")
         else:
-            target_dir = f"/Repos/Working/{build_name}-{common_language}"
+            target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}-{branch}.git")
+                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}-{branch}.git")
         print()
         self._validate_version_info(version, target_dir)
 
