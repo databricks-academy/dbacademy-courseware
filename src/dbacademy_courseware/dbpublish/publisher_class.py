@@ -238,6 +238,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         print(f"Resetting git repo:")
         print(f" - {self.target_dir}")
         print(f" - {self.target_repo_url}")
+        print(f" - Branch: {branch}")
 
         status = self.client.workspace().get_status(self.target_dir)
 
@@ -256,7 +257,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         current_branch = results.get("branch")
 
         assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
-        print(f" - Branch: {branch}")
 
     def publish_docs(self):
         import os, shutil
