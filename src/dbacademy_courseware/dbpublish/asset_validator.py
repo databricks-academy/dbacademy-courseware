@@ -2,12 +2,14 @@ class AssetValidator:
     from .publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
-        self.build_config = publisher.build_config
         self.publisher = publisher
+        self.version = self.publisher.version
+        self.build_name = self.publisher.build_name
+        self.client = self.publisher.client
 
     def validate_distribution_dbc(self, version=None):
-        version = version or self.build_config.version
-        build_name = self.build_config.build_name
+        version = version or self.version
+        build_name = self.build_name
 
         dbc_url = f"s3://dbacademy-secured/distributions/{build_name}/{build_name}-v{version}.dbc"
 
@@ -17,8 +19,8 @@ class AssetValidator:
     def validate_git_releases_dbc(self, version=None):
         print("Validating DBC in GitHub's Releases page")
 
-        version = version or self.build_config.version
-        build_name = self.build_config.build_name
+        version = version or self.version
+        build_name = self.build_name
 
         target_url = self.publisher.target_repo_url
         base_url = target_url[:-4] if target_url.endswith(".git") else target_url
@@ -28,9 +30,8 @@ class AssetValidator:
                                  dbc_url=dbc_url)
 
     def validate_dbc(self, version=None, dbc_url=None):
-        version = version or self.build_config.version
-        build_name = self.build_config.build_name
-        client = self.build_config.client
+        version = version or self.version
+        build_name = self.build_name
 
         dbc_target_dir = f"/Shared/Working/{build_name}-v{version}"
 
@@ -39,34 +40,34 @@ class AssetValidator:
         print(f" - Source: {dbc_url}")
         print(f" - Target: {dbc_target_dir}")
 
-        client.workspace.delete_path(dbc_target_dir)
-        client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
+        self.client.workspace.delete_path(dbc_target_dir)
+        self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
         self._validate_version_info(version, dbc_target_dir)
 
     def _validate_version_info(self, version, dbc_dir):
         version_info_path = f"{dbc_dir}/Version Info"
-        source = self.build_config.client.workspace.export_notebook(version_info_path)
+        source = self.client.workspace.export_notebook(version_info_path)
         assert "# MAGIC * Version:  **2.3.5**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
         print(f"PASSED: v{version} found in \"{version_info_path}\"")
 
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.")
 
-        version = version or self.build_config.version
-        build_name = self.build_config.build_name
+        version = version or self.version
+        build_name = self.build_name
         common_language = self.publisher.common_language
 
         if common_language is None:
             target_dir = f"/Repos/Working/{build_name}"
             self.publisher.reset_repo(branch=branch,
                                       target_dir=target_dir,
-                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}.git")
+                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{branch}.git")
         else:
             target_dir = f"/Repos/Working/{build_name}-{common_language}"
             self.publisher.reset_repo(branch=branch,
                                       target_dir=target_dir,
-                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}.git")
+                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}-{branch}.git")
         print()
         self._validate_version_info(version, target_dir)
