@@ -15,6 +15,8 @@ class AssetValidator:
                                  dbc_url=dbc_url)
 
     def validate_git_releases_dbc(self, version=None):
+        print("Validating DBC in GitHub's Releases page")
+
         version = version or self.build_config.version
         build_name = self.build_config.build_name
 
@@ -50,6 +52,8 @@ class AssetValidator:
         print(f"PASSED: v{version} at {version_info_path}")
 
     def validate_git_branch(self, branch="published", version=None):
+        print(f"Validating the \"{branch}\" branch in the public, student-facing repo.")
+
         version = version or self.build_config.version
         build_name = self.build_config.build_name
         common_language = self.publisher.common_language
