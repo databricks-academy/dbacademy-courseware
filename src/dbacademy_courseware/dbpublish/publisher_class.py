@@ -254,7 +254,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         results = self.client.repos.get(repo_id)
         current_branch = results.get("branch")
-        assert branch == "published", f"Expected the new branch to be {branch}, found {current_branch}"
+
+        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
+        print(f" - Branch: {branch}")
 
     def publish_docs(self):
         import os, shutil
