@@ -40,12 +40,31 @@ class AssetValidator:
         client.workspace.delete_path(dbc_target_dir)
         client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
-        version_info_path = f"{dbc_target_dir}/Version Info"
-        source = client.workspace.export_notebook(version_info_path)
-        assert "# MAGIC * Version:  **2.3.5**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
+        self.validate_version_info(version, dbc_target_dir)
 
-    def validate_git_published_branch(self):
-        pass
+    def validate_version_info(self, version, dbc_dir):
+        version_info_path = f"{dbc_dir}/Version Info"
+        source = self.build_config.client.workspace.export_notebook(version_info_path)
+        assert "# MAGIC * Version:  **2.3.5**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
+        print(f"PASSED: {version} at {version_info_path}")
+
+    def validate_git_branch(self, version=None, branch="published"):
+        version = version or self.build_config.version
+        build_name = self.build_config.build_name
+        common_language = self.publisher.common_language
+
+        if common_language is None:
+            target_dir = f"/Repos/Working/{build_name}"
+            self.publisher.reset_repo(branch=branch,
+                                      target_dir=target_dir,
+                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}.git")
+        else:
+            target_dir = f"/Repos/Working/{build_name}-{common_language}"
+            self.publisher.reset_repo(branch=branch,
+                                      target_dir=target_dir,
+                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}.git")
+
+        self.validate_version_info(version, dbc_target_dir)
 
     def validate_git_published_versioned_branch(self):
         pass
