@@ -57,26 +57,26 @@ class AssetValidator:
         version = version or self.version
 
         if self.common_language is None:
-            target_dir = f"/Repos/Working/{self.build_name}"
+            target_dir = f"/Repos/Working/{self.build_name}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{branch}.git")
+                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
         else:
-            target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
+            target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}-{branch}.git")
+                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
         print()
         self._validate_version_info(version, target_dir)
 
-    def reset_repo(self, target_dir: str, target_repo_url: str, branch: str = "published"):
+    def reset_repo(self, *, target_dir: str, target_repo_url: str, branch: str = "published"):
         target_dir = validate_type(target_dir, "target_dir", str)
         target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
         print(f"Resetting git repo:")
         print(f" - Branch: \"{branch}\"")
-        print(f" - Target: {target_dir}")
         print(f" - Source: {target_repo_url}")
+        print(f" - Target: {target_dir}")
 
         status = self.client.workspace().get_status(target_dir)
 
