@@ -54,12 +54,11 @@ class AssetValidator:
 
     def _validate_version_info(self, version, dbc_dir):
         version = version or self.version
-        core_version = version.split("-")[0]
 
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.client.workspace.export_notebook(version_info_path)
-        assert f"**{core_version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{core_version}\""
-        print(f"PASSED: v{core_version} found in \"{version_info_path}\"")
+        assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
+        print(f"PASSED: v{version} found in \"{version_info_path}\"")
 
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
