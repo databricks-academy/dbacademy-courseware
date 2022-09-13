@@ -229,7 +229,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             print(f"  {entry}")
         return
 
-    def reset_repo(self, target_dir, target_url):
+    def reset_repo(self, target_dir: str, target_url: str, branch: str = "published"):
         self.target_dir = target_dir
 
         print(f"Resetting git repo:")
@@ -243,9 +243,15 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             self.client.repos().delete(target_repo_id)
 
         # Re-create the repo to progress in testing
-        response = self.client.repos().create(path=self.target_dir, url=target_url)
-        branch = response.get("branch")
-        assert branch == "published", f"Expected the new branch to be published, found {branch}"
+        response = self.client.repos.create(path=self.target_dir, url=target_url)
+        repo_id = response.get("id")
+
+        if response.get("branch") != branch:
+            self.client.repos.update(repo_id=repo_id, branch=branch)
+
+        results = self.client.repos.get(repo_id)
+        current_branch = results.get("branch")
+        assert branch == "published", f"Expected the new branch to be {branch}, found {current_branch}"
 
     def publish_docs(self):
         import os, shutil
