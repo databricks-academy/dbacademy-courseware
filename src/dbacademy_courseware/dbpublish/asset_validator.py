@@ -40,6 +40,7 @@ class AssetValidator:
         client.workspace.delete_path(dbc_target_dir)
         client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
+        print()
         self.validate_version_info(version, dbc_target_dir)
 
     def validate_version_info(self, version, dbc_dir):
@@ -64,7 +65,7 @@ class AssetValidator:
                                       target_dir=target_dir,
                                       target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}.git")
 
-        self.validate_version_info(version, dbc_target_dir)
+        self.validate_version_info(version, target_dir)
 
     def validate_git_published_versioned_branch(self):
         pass
