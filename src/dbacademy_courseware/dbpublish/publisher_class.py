@@ -20,6 +20,7 @@ class Publisher:
 
         self.client = build_config.client
         self.version = build_config.version
+        self.build_name = build_config.build_name
 
         self.source_dir = build_config.source_dir
         self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
@@ -236,9 +237,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
         print(f"Resetting git repo:")
-        print(f" - \"{branch}\"")
-        print(f" - {self.target_dir}")
-        print(f" - {self.target_repo_url}")
+        print(f" - Branch: \"{branch}\"")
+        print(f" - Target: {self.target_dir}")
+        print(f" - Source: {self.target_repo_url}")
 
         status = self.client.workspace().get_status(self.target_dir)
 
