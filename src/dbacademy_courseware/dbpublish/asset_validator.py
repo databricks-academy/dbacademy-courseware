@@ -58,7 +58,7 @@ class AssetValidator:
 
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.client.workspace.export_notebook(version_info_path)
-        assert f"# MAGIC * Version:  **{core_version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{core_version}\""
+        assert f"**{core_version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{core_version}\""
         print(f"PASSED: v{core_version} found in \"{version_info_path}\"")
 
     def validate_git_branch(self, branch="published", version=None):
