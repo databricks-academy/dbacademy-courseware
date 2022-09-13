@@ -236,9 +236,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
         print(f"Resetting git repo:")
+        print(f" - \"{branch}\"")
         print(f" - {self.target_dir}")
         print(f" - {self.target_repo_url}")
-        print(f" - Branch: {branch}")
 
         status = self.client.workspace().get_status(self.target_dir)
 
