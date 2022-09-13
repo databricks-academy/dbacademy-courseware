@@ -23,7 +23,7 @@ class Publisher:
 
         self.source_dir = build_config.source_dir
         self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
-        self.target_url = None
+        self.target_repo_url = None
 
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
@@ -231,13 +231,13 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             print(f"  {entry}")
         return
 
-    def reset_repo(self, target_dir: str, target_url: str, branch: str = "published"):
+    def reset_repo(self, target_dir: str, target_repo_url: str, branch: str = "published"):
         self.target_dir = validate_type(target_dir, "target_dir", str)
-        self.target_url = validate_type(target_url, "target_url", str)
+        self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
         print(f"Resetting git repo:")
         print(f" - {self.target_dir}")
-        print(f" - {target_url}")
+        print(f" - {self.target_repo_url}")
 
         status = self.client.workspace().get_status(self.target_dir)
 
@@ -246,7 +246,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             self.client.repos().delete(target_repo_id)
 
         # Re-create the repo to progress in testing
-        response = self.client.repos.create(path=self.target_dir, url=target_url)
+        response = self.client.repos.create(path=self.target_dir, url=target_repo_url)
         repo_id = response.get("id")
 
         if response.get("branch") != branch:
