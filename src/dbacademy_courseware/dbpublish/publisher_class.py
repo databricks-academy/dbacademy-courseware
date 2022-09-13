@@ -333,6 +333,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         url = target_file.replace("/dbfs/FileStore/", "/files/")
         dbgems.display_html(f"""<a href="{url}" target="_blank">Download</a>""")
 
-    def get_asset_validator(self):
-        from .asset_validator import AssetValidator
-        return AssetValidator(self)
+    def get_validator(self):
+        from .validator import Validator
+        return Validator(self)

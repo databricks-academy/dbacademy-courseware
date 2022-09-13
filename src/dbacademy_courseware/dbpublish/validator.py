@@ -1,6 +1,6 @@
 from dbacademy_courseware import validate_type
 
-class AssetValidator:
+class Validator:
     from .publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
