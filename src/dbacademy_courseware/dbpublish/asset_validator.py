@@ -1,3 +1,5 @@
+from dbacademy_courseware import validate_type
+
 class AssetValidator:
     from .publisher_class import Publisher
 
@@ -61,13 +63,40 @@ class AssetValidator:
 
         if common_language is None:
             target_dir = f"/Repos/Working/{build_name}"
-            self.publisher.reset_repo(branch=branch,
-                                      target_dir=target_dir,
-                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{branch}.git")
+            self.reset_repo(branch=branch,
+                            target_dir=target_dir,
+                            target_repo_url=f"https://github.com/databricks-academy/{build_name}-{branch}.git")
         else:
             target_dir = f"/Repos/Working/{build_name}-{common_language}"
-            self.publisher.reset_repo(branch=branch,
-                                      target_dir=target_dir,
-                                      target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}-{branch}.git")
+            self.reset_repo(branch=branch,
+                            target_dir=target_dir,
+                            target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}-{branch}.git")
         print()
         self._validate_version_info(version, target_dir)
+
+    def reset_repo(self, target_dir: str, target_repo_url: str, branch: str = "published"):
+        target_dir = validate_type(target_dir, "target_dir", str)
+        target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
+
+        print(f"Resetting git repo:")
+        print(f" - Branch: \"{branch}\"")
+        print(f" - Target: {target_dir}")
+        print(f" - Source: {target_repo_url}")
+
+        status = self.client.workspace().get_status(target_dir)
+
+        if status is not None:
+            target_repo_id = status["object_id"]
+            self.client.repos().delete(target_repo_id)
+
+        # Re-create the repo to progress in testing
+        response = self.client.repos.create(path=target_dir, url=target_repo_url)
+        repo_id = response.get("id")
+
+        if response.get("branch") != branch:
+            self.client.repos.update(repo_id=repo_id, branch=branch)
+
+        results = self.client.repos.get(repo_id)
+        current_branch = results.get("branch")
+
+        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
