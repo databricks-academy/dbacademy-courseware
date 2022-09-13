@@ -64,7 +64,7 @@ class AssetValidator:
             self.publisher.reset_repo(branch=branch,
                                       target_dir=target_dir,
                                       target_repo_url=f"https://github.com/databricks-academy/{build_name}-{common_language}.git")
-
+        print()
         self.validate_version_info(version, target_dir)
 
     def validate_git_published_versioned_branch(self):
