@@ -53,11 +53,11 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def reset_repo(self, target_repo_url: str, branch: str = "published"):
+    def reset_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published"):
 
         self.branch = branch
-        self.target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
-        self.target_repo_url = f"https://github.com/databricks-academy/ml-in-production-{self.common_language}.git"
+        self.target_dir = target_dir or f"/Repos/Working/{self.build_name}-{self.common_language}"
+        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/ml-in-production-{self.common_language}.git"
 
         print(f"Resetting git repo:")
         print(f" - Branch: \"{branch}\"")
