@@ -2,6 +2,7 @@ from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
 from dbacademy_courseware import validate_type
+from dbacademy_courseware import validate_type
 
 
 class Publisher:
@@ -14,9 +15,7 @@ class Publisher:
     VERSION_INFO_NOTEBOOK = "Version Info"
 
     def __init__(self, build_config: BuildConfig):
-        assert type(build_config) == BuildConfig, f"Expected build_config to be of type BuildConfig, found {type(BuildConfig)}"
-
-        self.build_config = build_config
+        self.build_config = validate_type(build_config, "build_config", BuildConfig)
 
         self.client = build_config.client
         self.version = build_config.version
@@ -339,7 +338,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             f.write(data)
 
         url = target_file.replace("/dbfs/FileStore/", "/files/")
-        dbgems.display_html(f"""<html><body style="font-size:16px"><a href="{url}" target="_blank">Download</a></body></html>""")
+        dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     def get_validator(self):
         from .validator import Validator

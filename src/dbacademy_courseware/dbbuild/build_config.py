@@ -373,6 +373,10 @@ class BuildConfig:
         from dbacademy_courseware.dbpublish import ResourceDiff
         return ResourceDiff(self)
 
+    def to_translator(self):
+        from dbacademy_courseware.dbpublish import Translator
+        return Translator(self)
+
     def to_publisher(self):
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
@@ -385,13 +389,11 @@ class BuildConfig:
                          keep_success=keep_success)
 
     def select_i18n_language(self):
-        from dbacademy import dbrest
         from dbacademy_gems import dbgems
 
-        client = dbrest.DBAcademyRestClient()
         resources_folder = f"{self.source_repo}/Resources"
 
-        resources = client.workspace().ls(resources_folder)
+        resources = self.client.workspace().ls(resources_folder)
         self.language_options = [r.get("path").split("/")[-1] for r in resources]
         self.language_options.sort()
         self.language_options.insert(0, BuildConfig.LANGUAGE_OPTIONS_DEFAULT)
