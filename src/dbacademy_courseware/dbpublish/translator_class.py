@@ -82,3 +82,7 @@ class Translator:
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
+
+    def clean_target_dir(self):
+        from dbacademy_courseware.dbpublish import Publisher
+        Publisher.clean_target_dir(self.client, self.target_dir, verbose=True)
