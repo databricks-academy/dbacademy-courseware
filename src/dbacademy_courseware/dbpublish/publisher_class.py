@@ -183,8 +183,8 @@ class Publisher:
         for notebook in main_notebooks:
             if len(notebook.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
-            for warning in notebook.warnings:
-                html += f"""<div style="">{warning.message}</div>"""
+                for warning in notebook.warnings:
+                    html += f"""<div style="">{warning.message}</div>"""
         html += """</table></body></html>"""
 
         dbgems.display_html(html)
@@ -339,7 +339,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             f.write(data)
 
         url = target_file.replace("/dbfs/FileStore/", "/files/")
-        dbgems.display_html(f"""<a href="{url}" target="_blank">Download</a>""")
+        dbgems.display_html(f"""<html><body style="font-size:16px"><a href="{url}" target="_blank">Download</a></body></html>""")
 
     def get_validator(self):
         from .validator import Validator
