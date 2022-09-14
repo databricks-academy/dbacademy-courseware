@@ -161,12 +161,12 @@ class Publisher:
     @staticmethod
     def clean_target_dir(client, target_dir: str, verbose):
         if verbose: print("-" * 80)
-        if verbose: print(f"Deleting from {target_dir}...")
+        if verbose: print(f"Cleaning {target_dir}...")
 
         keepers = [f"{target_dir}/{k}" for k in Publisher.KEEPERS]
 
         for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
-            if verbose: print(verbose, f"...{path}")
+            if verbose: print(f"...{path}")
             client.workspace().delete_path(path)
 
     def create_published_message(self):
