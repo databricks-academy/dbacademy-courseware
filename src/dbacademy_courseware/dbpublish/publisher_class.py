@@ -6,11 +6,6 @@ from dbacademy_courseware import validate_type
 
 class Publisher:
 
-    MODE_DELETE = "delete"
-    MODE_OVERWRITE = "overwrite"
-    MODE_NO_OVERWRITE = "no-overwrite"
-    EXPECTED_MODES = [MODE_DELETE, MODE_OVERWRITE, MODE_NO_OVERWRITE]
-
     VERSION_INFO_NOTEBOOK = "Version Info"
 
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
@@ -100,17 +95,12 @@ class Publisher:
 
         return True
 
-    def publish_notebooks(self, *, mode, verbose=False, debugging=False):
+    def publish_notebooks(self, *, verbose=False, debugging=False):
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
-        main_notebooks: List[NotebookDef] = []
-
-        mode = str(mode).lower()
-
-        assert mode in Publisher.EXPECTED_MODES, f"Expected mode {mode} to be one of {Publisher.EXPECTED_MODES}"
-
         found_version_info = False
+        main_notebooks: List[NotebookDef] = []
 
         for notebook in self.notebooks:
             if self.black_list is None or notebook.path not in self.black_list:
@@ -123,7 +113,6 @@ class Publisher:
         print(f"Target: {self.target_dir}")
         print()
         print("Arguments:")
-        print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
 
@@ -145,28 +134,7 @@ class Publisher:
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
-        if target_status is None:
-            pass  # Who cares, it doesn't already exist.
-
-        elif mode == Publisher.MODE_NO_OVERWRITE:
-            assert target_status is None, f"The target path already exists and the build is configured for {Publisher.MODE_NO_OVERWRITE}"
-
-        elif mode == Publisher.MODE_DELETE:
-            self.print_if(verbose, "-"*80)
-            self.print_if(verbose, f"Deleting from {self.target_dir}...")
-
-            deleted = []
-            keepers = [f"{self.target_dir}/{k}" for k in Publisher.KEEPERS]
-
-            for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
-                deleted.append(path)
-                self.print_if(verbose, f"...{path}")
-                self.client.workspace().delete_path(path)
-
-        elif mode.lower() != Publisher.MODE_OVERWRITE:
-            self.print_if(verbose, "-"*80)
-            self.print_if(verbose, f"Overwriting target directory (unused files will not be removed)...")
-            raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
+        if target_status is not None: self.clean_target_dir()
 
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
@@ -188,6 +156,16 @@ class Publisher:
         html += """</table></body></html>"""
 
         dbgems.display_html(html)
+
+    def clean_target_dir(self, verbose: bool = False):
+        self.print_if(verbose, "-" * 80)
+        self.print_if(verbose, f"Deleting from {self.target_dir}...")
+
+        keepers = [f"{self.target_dir}/{k}" for k in Publisher.KEEPERS]
+
+        for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
+            self.print_if(verbose, f"...{path}")
+            self.client.workspace().delete_path(path)
 
     def create_published_message(self):
         import urllib.parse
