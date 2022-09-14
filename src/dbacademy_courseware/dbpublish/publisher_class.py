@@ -135,6 +135,7 @@ class Publisher:
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
         if target_status is not None:
+            self.print_if(verbose, "-" * 80)
             Publisher.clean_target_dir(self.client, self.target_dir, verbose)
 
         for notebook in main_notebooks:
@@ -160,7 +161,6 @@ class Publisher:
 
     @staticmethod
     def clean_target_dir(client, target_dir: str, verbose):
-        if verbose: print("-" * 80)
         if verbose: print(f"Cleaning {target_dir}...")
 
         keepers = [f"{target_dir}/{k}" for k in Publisher.KEEPERS]
