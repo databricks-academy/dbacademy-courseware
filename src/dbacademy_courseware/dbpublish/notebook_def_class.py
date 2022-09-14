@@ -342,13 +342,8 @@ class NotebookDef:
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                missing_msg = f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"
-
-                if self.version in BuildConfig.VERSIONS_LIST:
-                    self.warn(lambda: guid in i18n_guid_map, missing_msg)
-                    lines = i18n_guid_map.get(guid).split("\n")
-                elif self.test(lambda: guid in i18n_guid_map, missing_msg):
-                    lines = i18n_guid_map.get(guid).split("\n")
+                self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}")
+                lines = i18n_guid_map.get(guid).split("\n")
 
             if self.build_config.i18n_xml_tag_disabled:
                 lines.insert(0, f"{cm} MAGIC {md_tag}")
@@ -432,10 +427,7 @@ class NotebookDef:
                 return source
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero or one
-        if self.version in BuildConfig.VERSIONS_LIST:
-            self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
-        else:
-            self.test(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
+        self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
 
         return None
 
