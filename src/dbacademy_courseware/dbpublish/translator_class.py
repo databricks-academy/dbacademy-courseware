@@ -31,7 +31,7 @@ class Translator:
         self.language_options.sort()
 
         dbgems.get_dbutils().widgets.dropdown("i18n_language",
-                                              BuildConfig.LANGUAGE_OPTIONS_DEFAULT,
+                                              self.language_options[0],
                                               self.language_options,
                                               "i18n Language")
 
