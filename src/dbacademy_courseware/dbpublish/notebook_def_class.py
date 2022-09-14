@@ -307,6 +307,7 @@ class NotebookDef:
         return command
 
     def replace_guid(self, cm: str, command: str, i: int, i18n_guid_map: dict):
+        from dbacademy_courseware.dbbuild.build_config import BuildConfig
 
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
@@ -341,7 +342,12 @@ class NotebookDef:
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                if self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                missing_msg = f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"
+
+                if self.version in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
+                    self.warn(lambda: guid in i18n_guid_map, missing_msg)
+                    lines = i18n_guid_map.get(guid).split("\n")
+                elif self.test(lambda: guid in i18n_guid_map, missing_msg):
                     lines = i18n_guid_map.get(guid).split("\n")
 
             if self.build_config.i18n_xml_tag_disabled:
