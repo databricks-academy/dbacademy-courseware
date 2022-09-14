@@ -9,10 +9,8 @@ class Translator:
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
         # Copied from build_config
         self.client = build_config.client
-        # self.source_repo = build_config.source_repo
         self.notebooks = build_config.notebooks
         self.build_name = build_config.build_name
-        self.source_repo = build_config.source_repo
 
         # Defined in select_language
         self.version = None
@@ -25,12 +23,12 @@ class Translator:
         self.target_dir = None
         self.target_repo_url = None
 
-        self._select_i18n_language()
+        self._select_i18n_language(build_config.source_repo)
 
-    def _select_i18n_language(self):
+    def _select_i18n_language(self, source_repo: str):
         from dbacademy_gems import dbgems
 
-        self.resources_folder = f"{self.source_repo}/Resources"
+        self.resources_folder = f"{source_repo}/Resources"
 
         resources = self.client.workspace().ls(self.resources_folder)
         self.language_options = [r.get("path").split("/")[-1] for r in resources if not r.get("path").startswith("english-")]
