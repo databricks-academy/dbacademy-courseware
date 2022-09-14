@@ -49,6 +49,7 @@ class NotebookDef:
         assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
 
         self.build_config = build_config
+        self.client = build_config.client
         self.path = path
         self.replacements = dict() if replacements is None else replacements
 
@@ -306,8 +307,6 @@ class NotebookDef:
         return command
 
     def replace_guid(self, cm: str, command: str, i: int, i18n_guid_map: dict):
-        from dbacademy_courseware.dbbuild.build_config import BuildConfig
-
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
@@ -375,8 +374,6 @@ class NotebookDef:
                                      i18n_guid_map=i18n_guid_map)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
-        from dbacademy.dbrest import DBAcademyRestClient
-
         natural_language = None if natural_language is None else natural_language.lower()
 
         assert type(natural_language) == str, f"""Expected the parameter "natural_language" to be of type "str", found "{type(natural_language)}" """
@@ -388,12 +385,10 @@ class NotebookDef:
 
         source_notebook_path = f"{source_dir}/{self.path}"
 
-        client = DBAcademyRestClient()
-
-        source_info = client.workspace().get_status(source_notebook_path)
+        source_info = self.client.workspace().get_status(source_notebook_path)
         language = source_info["language"].lower()
 
-        raw_source = client.workspace().export_notebook(source_notebook_path)
+        raw_source = self.client.workspace().export_notebook(source_notebook_path)
 
         cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
@@ -415,7 +410,6 @@ class NotebookDef:
 
     def load_i18n_source(self, i18n_resources_dir):
         import os
-        from dbacademy_courseware.dbbuild import BuildConfig
 
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
@@ -469,8 +463,6 @@ class NotebookDef:
         return guid, value
 
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
-        from dbacademy.dbrest import DBAcademyRestClient
-
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
         assert type(i18n_resources_dir) == str, f"""Expected the parameter "resources_dir" to be of type "str", found "{type(i18n_resources_dir)}" """
@@ -489,13 +481,11 @@ class NotebookDef:
         print("=" * 80)
         print(f".../{self.path}")
 
-        client = DBAcademyRestClient()
-
         source_notebook_path = f"{source_dir}/{self.path}"
-        source_info = client.workspace().get_status(source_notebook_path)
+        source_info = self.client.workspace().get_status(source_notebook_path)
         language = source_info["language"].lower()
 
-        raw_source = client.workspace().export_notebook(source_notebook_path)
+        raw_source = self.client.workspace().export_notebook(source_notebook_path)
 
         i18n_source = self.load_i18n_source(i18n_resources_dir)
         i18n_guid_map = self.load_i18n_guid_map(i18n_source)
@@ -692,8 +682,6 @@ class NotebookDef:
             w.write(final_source)
 
     def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
-        from dbacademy.dbrest import DBAcademyRestClient
-
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
@@ -711,10 +699,9 @@ class NotebookDef:
 
         self.assert_no_errors(print_warnings)
 
-        client = DBAcademyRestClient()
         parent_dir = "/".join(target_path.split("/")[0:-1])
-        client.workspace().mkdirs(parent_dir)
-        client.workspace().import_notebook(language.upper(), target_path, final_source)
+        self.client.workspace().mkdirs(parent_dir)
+        self.client.workspace().import_notebook(language.upper(), target_path, final_source)
 
     def clean_todo_cell(self, source_language, command, i):
         new_command = ""

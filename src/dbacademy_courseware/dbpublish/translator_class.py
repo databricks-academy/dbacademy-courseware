@@ -1,3 +1,4 @@
+from typing import Callable, Union, List
 from dbacademy_courseware import validate_type
 
 class Translator:
@@ -27,6 +28,7 @@ class Translator:
         self.target_dir = None
         self.target_repo_url = None
 
+        self.warnings = []
         self._select_i18n_language(build_config.source_repo)
 
     def _select_i18n_language(self, source_repo: str):
@@ -86,3 +88,23 @@ class Translator:
     def clean_target_dir(self):
         from dbacademy_courseware.dbpublish import Publisher
         Publisher.clean_target_dir(self.client, self.target_dir, verbose=True)
+
+    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
+        if assertion is None or not assertion():
+            self.warnings.append(message)
+            return False
+        else:
+            return True
+
+    def load_i18n_source(self, path):
+        import os
+
+        i18n_source_path = f"/Workspace{self.resources_folder}/{path}.md"
+        if os.path.exists(i18n_source_path):
+            with open(f"{i18n_source_path}") as f:
+                source = f.read()
+                source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
+                source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
+                return source
+
+        return None
