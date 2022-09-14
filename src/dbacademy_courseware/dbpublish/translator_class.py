@@ -38,17 +38,14 @@ class Translator:
         self.i18n_language = dbgems.get_dbutils().widgets.get("i18n_language")
         self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
 
-        assert self.i18n_language is None or self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
-
         for notebook in self.notebooks.values():
             notebook.i18n_language = self.i18n_language
 
-        if self.i18n_language is not None:
-            # Include the i18n code in the version.
-            # This hack just happens to work for japanese and korean
-            code = self.i18n_language[0:2].upper()
-            self.version = f"{self.version}-{code}"
-            self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
+        # Include the i18n code in the version.
+        # This hack just happens to work for japanese and korean
+        code = self.i18n_language[0:2].upper()
+        self.version = f"{self.version}-{code}"
+        self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
 
     def reset_repo(self, target_dir: str, target_repo_url: str, branch: str = "published"):
         self.target_dir = validate_type(target_dir, "target_dir", str)
