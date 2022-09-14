@@ -60,7 +60,7 @@ class Translator:
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/ml-in-production-{self.common_language}.git"
 
         print(f"Resetting git repo:")
-        print(f" - Branch: \"{branch}\"")
+        print(f" - Branch: \"{self.branch}\"")
         print(f" - Target: {self.target_dir}")
         print(f" - Source: {self.target_repo_url}")
 
@@ -71,13 +71,13 @@ class Translator:
             self.client.repos().delete(target_repo_id)
 
         # Re-create the repo to progress in testing
-        response = self.client.repos.create(path=self.target_dir, url=target_repo_url)
+        response = self.client.repos.create(path=self.target_dir, url=self.target_repo_url)
         repo_id = response.get("id")
 
-        if response.get("branch") != branch:
-            self.client.repos.update(repo_id=repo_id, branch=branch)
+        if response.get("branch") != self.branch:
+            self.client.repos.update(repo_id=repo_id, branch=self.branch)
 
         results = self.client.repos.get(repo_id)
         current_branch = results.get("branch")
 
-        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
+        assert self.branch == current_branch, f"Expected the new branch to be {self.branch}, found {current_branch}"
