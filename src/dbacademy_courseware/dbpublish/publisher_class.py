@@ -179,12 +179,12 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
-        html = f"""<html><body><div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">Published Version</a></div>"""
+        html = f"""<html><body style="font-size:16px"><div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
             if len(notebook.warnings) > 0:
-                html += f"""<div style="font-size:20px; font-weight:bold; margin-top:1em">{notebook.path}</div>"""
+                html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
             for warning in notebook.warnings:
-                html += f"""<div style="font-size:16px">{warning.message}</div>"""
+                html += f"""<div style="">{warning.message}</div>"""
         html += """</table></body></html>"""
 
         dbgems.display_html(html)
