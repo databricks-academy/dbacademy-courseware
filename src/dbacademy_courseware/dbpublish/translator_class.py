@@ -12,6 +12,7 @@ class Translator:
         # self.source_repo = build_config.source_repo
         self.notebooks = build_config.notebooks
         self.build_name = build_config.build_name
+        self.source_repo = build_config.source_repo
 
         # Defined in select_language
         self.version = None
@@ -28,11 +29,10 @@ class Translator:
 
     def _select_i18n_language(self):
         from dbacademy_gems import dbgems
-        from dbacademy_courseware.dbbuild import BuildConfig
 
         self.resources_folder = f"{self.source_repo}/Resources"
 
-        resources = self.client.workspace().ls(resources_folder)
+        resources = self.client.workspace().ls(self.resources_folder)
         self.language_options = [r.get("path").split("/")[-1] for r in resources if not r.get("path").startswith("english-")]
         self.language_options.sort()
 
