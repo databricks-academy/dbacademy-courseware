@@ -1,5 +1,4 @@
-from typing import Callable
-from typing import Union
+from typing import Callable, Union, List
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -54,8 +53,8 @@ class NotebookDef:
         self.replacements = dict() if replacements is None else replacements
 
         self.include_solution = include_solution
-        self.errors = list()
-        self.warnings = list()
+        self.errors: List[NotebookError] = list()
+        self.warnings: List[NotebookError] = list()
 
         self.test_round = test_round
         self.ignored = ignored
