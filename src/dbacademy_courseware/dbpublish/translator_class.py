@@ -55,10 +55,9 @@ class Translator:
 
     def reset_repo(self, target_repo_url: str, branch: str = "published"):
 
-        target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
-
-        self.target_dir = validate_type(target_dir, "target_dir", str)
-        self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
+        self.branch = branch
+        self.target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
+        self.target_repo_url = f"https://github.com/databricks-academy/ml-in-production-{self.common_language}.git"
 
         print(f"Resetting git repo:")
         print(f" - Branch: \"{branch}\"")
