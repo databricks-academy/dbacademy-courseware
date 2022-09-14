@@ -19,7 +19,11 @@ class Translator:
         self.resources_folder = None
 
         # Defined in rest_repo
-        self.branch = None
+        self.source_branch = None
+        self.source_dir = None
+        self.source_repo_url = None
+
+        self.target_branch = None
         self.target_dir = None
         self.target_repo_url = None
 
@@ -55,31 +59,20 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def reset_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published"):
+    def reset_target_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = "published"):
+        from dbacademy_courseware.dbpublish import Publisher
 
-        self.branch = branch
-        self.target_dir = target_dir or f"/Repos/Working/{self.build_name}-{self.common_language}"
-        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/ml-in-production-{self.common_language}.git"
+        self.source_branch = source_branch
+        self.source_dir = source_dir or f"/Repos/Working/{self.build_name}-english-{self.source_branch}"
+        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
-        print(f"Resetting git repo:")
-        print(f" - Branch: \"{self.branch}\"")
-        print(f" - Target: {self.target_dir}")
-        print(f" - Source: {self.target_repo_url}")
+        Publisher.reset_repo(self.client, self.source_dir, self.source_repo_url, source_branch)
 
-        status = self.client.workspace().get_status(self.target_dir)
+    def reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = "published"):
+        from dbacademy_courseware.dbpublish import Publisher
 
-        if status is not None:
-            target_repo_id = status["object_id"]
-            self.client.repos().delete(target_repo_id)
+        self.target_branch = target_branch
+        self.target_dir = target_dir or f"/Repos/Working/{self.build_name}-{self.common_language}-{self.target_branch}"
+        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        # Re-create the repo to progress in testing
-        response = self.client.repos.create(path=self.target_dir, url=self.target_repo_url)
-        repo_id = response.get("id")
-
-        if response.get("branch") != self.branch:
-            self.client.repos.update(repo_id=repo_id, branch=self.branch)
-
-        results = self.client.repos.get(repo_id)
-        current_branch = results.get("branch")
-
-        assert self.branch == current_branch, f"Expected the new branch to be {self.branch}, found {current_branch}"
+        Publisher.reset_repo(self.client, self.target_dir, self.target_repo_url, target_branch)

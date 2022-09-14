@@ -2,7 +2,6 @@ from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
 from dbacademy_courseware import validate_type
-from dbacademy_courseware import validate_type
 
 
 class Publisher:
@@ -343,3 +342,29 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def get_validator(self):
         from .validator import Validator
         return Validator(self)
+
+    @staticmethod
+    def reset_repo(client, directory, repo_url, branch):
+
+        print(f"Resetting git repo:")
+        print(f" - Branch:  \"{branch}\"")
+        print(f" - Directory: {directory}")
+        print(f" - Repo URL:  {repo_url}")
+
+        status = client.workspace().get_status(directory)
+
+        if status is not None:
+            target_repo_id = status["object_id"]
+            client.repos().delete(target_repo_id)
+
+        # Re-create the repo to progress in testing
+        response = client.repos.create(path=directory, url=repo_url)
+        repo_id = response.get("id")
+
+        if response.get("branch") != branch:
+            client.repos.update(repo_id=repo_id, branch=branch)
+
+        results = client.repos.get(repo_id)
+        current_branch = results.get("branch")
+
+        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
