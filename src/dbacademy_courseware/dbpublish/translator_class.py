@@ -59,7 +59,7 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = "published"):
+    def reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.source_branch = source_branch or f"published-{self.core_version}"
