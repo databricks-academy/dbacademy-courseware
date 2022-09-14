@@ -6,6 +6,7 @@ class BuildConfig:
 
     VERSION_TEST = "Test"
     VERSION_BUILD = "Build"
+    VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST]
 
     CHANGE_LOG_TAG = "## Change Log"
     CHANGE_LOG_VERSION = "### Version "
@@ -253,7 +254,7 @@ class BuildConfig:
         import os
         from datetime import datetime
 
-        if self.version in [BuildConfig.VERSION_TEST, BuildConfig.VERSION_BUILD]:
+        if self.version in BuildConfig.VERSIONS_LIST:
             return  # Implies we have an actual version of the form N.N.N
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
@@ -317,8 +318,8 @@ class BuildConfig:
         assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
 
     def _validate_version(self):
-        if self.version not in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
-            msg = f"The version parameter must be \"{BuildConfig.VERSION_BUILD}\", \"{BuildConfig.VERSION_TEST}\" or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
+        if self.version not in BuildConfig.VERSIONS_LIST:
+            msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
             self.version.split(".")
 
             assert len(self.version.split(".")) == 3, msg

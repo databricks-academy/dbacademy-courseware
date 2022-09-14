@@ -344,7 +344,7 @@ class NotebookDef:
                 # We must confirm that the replacement GUID actually exists
                 missing_msg = f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"
 
-                if self.version in [BuildConfig.VERSION_BUILD, BuildConfig.VERSION_TEST]:
+                if self.version in BuildConfig.VERSIONS_LIST:
                     self.warn(lambda: guid in i18n_guid_map, missing_msg)
                     lines = i18n_guid_map.get(guid).split("\n")
                 elif self.test(lambda: guid in i18n_guid_map, missing_msg):
@@ -421,6 +421,7 @@ class NotebookDef:
 
     def load_i18n_source(self, i18n_resources_dir):
         import os
+        from dbacademy_courseware.dbbuild import BuildConfig
 
         i18n_source_path = f"/Workspace{i18n_resources_dir}/{self.path}.md"
         if os.path.exists(i18n_source_path):
@@ -431,7 +432,10 @@ class NotebookDef:
                 return source
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero or one
-        self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
+        if self.version in BuildConfig.VERSIONS_LIST:
+            self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
+        else:
+            self.test(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
 
         return None
 
