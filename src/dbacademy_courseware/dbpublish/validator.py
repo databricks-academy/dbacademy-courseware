@@ -4,7 +4,9 @@ class Validator:
     from .publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
+        self.i18n = publisher.i18n
         self.common_language = publisher.common_language
+
         self.version = publisher.version
         self.core_version = publisher.core_version
         self.build_name = publisher.build_name
@@ -63,16 +65,16 @@ class Validator:
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
-        if self.common_language is None:
-            target_dir = f"/Repos/Working/{self.build_name}-{branch}"
-            self.reset_repo(branch=branch,
-                            target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
-        else:
+        if self.i18n:
             target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
+        else:
+            target_dir = f"/Repos/Working/{self.build_name}-{branch}"
+            self.reset_repo(branch=branch,
+                            target_dir=target_dir,
+                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
         print()
         self._validate_version_info(version, target_dir)
 

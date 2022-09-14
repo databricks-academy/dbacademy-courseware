@@ -27,6 +27,7 @@ class Publisher:
         self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
         self.target_repo_url = None
 
+        self.i18n = build_config.i18n
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
 
