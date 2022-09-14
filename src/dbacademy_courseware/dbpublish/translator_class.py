@@ -100,11 +100,10 @@ class Translator:
         import os
 
         i18n_source_path = f"/Workspace{self.resources_folder}/{path}.md"
-        if os.path.exists(i18n_source_path):
-            with open(f"{i18n_source_path}") as f:
-                source = f.read()
-                source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
-                source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
-                return source
+        assert os.path.exists(i18n_source_path), f"Cannot find {i18n_source_path}"
 
-        return None
+        with open(f"{i18n_source_path}") as f:
+            source = f.read()
+            source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
+            source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
+            return source
