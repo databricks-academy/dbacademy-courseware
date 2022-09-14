@@ -341,7 +341,7 @@ class NotebookDef:
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                if self.test(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                if self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
                     lines = i18n_guid_map.get(guid).split("\n")
 
             if self.build_config.i18n_xml_tag_disabled:
