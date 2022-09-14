@@ -12,11 +12,13 @@ class Translator:
         self.source_repo = build_config.source_repo
         self.notebooks = build_config.notebooks
         self.version = build_config.version
+        self.build_name = build_config.build_name
 
         # Defined in rest_repo
         self.branch = None
         self.target_dir = None
         self.target_repo_url = None
+        self.common_language = None
 
         self._select_i18n_language()
 
@@ -47,7 +49,14 @@ class Translator:
         self.version = f"{self.version}-{code}"
         self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
 
-    def reset_repo(self, target_dir: str, target_repo_url: str, branch: str = "published"):
+        # Include the i18n code in the version.
+        # This hack just happens to work for japanese and korean
+        self.common_language = self.i18n_language.split("-")[0]
+
+    def reset_repo(self, target_repo_url: str, branch: str = "published"):
+
+        target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}"
+
         self.target_dir = validate_type(target_dir, "target_dir", str)
         self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
