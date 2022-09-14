@@ -134,7 +134,8 @@ class Publisher:
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
-        if target_status is not None: self.clean_target_dir()
+        if target_status is not None:
+            Publisher.clean_target_dir(self.client, self.target_dir, verbose)
 
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
@@ -157,15 +158,16 @@ class Publisher:
 
         dbgems.display_html(html)
 
-    def clean_target_dir(self, verbose: bool = False):
-        self.print_if(verbose, "-" * 80)
-        self.print_if(verbose, f"Deleting from {self.target_dir}...")
+    @staticmethod
+    def clean_target_dir(client, target_dir: str, verbose):
+        if verbose: print("-" * 80)
+        if verbose: print(f"Deleting from {target_dir}...")
 
-        keepers = [f"{self.target_dir}/{k}" for k in Publisher.KEEPERS]
+        keepers = [f"{target_dir}/{k}" for k in Publisher.KEEPERS]
 
-        for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
-            self.print_if(verbose, f"...{path}")
-            self.client.workspace().delete_path(path)
+        for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
+            if verbose: print(verbose, f"...{path}")
+            client.workspace().delete_path(path)
 
     def create_published_message(self):
         import urllib.parse
