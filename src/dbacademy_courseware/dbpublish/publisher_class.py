@@ -13,6 +13,8 @@ class Publisher:
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
+    KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
+
     def __init__(self, build_config: BuildConfig):
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
 
@@ -154,7 +156,7 @@ class Publisher:
             self.print_if(verbose, f"Deleting from {self.target_dir}...")
 
             deleted = []
-            keepers = [f"{self.target_dir}/{k}" for k in [".gitignore", "README.md", "LICENSE", "docs"]]
+            keepers = [f"{self.target_dir}/{k}" for k in Publisher.KEEPERS]
 
             for path in [p.get("path") for p in self.client.workspace.ls(self.target_dir) if p.get("path") not in keepers]:
                 deleted.append(path)
@@ -350,6 +352,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         print(f" - Branch:  \"{branch}\"")
         print(f" - Directory: {directory}")
         print(f" - Repo URL:  {repo_url}")
+        print()
 
         status = client.workspace().get_status(directory)
 
