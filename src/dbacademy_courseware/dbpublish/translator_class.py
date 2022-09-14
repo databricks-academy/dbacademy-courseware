@@ -59,14 +59,14 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def reset_target_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = "published"):
+    def reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = "published"):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.source_branch = source_branch
         self.source_dir = source_dir or f"/Repos/Working/{self.build_name}-english-{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
-        Publisher.reset_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
+        Publisher.reset_git_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
 
     def reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = "published"):
         from dbacademy_courseware.dbpublish import Publisher
@@ -75,4 +75,4 @@ class Translator:
         self.target_dir = target_dir or f"/Repos/Working/{self.build_name}-{self.common_language}-{self.target_branch}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        Publisher.reset_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
+        Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)

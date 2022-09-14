@@ -344,7 +344,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         return Validator(self)
 
     @staticmethod
-    def reset_repo(client, directory, repo_url, branch):
+    def reset_git_repo(client, directory, repo_url, branch):
 
         print(f"Resetting git repo:")
         print(f" - Branch:  \"{branch}\"")
