@@ -7,7 +7,8 @@ class BuildConfig:
 
     VERSION_TEST = "Test"
     VERSION_BUILD = "Build"
-    VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST]
+    VERSION_TRANSLATION = "Translation"
+    VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
 
     CHANGE_LOG_TAG = "## Change Log"
     CHANGE_LOG_VERSION = "### Version "
