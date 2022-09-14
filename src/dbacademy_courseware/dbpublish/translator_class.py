@@ -76,3 +76,9 @@ class Translator:
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
+
+    def validate(self):
+        print(f"version:          {self.version}")
+        print(f"core_version:     {self.core_version}")
+        print(f"common_language:  {self.common_language}")
+        print(f"resources_folder: {self.resources_folder}")
