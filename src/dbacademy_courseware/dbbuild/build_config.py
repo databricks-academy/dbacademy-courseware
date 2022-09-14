@@ -256,7 +256,6 @@ class BuildConfig:
         if self.version in [BuildConfig.VERSION_TEST, BuildConfig.VERSION_BUILD]:
             return  # Implies we have an actual version of the form N.N.N
         elif self.i18n_language is not None:
-            print(f"Not validating README.md file for course translation: {self.i18n_language}")
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
         readme_path = f"/Workspace/{self.source_repo}/README.md"
