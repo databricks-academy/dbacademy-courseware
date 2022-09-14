@@ -28,6 +28,7 @@ class Translator:
         self.target_dir = None
         self.target_repo_url = None
 
+        self.errors = []
         self.warnings = []
         self._select_i18n_language(build_config.source_repo)
 
@@ -89,6 +90,13 @@ class Translator:
         from dbacademy_courseware.dbpublish import Publisher
         Publisher.clean_target_dir(self.client, self.target_dir, verbose=True)
 
+    def test(self, assertion: Callable[[], bool], message: str) -> bool:
+        if assertion is None or not assertion():
+            self.errors.append(message)
+            return False
+        else:
+            return True
+
     def warn(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(message)
@@ -110,3 +118,25 @@ class Translator:
             source = source.replace("<hr />\n--i18n-", "<hr>--i18n-")
             source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
             return source
+
+    def load_i18n_guid_map(self, path: str, i18n_source: str):
+        import re
+        from dbacademy_courseware.dbpublish import NotebookDef
+
+        if i18n_source is None:
+            return dict()
+
+        i18n_guid_map = dict()
+
+        # parts = re.split(r"^<hr>--i18n-", i18n_source, flags=re.MULTILINE)
+        parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
+
+        name = parts[0].strip()[3:]
+        self.test(lambda: name == path, f"Expected the notebook \"{path}\" but found\n                      \"{name}\"")
+
+        for part in parts[1:]:
+            guid, value = NotebookDef.parse_guid_and_value(part)
+
+            i18n_guid_map[guid] = value
+
+        return i18n_guid_map
