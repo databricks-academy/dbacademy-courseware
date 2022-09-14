@@ -99,7 +99,7 @@ class Translator:
     def load_i18n_source(self, path):
         import os
 
-        i18n_source_path = f"/Workspace{self.resources_folder}/{path}.md"
+        i18n_source_path = f"/Workspace{self.resources_folder}/{self.i18n_language}/{path}.md"
         assert os.path.exists(i18n_source_path), f"Cannot find {i18n_source_path}"
 
         with open(f"{i18n_source_path}") as f:
