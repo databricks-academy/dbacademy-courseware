@@ -193,7 +193,7 @@ class Translator:
                     lines.extend(i18n_guid_map[guid].split("\n"))         # Convert to a set of lines and append
                     cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
                     new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
-                    new_commands.append(new_command)                      # Append the new command to set of commands
+                    new_commands.append(new_command.strip())                      # Append the new command to set of commands
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
