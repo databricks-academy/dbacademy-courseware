@@ -179,7 +179,7 @@ class Translator:
                 guid, line_zero = self._extract_i18n_guid(command)
                 if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
                 else:
-                    assert guid in i18n_guid_map                          # Make sure that the GUID exists in the map
+                    assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
                     lines = [line_zero]                                   # The first line doesn't exist in the guid map
                     lines.extend(i18n_guid_map[guid].split("\n"))         # Convert to a set of lines and append
                     cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
