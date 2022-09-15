@@ -118,6 +118,7 @@ class Translator:
 
         name = parts[0].strip()[3:]
         if not path.startswith("Includes/"):
+            print(path)
             path = path[10:] if path.startswith("Solutions/") else path
             assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
 
