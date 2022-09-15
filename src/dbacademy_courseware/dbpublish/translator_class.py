@@ -137,6 +137,8 @@ class Translator:
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
 
         for file in source_files:
+            if file.startswith("Includes/"): continue
+
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
 
