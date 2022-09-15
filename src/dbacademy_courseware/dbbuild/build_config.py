@@ -229,7 +229,7 @@ class BuildConfig:
                                                    ignoring=self.ignoring,
                                                    version=self.version)
 
-            if has_wip: print()
+        if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
         if validate_version: self._validate_version()
