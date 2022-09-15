@@ -117,6 +117,7 @@ class Translator:
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
+        path = path[10:] if path.startswith("Solutions/") else path
         assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
 
         for part in parts[1:]:
