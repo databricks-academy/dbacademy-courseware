@@ -204,10 +204,11 @@ class Translator:
     def _extract_i18n_guid(self, command):
         line_zero = command.strip().split("\n")[0]
 
-        pos_a = line_zero.find("<i18n value=\"")
+        prefix = "<i18n value=\""
+        pos_a = line_zero.find(prefix)
         if pos_a == -1:
             return None, line_zero
 
         pos_b = line_zero.find("/>")
-        guid = f"--i18n-{command[pos_a + 13:pos_b - 1]}"
+        guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
         return guid, line_zero
