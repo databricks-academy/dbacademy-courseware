@@ -62,7 +62,7 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
+    def _reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.source_branch = source_branch or f"published-{self.core_version}"
@@ -71,7 +71,7 @@ class Translator:
 
         Publisher.reset_git_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
 
-    def reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
+    def _reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.target_branch = target_branch or "published"
@@ -81,26 +81,14 @@ class Translator:
         Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
 
     def validate(self):
+        self._reset_source_repo()
+        self._reset_target_repo()
         print(f"version:          {self.version}")
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
 
-    def test(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.errors.append(message)
-            return False
-        else:
-            return True
-
-    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.warnings.append(message)
-            return False
-        else:
-            return True
-
-    def load_i18n_source(self, path):
+    def _load_i18n_source(self, path):
         import os
 
         if path.startswith("Solutions/"): path = path[10:]
@@ -115,7 +103,8 @@ class Translator:
             source = source.replace("<hr sandbox />\n--i18n-", "<hr sandbox>--i18n-")
             return source
 
-    def load_i18n_guid_map(self, path: str, i18n_source: str):
+    @staticmethod
+    def _load_i18n_guid_map(path: str, i18n_source: str):
         import re
         from dbacademy_courseware.dbpublish import NotebookDef
 
@@ -128,7 +117,7 @@ class Translator:
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
-        self.test(lambda: name == path, f"Expected the notebook \"{path}\" but found\n                      \"{name}\"")
+        assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
 
         for part in parts[1:]:
             guid, value = NotebookDef.parse_guid_and_value(part)
@@ -141,18 +130,14 @@ class Translator:
         from datetime import datetime
         from dbacademy_courseware.dbpublish import Publisher, NotebookDef
 
-        self.reset_source_repo()
-        self.reset_target_repo()
-        self.validate()
-        print()
         Publisher.clean_target_dir(self.client, self.target_dir, verbose=False)
 
         prefix = len(self.source_dir) + 1
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
 
         for file in source_files:
-            source = self.load_i18n_source(file)
-            i18n_guid_map = self.load_i18n_guid_map(file, source)
+            source = self._load_i18n_source(file)
+            i18n_guid_map = self._load_i18n_guid_map(file, source)
 
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
