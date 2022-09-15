@@ -191,6 +191,7 @@ class BuildConfig:
 
         entities.sort(key=lambda e: e["path"])
 
+        has_wip = False
         for i in range(len(entities)):
             entity = entities[i]
             order = i       # Start with the natural order
@@ -212,6 +213,7 @@ class BuildConfig:
                 include_solution = False  # Exclude from the solutions folder
 
             if "wip" in path.lower():
+                has_wip = True
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
                 # Add our notebook to the set of notebooks to be tested.
@@ -226,6 +228,8 @@ class BuildConfig:
                                                    i18n_language=self.i18n_language,
                                                    ignoring=self.ignoring,
                                                    version=self.version)
+
+            if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
         if validate_version: self._validate_version()
