@@ -117,8 +117,9 @@ class Translator:
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
-        path = path[10:] if path.startswith("Solutions/") else path
-        assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
+        if not path.startswith("Includes/"):
+            path = path[10:] if path.startswith("Solutions/") else path
+            assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
 
         for part in parts[1:]:
             guid, value = NotebookDef.parse_guid_and_value(part)
@@ -137,8 +138,6 @@ class Translator:
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
 
         for file in source_files:
-            if file.startswith("Includes/"): continue
-
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
 
