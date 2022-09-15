@@ -172,11 +172,19 @@ class Translator:
             header = raw_lines.pop(0)
             source = "\n".join(raw_lines)
 
+            if file.startswith("Includes/"):
+                # Write the original notebook to the target directory
+                self.client.workspace.import_notebook(language=language.upper(),
+                                                      notebook_path=target_notebook_path,
+                                                      content=raw_source,
+                                                      overwrite=True)
+                continue
+
             commands = source.split(cmd_delim)
             new_commands = [commands.pop(0)]
 
             for i, command in enumerate(commands):
-                guid, line_zero = self._extract_i18n_guid(command)
+                guid, line_zero = Translator._extract_i18n_guid(command)
                 if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
@@ -201,7 +209,8 @@ class Translator:
                                                   overwrite=True)
         print("All done!")
 
-    def _extract_i18n_guid(self, command):
+    @staticmethod
+    def _extract_i18n_guid(command):
         line_zero = command.strip().split("\n")[0]
 
         prefix = "<i18n value=\""
