@@ -797,8 +797,9 @@ class NotebookDef:
         else:
             raise ValueError(f"The language {language} is not supported.")
 
-    def get_cmd_delim(self, language):
-        marker = self.get_comment_marker(language)
+    @staticmethod
+    def get_cmd_delim(language):
+        marker = NotebookDef.get_comment_marker(language)
         return f"\n{marker} COMMAND ----------\n"
 
     def get_leading_comments(self, language, command) -> list:
