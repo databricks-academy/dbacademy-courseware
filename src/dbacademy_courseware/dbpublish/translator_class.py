@@ -56,7 +56,7 @@ class Translator:
         # This hack just happens to work for japanese and korean
         code = self.i18n_language[0:2].upper()
         self.common_language, self.core_version = self.i18n_language.split("-")
-        self.version = f"{self.core_version}-{code}"
+        self.version = f"{self.core_version[1:]}-{code}"
 
         # Include the i18n code in the version.
         # This hack just happens to work for japanese and korean
