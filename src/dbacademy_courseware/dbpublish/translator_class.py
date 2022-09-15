@@ -1,4 +1,4 @@
-from typing import Callable, Union, List
+from typing import Callable
 from dbacademy_courseware import validate_type
 
 class Translator:
@@ -86,10 +86,6 @@ class Translator:
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
 
-    def clean_target_dir(self):
-        from dbacademy_courseware.dbpublish import Publisher
-        Publisher.clean_target_dir(self.client, self.target_dir, verbose=True)
-
     def test(self, assertion: Callable[[], bool], message: str) -> bool:
         if assertion is None or not assertion():
             self.errors.append(message)
@@ -140,3 +136,70 @@ class Translator:
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
+
+    def publish(self):
+        from datetime import datetime
+        from dbacademy_courseware.dbpublish import Publisher, NotebookDef
+
+        self.reset_source_repo()
+        self.reset_target_repo()
+        self.validate()
+        print()
+        Publisher.clean_target_dir(self.client, self.target_dir, verbose=False)
+
+        prefix = len(self.source_dir) + 1
+        source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
+
+        for file in source_files:
+            source = self.load_i18n_source(file)
+            i18n_guid_map = self.load_i18n_guid_map(file, source)
+
+            source_notebook_path = f"{self.source_dir}/{file}"
+            target_notebook_path = f"{self.target_dir}/{file}"
+
+            source_info = self.client.workspace().get_status(source_notebook_path)
+            language = source_info["language"].lower()
+            cmd_delim = NotebookDef.get_cmd_delim(language)
+            cm = NotebookDef.get_comment_marker(language)
+
+            raw_source = self.client.workspace().export_notebook(source_notebook_path)
+            raw_lines = raw_source.split("\n")
+            header = raw_lines.pop(0)
+            source = "\n".join(raw_lines)
+
+            commands = source.split(cmd_delim)
+            new_commands = [commands.pop(0)]
+
+            for i, command in enumerate(commands):
+                command = command.strip()
+                line_zero = command.split("\n")[0]
+
+                pos_a = line_zero.find("<i18n value=\"")
+                if pos_a == -1:
+                    new_commands.append(command)
+                    continue
+
+                pos_b = line_zero.find("/>")
+                guid = f"--i18n-{command[pos_a + 13:pos_b - 1]}"
+                assert guid in i18n_guid_map
+
+                lines = [f"{cm} MAGIC {line}" for line in i18n_guid_map[guid].split("\n")]
+                lines.insert(0, line_zero)
+                new_command = "\n".join(lines)
+                new_commands.append(new_command)
+
+            new_source = f"{header}\n"
+            new_source += f"\n{cmd_delim}\n".join(new_commands)
+
+            new_source = new_source.replace("{{version_number}}", self.version)
+
+            built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+            new_source = new_source.replace("{{built_on}}", built_on)
+
+            target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
+
+            self.client.workspace.mkdirs(target_notebook_dir)
+            self.client.workspace.import_notebook(language=language.upper(),
+                                                  notebook_path=target_notebook_path,
+                                                  content=new_source,
+                                                  overwrite=True)
