@@ -184,6 +184,7 @@ class Translator:
             new_commands = [commands.pop(0)]
 
             for i, command in enumerate(commands):
+                command = command.strip()
                 guid, line_zero = Translator._extract_i18n_guid(command)
                 if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
                 else:
