@@ -66,7 +66,7 @@ class Translator:
     def _reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
-        self.source_branch = source_branch or f"published-{self.core_version}"
+        self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Working/{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
