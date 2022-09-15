@@ -38,7 +38,8 @@ class Translator:
         self.resources_folder = f"{source_repo}/Resources"
 
         resources = self.client.workspace().ls(self.resources_folder)
-        self.language_options = [r.get("path").split("/")[-1] for r in resources if not r.get("path").startswith("english-")]
+        self.language_options = [r.get("path").split("/")[-1] for r in resources]
+        self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
 
         dbgems.get_dbutils().widgets.dropdown("i18n_language",
@@ -133,15 +134,31 @@ class Translator:
         from datetime import datetime
         from dbacademy_courseware.dbpublish import Publisher, NotebookDef
 
+        print(f"Publishing translated version of {self.build_name}, {self.version}")
+        print(f"...Removing files from target directories")
         Publisher.clean_target_dir(self.client, self.target_dir, verbose=False)
 
         prefix = len(self.source_dir) + 1
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
+        print(f"...Processing {len(source_files)} files:")
+
+        # We have to first create the directory before writing to it.
+        # Processing them first, once and only once, avoids duplicate REST calls.
+        print(f"...Pre-creating directory structures")
+        processed_directory = []
+        for file in source_files:
+            target_notebook_path = f"{self.target_dir}/{file}"
+            if target_notebook_path not in processed_directory:
+                processed_directory.append(target_notebook_path)
+                target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
+                self.client.workspace.mkdirs(target_notebook_dir)
 
         for file in source_files:
+            print(f"   /{file}")
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
 
+            # Compute the source and target directories
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
 
@@ -159,35 +176,38 @@ class Translator:
             new_commands = [commands.pop(0)]
 
             for i, command in enumerate(commands):
-                command = command.strip()
-                line_zero = command.split("\n")[0]
+                guid, line_zero = self._extract_i18n_guid(command)
+                if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
+                else:
+                    assert guid in i18n_guid_map                          # Make sure that the GUID exists in the map
+                    lines = [line_zero]                                   # The first line doesn't exist in the guid map
+                    lines.extend(i18n_guid_map[guid].split("\n"))         # Convert to a set of lines and append
+                    cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
+                    new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
+                    new_commands.append(new_command)                      # Append the new command to set of commands
 
-                pos_a = line_zero.find("<i18n value=\"")
-                if pos_a == -1:
-                    new_commands.append(command)
-                    continue
+            new_source = f"{header}\n"                           # Add the Databricks Notebook Header
+            new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
 
-                pos_b = line_zero.find("/>")
-                guid = f"--i18n-{command[pos_a + 13:pos_b - 1]}"
-                assert guid in i18n_guid_map
-
-                lines = [f"{cm} MAGIC {line}" for line in i18n_guid_map[guid].split("\n")]
-                lines.insert(0, line_zero)
-                new_command = "\n".join(lines)
-                new_commands.append(new_command)
-
-            new_source = f"{header}\n"
-            new_source += f"\n{cmd_delim}\n".join(new_commands)
-
-            new_source = new_source.replace("{{version_number}}", self.version)
-
+            # Update the built_on and version_number - typically only found in the Version Info notebook.
             built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
             new_source = new_source.replace("{{built_on}}", built_on)
+            new_source = new_source.replace("{{version_number}}", self.version)
 
-            target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
-
-            self.client.workspace.mkdirs(target_notebook_dir)
+            # Write the new notebook to the target directory
             self.client.workspace.import_notebook(language=language.upper(),
                                                   notebook_path=target_notebook_path,
                                                   content=new_source,
                                                   overwrite=True)
+        print("All done!")
+
+    def _extract_i18n_guid(self, command):
+        line_zero = command.strip().split("\n")[0]
+
+        pos_a = line_zero.find("<i18n value=\"")
+        if pos_a == -1:
+            return None, line_zero
+
+        pos_b = line_zero.find("/>")
+        guid = f"--i18n-{command[pos_a + 13:pos_b - 1]}"
+        return guid, line_zero
