@@ -164,6 +164,7 @@ class NotebookDef:
 
         if url in command:
             name = url.split("/")[-1]
+            assert "@" not in name, f"Cannot publish with libraries that specify a specific branch or version, found \"{name}\"."
             commit_id = NotebookDef.get_latest_commit_id(name)
             command = command.replace(url, f"{url}@{commit_id}")
 
