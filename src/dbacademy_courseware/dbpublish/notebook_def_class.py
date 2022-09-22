@@ -159,15 +159,14 @@ class NotebookDef:
 
         return response.json().get("sha")
 
-    @staticmethod
-    def update_git_commit(command: str, url: str) -> str:
+    def update_git_commit(self, command: str, url: str) -> str:
 
         if url in command:
             name = url.split("/")[-1]
             commit_id = NotebookDef.get_latest_commit_id(name)
             new_url = f"{url}@{commit_id}"
             command = command.replace(url, new_url)
-            assert f"{new_url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version (see full stack trace for more information)...\n{command}"
+            self.test(lambda: f"{new_url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version (see full stack trace for more information)...\n{command}")
 
         return command
 
