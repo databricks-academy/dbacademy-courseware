@@ -163,9 +163,9 @@ class NotebookDef:
         from dbacademy_courseware.dbbuild import BuildConfig
         if url in command:
             if self.version in BuildConfig.VERSIONS_LIST:
-                self.warn(lambda: f"{url}@" not in command, f"Building with named branch, not head - this will prevent publishing:\n{command}")
+                self.warn(lambda: f"{url}@" not in command, f"Building with named branch, not head - this will prevent publishing: {url}\n{command}")
             else:
-                self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version ():\n{command}")
+                self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version {url}:\n{command}")
 
             if f"{url}@" not in command:
                 name = url.split("/")[-1]
