@@ -167,7 +167,7 @@ class NotebookDef:
             else:
                 self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version ():\n{command}")
 
-            if f"{url}@" in command:
+            if f"{url}@" not in command:
                 name = url.split("/")[-1]
                 commit_id = NotebookDef.get_latest_commit_id(name)
                 new_url = f"{url}@{commit_id}"
