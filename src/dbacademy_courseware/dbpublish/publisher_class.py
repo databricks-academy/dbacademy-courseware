@@ -224,9 +224,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
 
         if "target_url" in kwargs:
-            print("-"*80)
-            print(f"*** WARNING: The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
-            print("-"*80)
+            print(f"*** WARNING "+("*")*68)
+            print(f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
+            print("*"*80)
             print()
             target_repo_url = kwargs.get("target_url")
 
