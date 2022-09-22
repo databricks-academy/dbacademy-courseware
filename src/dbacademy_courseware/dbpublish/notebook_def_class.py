@@ -162,17 +162,16 @@ class NotebookDef:
     def update_git_commit(self, command: str, url: str) -> str:
         from dbacademy_courseware.dbbuild import BuildConfig
         if url in command:
-            msg = f"Cannot publish with libraries that specify a specific branch or version ():\n{command}"
             if self.version in BuildConfig.VERSIONS_LIST:
-                self.warn(lambda: f"{url}@" not in command, msg)
+                self.warn(lambda: f"{url}@" not in command, f"Building with named branch, not head - this will prevent publishing:\n{command}")
             else:
-                self.test(lambda: f"{url}@" not in command, msg)
+                self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version ():\n{command}")
 
-
-            name = url.split("/")[-1]
-            commit_id = NotebookDef.get_latest_commit_id(name)
-            new_url = f"{url}@{commit_id}"
-            command = command.replace(url, new_url)
+            if f"{url}@" in command:
+                name = url.split("/")[-1]
+                commit_id = NotebookDef.get_latest_commit_id(name)
+                new_url = f"{url}@{commit_id}"
+                command = command.replace(url, new_url)
 
         return command
 
