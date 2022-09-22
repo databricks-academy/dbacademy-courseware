@@ -162,11 +162,12 @@ class NotebookDef:
     def update_git_commit(self, command: str, url: str) -> str:
 
         if url in command:
+            self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version:\n{command}")
+
             name = url.split("/")[-1]
             commit_id = NotebookDef.get_latest_commit_id(name)
             new_url = f"{url}@{commit_id}"
             command = command.replace(url, new_url)
-            self.test(lambda: f"{new_url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version (see full stack trace for more information)...\n{command}")
 
         return command
 
