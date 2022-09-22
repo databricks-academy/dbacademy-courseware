@@ -1,6 +1,7 @@
 import unittest
 import typing
 from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef, NotebookError
+from deprecated.classic import deprecated
 
 class MyTestCase(unittest.TestCase):
 
@@ -26,15 +27,30 @@ class MyTestCase(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        return NotebookDef(path="Agenda",
+        from dbacademy_courseware.dbbuild import BuildConfig
+        version = "1.2.3"
+        config = {
+            "name": "Unit Test"
+        }
+        build_config = BuildConfig.load_config(config, version)
+        return NotebookDef(build_config=build_config,
+                           path="Agenda",
                            replacements={},
                            include_solution=False,
                            test_round=2,
                            ignored=False,
                            order=0,
                            i18n=True,
+                           i18n_language="English",
                            ignoring=[],
-                           i18n_language="English")
+                           version=version)
+
+    @deprecated(reason="Just because")
+    def dummy(self, arg_1, arg_2, *args, **kwargs):
+        pass
+
+    def test_dummy(self):
+        self.dummy("apples", "blue", "red", happy=True)
 
     def test_test_pip_cells_pinned(self):
         command = r"""
