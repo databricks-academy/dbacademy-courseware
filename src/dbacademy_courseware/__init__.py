@@ -57,6 +57,7 @@ def validate_type(actual_value, name, expected_type):
 
 def print_deprecated_msg(msg):
     title = "DEPRECATION WARNING"
+    print()
     print(f"*** {title} " + ("*"*(80-len(title)-5)))
     for line in msg.split("\n"):
         print(f"* {line}")

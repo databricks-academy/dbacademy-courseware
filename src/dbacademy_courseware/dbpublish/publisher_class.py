@@ -99,6 +99,9 @@ class Publisher:
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
+        if "mode" in kwargs:
+            print_deprecated_msg("The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
+
         found_version_info = False
         main_notebooks: List[NotebookDef] = []
 
