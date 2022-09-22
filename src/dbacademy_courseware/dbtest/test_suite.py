@@ -18,6 +18,7 @@ class TestInstance:
 
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
+    from deprecated.classic import deprecated
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
@@ -70,7 +71,11 @@ class TestSuite:
 
         return job_names
 
+    @deprecated("Use reset() instead")
     def reset_test_suite(self):
+        self.reset()
+
+    def reset(self):
         # Delete all jobs, even those that were successful
         self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=False)
         print()
