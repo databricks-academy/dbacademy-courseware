@@ -1,5 +1,6 @@
 from deprecated.classic import deprecated
 from typing import Type, List, Dict, Union
+from dbacademy_courseware import validate_type
 
 class BuildConfig:
 
@@ -17,73 +18,79 @@ class BuildConfig:
     def load(file: str, *, version: str):
         import json
 
-        assert type(file) == str, f"Expected the parameter \"file\" to be of type str, found {file}."
-        assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
+        validate_type(file, "file", str)
+        validate_type(version, "version", str)
 
         with open(file) as f:
-            config = json.load(f)
+            return BuildConfig.load_config(json.load(f), version)
 
-            configurations = config.get("notebook_config", dict())
-            if "notebook_config" in config: del config["notebook_config"]
+    @staticmethod
+    def load_config(config: dict, version: str):
 
-            publish_only = config.get("publish_only", None)
-            if "publish_only" in config: del config["publish_only"]
+        assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
+        assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
 
-            build_config = BuildConfig(version=version, **config)
+        configurations = config.get("notebook_config", dict())
+        if "notebook_config" in config: del config["notebook_config"]
 
-            def validate_type(key: str, expected_type: Type, actual_value):
-                if expected_type == List[str]:
-                    assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
-                    for item in actual_value:
-                        assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
-                else:
-                    assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+        publish_only = config.get("publish_only", None)
+        if "publish_only" in config: del config["publish_only"]
 
-                return actual_value
+        build_config = BuildConfig(version=version, **config)
 
-            for name in configurations:
-                assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
-                notebook = build_config.notebooks.get(name)
-                notebook_config = configurations.get(name)
+        def validate_type(key: str, expected_type: Type, actual_value):
+            if expected_type == List[str]:
+                assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
+                for item in actual_value:
+                    assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
+            else:
+                assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
 
-                param = "include_solution"
-                if param in notebook_config:
-                    value = validate_type(param, bool, notebook_config.get(param))
-                    notebook.include_solution = value
+            return actual_value
 
-                param = "test_round"
-                if param in notebook_config:
-                    value = validate_type(param, int, notebook_config.get(param))
-                    notebook.test_round = value
+        for name in configurations:
+            assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
+            notebook = build_config.notebooks.get(name)
+            notebook_config = configurations.get(name)
 
-                param = "ignored"
-                if param in notebook_config:
-                    value = validate_type(param, bool, notebook_config.get(param))
-                    notebook.ignored = value
+            param = "include_solution"
+            if param in notebook_config:
+                value = validate_type(param, bool, notebook_config.get(param))
+                notebook.include_solution = value
 
-                param = "order"
-                if param in notebook_config:
-                    value = validate_type(param, int, notebook_config.get(param))
-                    notebook.order = value
+            param = "test_round"
+            if param in notebook_config:
+                value = validate_type(param, int, notebook_config.get(param))
+                notebook.test_round = value
 
-                # param = "replacements"
-                # if param in notebook_config:
-                #     value = validate_type(param, int, notebook_config.get(param))
-                #     notebook.replacements = value
+            param = "ignored"
+            if param in notebook_config:
+                value = validate_type(param, bool, notebook_config.get(param))
+                notebook.ignored = value
 
-                param = "ignored_errors"
-                if param in notebook_config:
-                    value = validate_type(param, List[str], notebook_config.get(param))
-                    notebook.ignoring = value
+            param = "order"
+            if param in notebook_config:
+                value = validate_type(param, int, notebook_config.get(param))
+                notebook.order = value
 
-            if publish_only is not None:
-                build_config.white_list = publish_only.get("white_list", None)
-                assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
+            # param = "replacements"
+            # if param in notebook_config:
+            #     value = validate_type(param, int, notebook_config.get(param))
+            #     notebook.replacements = value
 
-                build_config.black_list = publish_only.get("black_list", None)
-                assert build_config.black_list is not None, "The black_list must be specified when specifying publish_only"
+            param = "ignored_errors"
+            if param in notebook_config:
+                value = validate_type(param, List[str], notebook_config.get(param))
+                notebook.ignoring = value
 
-            return build_config
+        if publish_only is not None:
+            build_config.white_list = publish_only.get("white_list", None)
+            assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
+
+            build_config.black_list = publish_only.get("black_list", None)
+            assert build_config.black_list is not None, "The black_list must be specified when specifying publish_only"
+
+        return build_config
 
     def __init__(self,
                  *,
