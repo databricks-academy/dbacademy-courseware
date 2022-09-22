@@ -54,3 +54,9 @@ def to_job_url(*, job_id: str, run_id: str):
 def validate_type(actual_value, name, expected_type):
     assert type(actual_value) == expected_type, f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
     return actual_value
+
+def print_deprecated_msg(msg):
+    print(f"*** WARNING " + ("*"*68))
+    print(msg)
+    print("*" * 80)
+    print()

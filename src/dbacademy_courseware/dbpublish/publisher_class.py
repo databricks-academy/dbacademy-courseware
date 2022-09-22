@@ -1,7 +1,7 @@
 from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
-from dbacademy_courseware import validate_type
+from dbacademy_courseware import validate_type, print_deprecated_msg
 
 
 class Publisher:
@@ -224,10 +224,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
 
         if "target_url" in kwargs:
-            print(f"*** WARNING "+("*")*68)
-            print(f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
-            print("*"*80)
-            print()
+            print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
 
         self.target_dir = validate_type(target_dir, "target_dir", str)
