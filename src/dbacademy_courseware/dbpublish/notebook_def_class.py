@@ -160,9 +160,14 @@ class NotebookDef:
         return response.json().get("sha")
 
     def update_git_commit(self, command: str, url: str) -> str:
-
+        from dbacademy_courseware.dbbuild import BuildConfig
         if url in command:
-            self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version:\n{command}")
+            msg = f"Cannot publish with libraries that specify a specific branch or version ():\n{command}"
+            if self.version in BuildConfig.VERSIONS_LIST:
+                self.warn(lambda: f"{url}@" not in command, msg)
+            else:
+                self.test(lambda: f"{url}@" not in command, msg)
+
 
             name = url.split("/")[-1]
             commit_id = NotebookDef.get_latest_commit_id(name)
