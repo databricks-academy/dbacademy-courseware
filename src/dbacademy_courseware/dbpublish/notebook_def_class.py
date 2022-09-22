@@ -167,7 +167,7 @@ class NotebookDef:
             commit_id = NotebookDef.get_latest_commit_id(name)
             new_url = f"{url}@{commit_id}"
             command = command.replace(url, new_url)
-            assert f"{new_url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version...\n{command}"
+            assert f"{new_url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version (see full stack trace for more information)...\n{command}"
 
         return command
 
