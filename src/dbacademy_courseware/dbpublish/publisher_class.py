@@ -360,6 +360,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def write_file(self, data, target_file):
         import os, shutil
+        print(f"Writing {target_file}")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
         target_dir = "/".join(target_file.split("/")[:-1])
