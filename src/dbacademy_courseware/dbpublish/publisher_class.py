@@ -240,7 +240,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
+    @deprecated(reason="Use Publisher.configure_target_repo() instead")
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
+        return self.configure_target_repo(target_dir, target_repo_url, branch, **kwargs)
+
+    def configure_target_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
         # Assume for now that we have failed. This overrides the default
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
