@@ -11,6 +11,10 @@ class Publisher:
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig):
+
+        self.__validated = False             # By default, we are not validated
+        self.__validated_repo_reset = True   # By default repo is valid (unless invoked)
+
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
 
         self.client = build_config.client
@@ -96,6 +100,9 @@ class Publisher:
         return True
 
     def publish_notebooks(self, *, verbose=False, debugging=False, **kwargs):
+
+        assert self.validated, f"Cannot publish notebooks until the publisher passes validation."
+
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
@@ -222,9 +229,19 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         print("\nChange Log:")
         for entry in self.build_config.change_log:
             print(f"  {entry}")
+
+        self.__validated = True
         return
 
+    @property
+    def validated(self) -> bool:
+        # Both have to be true to be considered validated.
+        return self.__validated and self.__validated_repo_reset
+
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
+        # Assume for now that we have failed. This overrides the default
+        # of True meaning we have to succeed here to continue
+        self.__validated_repo_reset = False
 
         if "target_url" in kwargs:
             print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
@@ -255,6 +272,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         current_branch = results.get("branch")
 
         assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
+
+        self.__validated_repo_reset = True
 
     def publish_docs(self):
         import os, shutil
