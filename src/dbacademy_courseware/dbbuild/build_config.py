@@ -1,6 +1,5 @@
-from deprecated.classic import deprecated
 from typing import Type, List, Dict, Union
-from dbacademy_courseware import validate_type
+from dbacademy_courseware import validate_type, print_deprecated_msg
 
 
 class BuildConfig:
@@ -420,8 +419,9 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    @deprecated(reason="Moved to Translator utility")
     def select_i18n_language(self):
+        print_deprecated_msg("Corresponding logic has been moved to the class Translator and its related capabilities")
+
         from dbacademy_gems import dbgems
 
         resources_folder = f"{self.source_repo}/Resources"

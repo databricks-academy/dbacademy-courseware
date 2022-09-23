@@ -243,8 +243,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
-    @deprecated(reason="Use Publisher.configure_target_repo() instead")
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
+        print_deprecated_msg("Use Publisher.configure_target_repo() instead")
+
         return self.configure_target_repo(target_dir, target_repo_url, branch, **kwargs)
 
     def configure_target_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
@@ -338,8 +339,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         with ThreadPool(len(self.build_config.notebooks)) as pool:
             pool.map(self._generate_html, self.build_config.notebooks.values())
 
-    @deprecated(reason="Use Publisher.create_dbcs() instead")
     def create_dbc(self):
+        print_deprecated_msg("Use Publisher.create_dbcs() instead")
         return self.create_dbcs()
 
     def create_dbcs(self):

@@ -1,4 +1,5 @@
 import typing
+from dbacademy_courseware import print_deprecated_msg
 
 class ResultsEvaluator:
     def __init__(self, results: typing.List[dict], keep_success):
@@ -18,12 +19,9 @@ class ResultsEvaluator:
     def passed(self) -> bool:
         return len(self.failed_set) == 0
 
-    def to_html(self, print_success_links=None) -> str:
-        if print_success_links is not None:
-            print("*" * 80)
-            print("* DEPRECATION WARNING")
-            print("* print_success_links is no longer supported, initialize TestSuite with keep_success=True instead")
-            print("*" * 80)
+    def to_html(self, **kwargs) -> str:
+        if "print_success_links" in kwargs:
+            print_deprecated_msg("The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
 
         html = "</body>"
         html += self.add_section("Failed", self.failed_set)

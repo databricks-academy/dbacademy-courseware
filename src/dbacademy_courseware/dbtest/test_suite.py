@@ -1,3 +1,5 @@
+from dbacademy_courseware import print_deprecated_msg
+
 class TestInstance:
     def __init__(self, build_config, notebook, test_dir, test_type):
         import hashlib
@@ -71,8 +73,8 @@ class TestSuite:
 
         return job_names
 
-    @deprecated("Use reset() instead")
     def reset_test_suite(self):
+        print_deprecated_msg("Use TestSuite.reset() instead")
         self.reset()
 
     def reset(self):
