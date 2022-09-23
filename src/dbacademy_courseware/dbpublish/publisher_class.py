@@ -1,3 +1,5 @@
+from deprecated.classic import deprecated
+
 from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
@@ -329,26 +331,40 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         with ThreadPool(len(self.build_config.notebooks)) as pool:
             pool.map(self._generate_html, self.build_config.notebooks.values())
 
-    def create_dbc(self, target_file: str = None):
-        import os, shutil
+    @deprecated(reason="Use Publisher.create_dbcs() instead")
+    def create_dbc(self):
+        return self.create_dbcs()
+
+    def create_dbcs(self):
         from dbacademy_gems import dbgems
 
         assert self.validated, f"Cannot create DBC until the publisher passes validation."
 
+        print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
-        target_file = target_file or f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}.dbc"
+        print("Writing DBC to FileStore for download")
+        download_dbc = f"/dbfs/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
+        self.write_file(data, download_dbc)
+
+        print("Writing DBC to distribution system")
+        secure_dbc = f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc"
+        self.write_file(data, secure_dbc)
+
+        url = download_dbc.replace("/dbfs/FileStore/", "/files/")
+        dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
+
+    def write_file(self, data, target_file):
+        import os, shutil
+
         target_file = target_file.replace("dbfs:/", "/dbfs/")
         target_dir = "/".join(target_file.split("/")[:-1])
 
         if os.path.exists(target_dir): shutil.rmtree(target_dir)
         os.mkdir(target_dir)
 
-        with open(target_file, "wb") as f:
-            f.write(data)
-
-        url = target_file.replace("/dbfs/FileStore/", "/files/")
-        dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
+        target_file = f"{self.target_dir}"
+        with open(target_file, "wb") as f: f.write(data)
 
     def get_validator(self):
         from .validator import Validator
