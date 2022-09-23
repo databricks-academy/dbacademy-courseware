@@ -118,6 +118,8 @@ class BuildConfig:
         from dbacademy_gems import dbgems
         from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
 
+        self.__validated = False
+
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
 
@@ -263,6 +265,12 @@ class BuildConfig:
             print(f"notebooks:         {len(self.notebooks)}")
             self._index_notebooks()
 
+        self.__validated = True
+
+    @property
+    def validated(self) -> bool:
+        return self.__validated
+
     def _validate_readme(self):
         import os
         from datetime import datetime
@@ -391,6 +399,8 @@ class BuildConfig:
         return Translator(self)
 
     def to_publisher(self):
+        assert self.validated, f"Cannot publish until the build configuration passes validation."
+
         from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
 
