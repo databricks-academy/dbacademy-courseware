@@ -417,7 +417,7 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    @deprecated("Moved to Translator utility")
+    @deprecated(reason="Moved to Translator utility")
     def select_i18n_language(self):
         from dbacademy_gems import dbgems
 
