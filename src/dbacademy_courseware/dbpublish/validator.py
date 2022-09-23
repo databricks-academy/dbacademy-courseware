@@ -11,7 +11,10 @@ class Validator:
         self.core_version = publisher.core_version
         self.build_name = publisher.build_name
         self.client = publisher.client
+
         self.target_repo_url = publisher.target_repo_url
+        self.temp_repo_dir = publisher.temp_repo_dir
+        self.temp_work_dir = publisher.temp_work_dir
 
     @staticmethod
     def validate_distribution_dbc():
@@ -41,7 +44,7 @@ class Validator:
     def validate_dbc(self, version=None, dbc_url=None):
         version = version or self.version
 
-        dbc_target_dir = f"/Shared/Working/{self.build_name}-v{version}"
+        dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"
 
         name = dbc_url.split("/")[-1]
         print(f"Importing {name}")
@@ -66,12 +69,12 @@ class Validator:
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         if self.i18n:
-            target_dir = f"/Repos/Working/{self.build_name}-{self.common_language}-{branch}"
+            target_dir = f"/{self.temp_repo_dir}/{self.build_name}-{self.common_language}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
         else:
-            target_dir = f"/Repos/Working/{self.build_name}-{branch}"
+            target_dir = f"/{self.temp_repo_dir}/{self.build_name}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")

@@ -2,6 +2,7 @@ from deprecated.classic import deprecated
 from typing import Type, List, Dict, Union
 from dbacademy_courseware import validate_type
 
+
 class BuildConfig:
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
@@ -38,7 +39,7 @@ class BuildConfig:
 
         build_config = BuildConfig(version=version, **config)
 
-        def validate_type(key: str, expected_type: Type, actual_value):
+        def validate_code_type(key: str, expected_type: Type, actual_value):
             if expected_type == List[str]:
                 assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
                 for item in actual_value:
@@ -55,22 +56,22 @@ class BuildConfig:
 
             param = "include_solution"
             if param in notebook_config:
-                value = validate_type(param, bool, notebook_config.get(param))
+                value = validate_code_type(param, bool, notebook_config.get(param))
                 notebook.include_solution = value
 
             param = "test_round"
             if param in notebook_config:
-                value = validate_type(param, int, notebook_config.get(param))
+                value = validate_code_type(param, int, notebook_config.get(param))
                 notebook.test_round = value
 
             param = "ignored"
             if param in notebook_config:
-                value = validate_type(param, bool, notebook_config.get(param))
+                value = validate_code_type(param, bool, notebook_config.get(param))
                 notebook.ignored = value
 
             param = "order"
             if param in notebook_config:
-                value = validate_type(param, int, notebook_config.get(param))
+                value = validate_code_type(param, int, notebook_config.get(param))
                 notebook.order = value
 
             # param = "replacements"
@@ -80,7 +81,7 @@ class BuildConfig:
 
             param = "ignored_errors"
             if param in notebook_config:
-                value = validate_type(param, List[str], notebook_config.get(param))
+                value = validate_code_type(param, List[str], notebook_config.get(param))
                 notebook.ignoring = value
 
         if publish_only is not None:
@@ -119,6 +120,8 @@ class BuildConfig:
         from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
 
         self.__validated = False
+
+        self.username = dbgems.sql("SELECT current_user()").first()[0]
 
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
