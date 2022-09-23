@@ -27,8 +27,9 @@ class Publisher:
         self.source_dir = build_config.source_dir
         self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
         self.target_repo_url = None
-        self.temp_repo_dir = f"/Repos/Temp/{build_config.username}"
+        self.temp_repo_dir = f"/Repos/Temp/"
         self.temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
+        self.username = build_config.username
 
         self.i18n = build_config.i18n
         self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"

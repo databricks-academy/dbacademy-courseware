@@ -15,6 +15,7 @@ class Validator:
         self.target_repo_url = publisher.target_repo_url
         self.temp_repo_dir = publisher.temp_repo_dir
         self.temp_work_dir = publisher.temp_work_dir
+        self.username = publisher.username
 
     @staticmethod
     def validate_distribution_dbc():
@@ -69,12 +70,12 @@ class Validator:
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         if self.i18n:
-            target_dir = f"/{self.temp_repo_dir}/{self.build_name}-{self.common_language}-{branch}"
+            target_dir = f"/{self.temp_repo_dir}/{self.username}-{self.build_name}-{self.common_language}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
         else:
-            target_dir = f"/{self.temp_repo_dir}/{self.build_name}-{branch}"
+            target_dir = f"/{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
