@@ -349,27 +349,35 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         print("Writing DBC to FileStore for download")
         download_dbc = f"/dbfs/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
-        self.write_file(data, download_dbc)
+        self.write_file(data, download_dbc, overwrite=True)
 
         print("Writing DBC to distribution system")
         secured_dbc = f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc"
-        self.write_file(data, secured_dbc)
+        self.write_file(data, secured_dbc, overwrite=False)
 
         url = download_dbc.replace("/dbfs/FileStore/", "/files/")
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
-    def write_file(self, data, target_file):
-        import os, shutil
+    @staticmethod
+    def write_file(data: bytearray, target_file: str, overwrite: bool):
+        import os
         print(f"Writing {target_file}")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
+
+        if os.path.exists(target_file):
+            assert overwrite, f"Cannot overwrite existing file: {target_file}"
+            print(f"Removing existing file: {target_file}")
+            os.remove(target_file)
+
         target_dir = "/".join(target_file.split("/")[:-1])
+        if os.path.exists(target_dir):
+            print(f"Creating missing target directory: {target_dir}")
+            os.mkdir(target_dir)
 
-        if os.path.exists(target_dir): shutil.rmtree(target_dir)
-        os.mkdir(target_dir)
-
-        target_file = f"{self.target_dir}"
-        with open(target_file, "wb") as f: f.write(data)
+        with open(target_file, "wb") as f:
+            print(f"Writing data: {target_file}")
+            f.write(data)
 
     def get_validator(self):
         from .validator import Validator
