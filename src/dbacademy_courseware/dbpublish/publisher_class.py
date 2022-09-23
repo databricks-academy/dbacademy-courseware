@@ -333,6 +333,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         import os, shutil
         from dbacademy_gems import dbgems
 
+        assert self.validated, f"Cannot create DBC until the publisher passes validation."
+
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
         target_file = target_file or f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}.dbc"
