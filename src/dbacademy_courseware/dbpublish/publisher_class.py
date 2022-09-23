@@ -371,7 +371,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 
         if os.path.exists(target_file):
-            assert overwrite, f"Cannot overwrite existing file: {target_file}"
+            # assert overwrite, f"Cannot overwrite existing file: {target_file}"
             # print(f"Removing existing file: {target_file}")
             os.remove(target_file)
 
