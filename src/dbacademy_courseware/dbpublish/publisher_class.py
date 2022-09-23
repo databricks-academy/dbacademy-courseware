@@ -347,21 +347,23 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
-        print("Writing DBC to FileStore for download")
-        download_dbc = f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
-        self.write_file(data, download_dbc, overwrite=True)
+        self.write_file(data=data,
+                        overwrite=True,
+                        target_name="FileStore",
+                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc")
 
-        print("Writing DBC to distribution system")
-        secured_dbc = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc"
-        self.write_file(data, secured_dbc, overwrite=False)
+        self.write_file(data=data,
+                        overwrite=False,
+                        target_name="Distributions",
+                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc")
 
-        url = download_dbc.replace("/dbfs/FileStore/", "/files/")
+        url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     @staticmethod
-    def write_file(data: bytearray, target_file: str, overwrite: bool):
+    def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
         import os
-        print(f"""Writing {target_file}""")
+        print(f"\nWriting DBC to {target_name} system:\n   {target_file}")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 
