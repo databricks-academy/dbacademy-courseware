@@ -391,10 +391,14 @@ class BuildConfig:
                         print("      }")
 
     def to_resource_diff(self):
+        assert self.validated, f"Cannot diff until the build configuration passes validation."
+
         from dbacademy_courseware.dbpublish import ResourceDiff
         return ResourceDiff(self)
 
     def to_translator(self):
+        assert self.validated, f"Cannot translate until the build configuration passes validation."
+
         from dbacademy_courseware.dbpublish import Translator
         return Translator(self)
 
@@ -405,6 +409,8 @@ class BuildConfig:
         return Publisher(self)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+        assert self.validated, f"Cannot test until the build configuration passes validation."
+
         from dbacademy_courseware.dbtest import TestSuite
         return TestSuite(build_config=self,
                          test_dir=self.source_dir,
