@@ -371,7 +371,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             os.remove(target_file)
 
         target_dir = "/".join(target_file.split("/")[:-1])
-        if os.path.exists(target_dir):
+        if not os.path.exists(target_dir):
             print(f"Creating missing target directory: {target_dir}")
             os.mkdir(target_dir)
 
