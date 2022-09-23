@@ -106,7 +106,7 @@ class Publisher:
 
     def publish_notebooks(self, *, verbose=False, debugging=False, **kwargs):
 
-        assert self.validated, f"Cannot publish notebooks until the publisher passes validation."
+        assert self.validated, f"Cannot publish notebooks until the publisher passes validation. See Publisher.validate()"
 
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
@@ -345,7 +345,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def create_dbcs(self):
         from dbacademy_gems import dbgems
 
-        assert self.validated, f"Cannot create DBC until the publisher passes validation."
+        assert self.validated, f"Cannot create DBC until the publisher passes validation. See Publisher.validate()"
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
