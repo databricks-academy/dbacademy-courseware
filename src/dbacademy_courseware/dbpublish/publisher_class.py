@@ -348,11 +348,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
         print("Writing DBC to FileStore for download")
-        download_dbc = f"/dbfs/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
+        download_dbc = f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
         self.write_file(data, download_dbc, overwrite=True)
 
         print("Writing DBC to distribution system")
-        secured_dbc = f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc"
+        secured_dbc = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc"
         self.write_file(data, secured_dbc, overwrite=False)
 
         url = download_dbc.replace("/dbfs/FileStore/", "/files/")
@@ -361,22 +361,22 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     @staticmethod
     def write_file(data: bytearray, target_file: str, overwrite: bool):
         import os
-        print(f"Writing {target_file}")
+        print(f"""Writing {target_file}""")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 
         if os.path.exists(target_file):
             assert overwrite, f"Cannot overwrite existing file: {target_file}"
-            print(f"Removing existing file: {target_file}")
+            # print(f"Removing existing file: {target_file}")
             os.remove(target_file)
 
         target_dir = "/".join(target_file.split("/")[:-1])
         if not os.path.exists(target_dir):
-            print(f"Creating missing target directory: {target_dir}")
+            # print(f"Creating missing target directory: {target_dir}")
             os.mkdir(target_dir)
 
         with open(target_file, "wb") as f:
-            print(f"Writing data: {target_file}")
+            # print(f"Writing data: {target_file}")
             f.write(data)
 
     def get_validator(self):
