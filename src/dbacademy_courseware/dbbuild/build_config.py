@@ -16,6 +16,7 @@ class BuildConfig:
 
     @staticmethod
     def load(file: str, *, version: str):
+        print(f"DEBUGGING: BuildConfig.load()")
         import json
 
         validate_type(file, "file", str)
@@ -26,6 +27,7 @@ class BuildConfig:
 
     @staticmethod
     def load_config(config: dict, version: str):
+        print(f"DEBUGGING: BuildConfig.load_config()")
 
         assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
@@ -39,6 +41,7 @@ class BuildConfig:
         build_config = BuildConfig(version=version, **config)
 
         def validate_code_type(key: str, expected_type: Type, actual_value):
+            print(f"DEBUGGING: BuildConfig.load_config().validate_code_type()")
             if expected_type == List[str]:
                 assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
                 for item in actual_value:
@@ -49,6 +52,7 @@ class BuildConfig:
             return actual_value
 
         for name in configurations:
+            print(f"DEBUGGING: BuildConfig.load_config() configurations: {name}")
             assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
             notebook = build_config.notebooks.get(name)
             notebook_config = configurations.get(name)
@@ -117,6 +121,8 @@ class BuildConfig:
         from dbacademy import dbrest
         from dbacademy_gems import dbgems
         from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
+
+        print(f"DEBUGGING: BuildConfig())")
 
         self.__validated = False
 

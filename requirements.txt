@@ -1,4 +1,5 @@
-requests~=2.27.1
-Deprecated~=1.2.13
+dbx
+pyspark==3.3.*
+requests
 git+https://github.com/databricks-academy/dbacademy-gems
 git+https://github.com/databricks-academy/dbacademy-rest
