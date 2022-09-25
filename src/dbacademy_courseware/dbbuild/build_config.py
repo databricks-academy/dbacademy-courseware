@@ -121,14 +121,16 @@ class BuildConfig:
         from dbacademy_gems import dbgems
         from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
 
-        print(f"DEBUGGING: BuildConfig())")
+        print(f"DEBUGGING: BuildConfig()")
 
         self.__validated = False
+
+        print(f"DEBUGGING: BuildConfig() ... {type(dbgems): type(dbgems)}")
 
         self.username = dbgems.sql("SELECT current_user()").first()[0]
 
         print(f"DEBUGGING: BuildConfig() ... username: {self.username}")
-        
+
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
 
