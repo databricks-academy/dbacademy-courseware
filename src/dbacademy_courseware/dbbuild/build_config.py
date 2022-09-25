@@ -125,7 +125,8 @@ class BuildConfig:
 
         self.__validated = False
 
-        print(f"DEBUGGING: BuildConfig() ... {type(dbgems): type(dbgems)}")
+        print(f"DEBUGGING: BuildConfig() ... type(dbgems): {type(dbgems)}")
+        print(f"DEBUGGING: BuildConfig() ... type(dbgems.spark): {type(dbgems.spark)}")
 
         self.username = dbgems.sql("SELECT current_user()").first()[0]
 
