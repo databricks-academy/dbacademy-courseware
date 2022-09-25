@@ -127,10 +127,11 @@ class BuildConfig:
 
         print(f"DEBUGGING: BuildConfig() ... type(dbgems): {type(dbgems)}")
         print(f"DEBUGGING: BuildConfig() ... type(dbgems.spark): {type(dbgems.spark)}")
+        print(f"DEBUGGING: BuildConfig() ... dbgems.spark: {dbgems.spark}")
 
         result = dbgems.sql("SELECT current_user()")
         print(f"DEBUGGING: BuildConfig() ... result: {type(result)}")
-        
+
         self.username = result.first()[0]
 
         print(f"DEBUGGING: BuildConfig() ... username: {self.username}")
