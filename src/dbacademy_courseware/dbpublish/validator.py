@@ -27,6 +27,8 @@ class Validator:
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
+        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbc\".")
+
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><span style="text-decoration: line-through underline;">Download DBC</span></div></body></html>""")
 
     def validate_git_releases_dbc(self, version=None):
@@ -70,12 +72,12 @@ class Validator:
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         if self.i18n:
-            target_dir = f"/{self.temp_repo_dir}/{self.username}-{self.build_name}-{self.common_language}-{branch}"
+            target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{self.common_language}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
         else:
-            target_dir = f"/{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
+            target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
             self.reset_repo(branch=branch,
                             target_dir=target_dir,
                             target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
