@@ -23,15 +23,9 @@ class Validator:
 
         print("Validating the DBC in DBAcademy's distribution system\n")
 
-        print("NOT-IMPLEMENTED: This is projected to be implemented soon.")
-
-        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbcs"
-        error_message = f"The distribution DBC was not found at \"{target_path}\"."
-        try:
-            files = dbgems.dbutils.fs.ls(target_path)
-            assert len(files) == 1, error_message
-        except:
-            raise AssertionError(error_message)
+        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbc"
+        files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
+        assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><span style="text-decoration: line-through underline;">Download DBC</span></div></body></html>""")
 
