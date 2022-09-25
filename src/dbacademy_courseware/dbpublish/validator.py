@@ -7,6 +7,7 @@ class Validator:
         self.i18n = publisher.i18n
         self.common_language = publisher.common_language
 
+        self.build_name = publisher.build_name
         self.version = publisher.version
         self.core_version = publisher.core_version
         self.build_name = publisher.build_name
@@ -17,18 +18,22 @@ class Validator:
         self.temp_work_dir = publisher.temp_work_dir
         self.username = publisher.username
 
-    @staticmethod
-    def validate_distribution_dbc():
+    def validate_distribution_dbc(self):
+        from dbacademy_gems import dbgems
+
         print("Validating the DBC in DBAcademy's distribution system\n")
 
         print("NOT-IMPLEMENTED: This is projected to be implemented soon.")
 
-        # version = version or self.version
-        #
-        # dbc_url = f"s3://dbacademy-secured/distributions/{self.build_name}/{self.build_name}-v{version}.dbc"
-        #
-        # return self.validate_dbc(version=version,
-        #                          dbc_url=dbc_url)validate_distribution_dbc
+        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbcs"
+        error_message = f"The distribution DBC was not found at \"{target_path}\"."
+        try:
+            files = dbgems.dbutils.fs.ls(target_path)
+            assert len(files) == 1, error_message
+        except:
+            raise AssertionError(error_message)
+
+        dbgems.display_html(f"""<html><body style="font-size:16px"><div><span style="text-decoration: line-through underline;">Download DBC</span></div></body></html>""")
 
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
