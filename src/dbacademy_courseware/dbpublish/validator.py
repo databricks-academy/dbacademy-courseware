@@ -53,6 +53,7 @@ class Validator:
         print(f" - Target: {dbc_target_dir}")
 
         self.client.workspace.delete_path(dbc_target_dir)
+        self.client.workspace.mkdirs(dbc_target_dir)
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
