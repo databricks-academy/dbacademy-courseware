@@ -45,6 +45,7 @@ class Validator:
     def validate_dbc(self, version=None, dbc_url=None):
         version = version or self.version
 
+        self.client.workspace.mkdirs(self.temp_work_dir)
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"
 
         name = dbc_url.split("/")[-1]
@@ -53,7 +54,6 @@ class Validator:
         print(f" - Target: {dbc_target_dir}")
 
         self.client.workspace.delete_path(dbc_target_dir)
-        self.client.workspace.mkdirs(dbc_target_dir)
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
