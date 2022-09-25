@@ -29,7 +29,7 @@ def help_html():
     return html
 
 def get_workspace_url():
-    import dbacademy.dbgems as dbgems
+    from dbacademy_gems import dbgems
 
     workspaces = {
         "3551974319838082": "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082",
