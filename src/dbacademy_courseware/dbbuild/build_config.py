@@ -16,7 +16,6 @@ class BuildConfig:
 
     @staticmethod
     def load(file: str, *, version: str):
-        print(f"DEBUGGING: BuildConfig.load()")
         import json
 
         validate_type(file, "file", str)
@@ -27,7 +26,6 @@ class BuildConfig:
 
     @staticmethod
     def load_config(config: dict, version: str):
-        print(f"DEBUGGING: BuildConfig.load_config()")
 
         assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
@@ -39,6 +37,7 @@ class BuildConfig:
         if "publish_only" in config: del config["publish_only"]
 
         build_config = BuildConfig(version=version, **config)
+        print(f"DEBUGGING: BuildConfig.load_config(): {build_config}")
 
         def validate_code_type(key: str, expected_type: Type, actual_value):
             print(f"DEBUGGING: BuildConfig.load_config().validate_code_type()")
@@ -128,6 +127,8 @@ class BuildConfig:
 
         self.username = dbgems.sql("SELECT current_user()").first()[0]
 
+        print(f"DEBUGGING: BuildConfig() ... username: {self.username}")
+        
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
 
@@ -188,6 +189,7 @@ class BuildConfig:
 
         self.change_log = []
         self.publishing_info = publishing_info or {}
+        print(f"DEBUGGING: BuildConfig() ... END")
 
     # def get_distribution_name(self, version):
     #     distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
@@ -249,6 +251,8 @@ class BuildConfig:
         if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
+        print(f"DEBUGGING: BuildConfig.validate()")
+
         if validate_version: self._validate_version()
         if validate_readme: self._validate_readme()
 
@@ -280,6 +284,7 @@ class BuildConfig:
         return self.__validated
 
     def _validate_readme(self):
+        print(f"DEBUGGING: BuildConfig._validate_readme()")
         import os
         from datetime import datetime
 
@@ -347,6 +352,7 @@ class BuildConfig:
         assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
 
     def _validate_version(self):
+        print(f"DEBUGGING: BuildConfig._validate_version()")
         if self.version not in BuildConfig.VERSIONS_LIST:
             msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
             self.version.split(".")
