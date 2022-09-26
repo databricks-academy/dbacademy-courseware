@@ -171,14 +171,14 @@ class Translator:
         # We have to first create the directory before writing to it.
         # Processing them first, once and only once, avoids duplicate REST calls.
         print(f"...Pre-creating directory structures")
-        # processed_directory = []
-        # for file in source_files:
-        #     target_notebook_path = f"{self.target_dir}/{file}"
-        #     if target_notebook_path not in processed_directory:
-        #         processed_directory.append(target_notebook_path)
-        #         target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
-        #         self.client.workspace.mkdirs(target_notebook_dir)
-        #
+        processed_directory = []
+        for file in source_files:
+            target_notebook_path = f"{self.target_dir}/{file}"
+            if target_notebook_path not in processed_directory:
+                processed_directory.append(target_notebook_path)
+                target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
+                self.client.workspace.mkdirs(target_notebook_dir)
+
         # for file in source_files:
         #     print(f"   /{file}")
         #     source = self._load_i18n_source(file)
