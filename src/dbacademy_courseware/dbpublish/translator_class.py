@@ -249,22 +249,22 @@ class Translator:
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
-        data = self.build_config.client.workspace.export_dbc(self.target_dir)
+        data = self.client.workspace.export_dbc(self.target_dir)
 
         Publisher.write_file(data=data,
                              overwrite=False,
                              target_name="Distributions system (versioned)",
-                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
 
         Publisher.write_file(data=data,
                              overwrite=False,
                              target_name="Distributions system (latest)",
-                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
+                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc")
 
         Publisher.write_file(data=data,
                              overwrite=True,
                              target_name="workspace-local FileStore",
-                             target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+                             target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
 
-        url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
+        url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")

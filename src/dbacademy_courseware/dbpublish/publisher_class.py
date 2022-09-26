@@ -375,6 +375,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
         import os
