@@ -21,13 +21,24 @@ class Validator:
     def validate_distribution_dbc(self):
         from dbacademy_gems import dbgems
 
-        print("Validating the DBC in DBAcademy's distribution system\n")
+        print(f"Validating the DBC in DBAcademy's distribution system (v{self.version})\n")
 
-        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbc"
+        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}.dbc"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbc\".")
+        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}.dbc\".")
+
+        #########################################################
+
+        print(f"Validating the DBC in DBAcademy's distribution system (vLATEST)\n")
+
+        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc"
+        files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
+        assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
+
+        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc\".")
+
 
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
