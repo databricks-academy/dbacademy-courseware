@@ -18,7 +18,11 @@ class Validator:
         self.temp_work_dir = publisher.temp_work_dir
         self.username = publisher.username
 
+    @deprecated(reason="Use Validator.validate_distribution_dbcs() instead")
     def validate_distribution_dbc(self):
+        return self.validate_distribution_dbcs()
+
+    def validate_distribution_dbcs(self):
         from dbacademy_gems import dbgems
 
         print(f"Validating the DBC in DBAcademy's distribution system (v{self.version})\n")
@@ -38,7 +42,6 @@ class Validator:
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
         print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc\".")
-
 
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
