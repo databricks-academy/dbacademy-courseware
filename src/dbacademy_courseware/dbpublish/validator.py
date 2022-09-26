@@ -19,7 +19,7 @@ class Validator:
         self.temp_work_dir = publisher.temp_work_dir
         self.username = publisher.username
 
-    def validate_publishing(self):
+    def validate_publishing_processes(self):
         self.validate_distribution_dbc(as_latest=True)
         print("-" * 80)
         self.validate_distribution_dbc(as_latest=False)
