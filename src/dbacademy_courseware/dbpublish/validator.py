@@ -19,33 +19,33 @@ class Validator:
         self.temp_work_dir = publisher.temp_work_dir
         self.username = publisher.username
 
-    @dbgems.deprecated(reason="Use Validator.validate_distribution_dbcs() instead")
-    def validate_distribution_dbc(self):
-        return self.validate_distribution_dbcs()
+    def validate_publishing(self):
+        self.validate_distribution_dbc(as_latest=True)
+        print("-" * 80)
+        self.validate_distribution_dbc(as_latest=False)
+        print("-" * 80)
+        self.validate_git_releases_dbc()
+        print("-" * 80)
+        self.validate_git_branch("published")
+        print("-" * 80)
+        self.validate_git_branch(f"published-v{self.core_version}")
 
-    def validate_distribution_dbcs(self):
+    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing() instead")
+    def validate_distribution_dbc(self, as_latest: bool):
         from dbacademy_gems import dbgems
 
-        print(f"Validating the DBC in DBAcademy's distribution system (v{self.version})\n")
+        label = "vLatest" if as_latest else self.version
+        file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}.dbc"
 
-        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}.dbc"
+        print(f"\nValidating the DBC in DBAcademy's distribution system ({label})\n")
+
+        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/{file_name}"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}.dbc\".")
+        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
-        #########################################################
-        print(print("-"*80))
-        #########################################################
-
-        print(f"\nValidating the DBC in DBAcademy's distribution system (vLATEST)\n")
-
-        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc"
-        files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
-        assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
-
-        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc\".")
-
+    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing() instead")
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
 
@@ -55,10 +55,10 @@ class Validator:
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
         dbc_url = f"{base_url}/releases/download/v{core_version}/{self.build_name}-v{self.version}.dbc"
 
-        return self.validate_dbc(version=version,
-                                 dbc_url=dbc_url)
+        return self.__validate_dbc(version=version,
+                                   dbc_url=dbc_url)
 
-    def validate_dbc(self, version=None, dbc_url=None):
+    def __validate_dbc(self, version=None, dbc_url=None):
         version = version or self.version
 
         self.client.workspace.mkdirs(self.temp_work_dir)
@@ -73,9 +73,9 @@ class Validator:
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
-        self._validate_version_info(version, dbc_target_dir)
+        self.__validate_version_info(version, dbc_target_dir)
 
-    def _validate_version_info(self, version, dbc_dir):
+    def __validate_version_info(self, version, dbc_dir):
         version = version or self.version
 
         version_info_path = f"{dbc_dir}/Version Info"
@@ -83,23 +83,24 @@ class Validator:
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
         print(f"PASSED: v{version} found in \"{version_info_path}\"")
 
+    @dbgems.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing() instead")
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         if self.i18n:
             target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{self.common_language}-{branch}"
-            self.reset_repo(branch=branch,
-                            target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
+            self.__reset_repo(branch=branch,
+                              target_dir=target_dir,
+                              target_repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git")
         else:
             target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
-            self.reset_repo(branch=branch,
-                            target_dir=target_dir,
-                            target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
+            self.__reset_repo(branch=branch,
+                              target_dir=target_dir,
+                              target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
         print()
-        self._validate_version_info(version, target_dir)
+        self.__validate_version_info(version, target_dir)
 
-    def reset_repo(self, *, target_dir: str, target_repo_url: str, branch: str = "published"):
+    def __reset_repo(self, *, target_dir: str, target_repo_url: str, branch: str = "published"):
         target_dir = validate_type(target_dir, "target_dir", str)
         target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
