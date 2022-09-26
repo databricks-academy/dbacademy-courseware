@@ -361,13 +361,18 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         self.write_file(data=data,
                         overwrite=False,
-                        target_name="Distributions",
-                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/notebooks.dbc")
+                        target_name="Distributions system (versioned)",
+                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}.dbc")
+
+        self.write_file(data=data,
+                        overwrite=False,
+                        target_name="Distributions system (latest)",
+                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
 
         self.write_file(data=data,
                         overwrite=True,
-                        target_name="FileStore",
-                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc")
+                        target_name="workspace-local FileStore",
+                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}.dbc")
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
@@ -375,7 +380,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     @staticmethod
     def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
         import os
-        print(f"\nWriting DBC to {target_name} system:\n   {target_file}")
+        print(f"\nWriting DBC to {target_name}:\n   {target_file}")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 
