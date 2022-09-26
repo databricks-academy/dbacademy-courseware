@@ -9,6 +9,7 @@ class Translator:
 
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
         # Copied from build_config
+        self.username = build_config.username
         self.client = build_config.client
         self.notebooks = build_config.notebooks
         self.build_name = build_config.build_name
@@ -68,7 +69,7 @@ class Translator:
         from dbacademy_courseware.dbpublish import Publisher
 
         self.source_branch = source_branch or f"published-v{self.core_version}"
-        self.source_dir = source_dir or f"/Repos/Working/{self.build_name}-english_{self.source_branch}"
+        self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
         Publisher.reset_git_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
@@ -77,7 +78,7 @@ class Translator:
         from dbacademy_courseware.dbpublish import Publisher
 
         self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Working/{self.build_name}-{self.common_language}-{self.core_version}"
+        self.target_dir = target_dir or f"/Repos/Temp/{self.username}-{self.build_name}-{self.common_language}-{self.core_version}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
