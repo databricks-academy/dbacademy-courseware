@@ -1,4 +1,4 @@
-from typing import Callable
+from dbacademy_gems import dbgems
 from dbacademy_courseware import validate_type
 
 class Translator:
@@ -140,9 +140,23 @@ class Translator:
     def validated(self):
         return self.__validated
 
-    def publish(self):
+    @staticmethod
+    def __extract_i18n_guid(command):
+        line_zero = command.strip().split("\n")[0]
+
+        prefix = "<i18n value=\""
+        pos_a = line_zero.find(prefix)
+        if pos_a == -1:
+            return None, line_zero
+
+        pos_b = line_zero.find("/>")
+        guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
+        return guid, line_zero
+
+    def publish_notebooks(self):
         from datetime import datetime
         from dbacademy_courseware.dbpublish import Publisher, NotebookDef
+        from dbacademy_courseware import get_workspace_url
 
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
@@ -197,7 +211,7 @@ class Translator:
 
             for i, command in enumerate(commands):
                 command = command.strip()
-                guid, line_zero = Translator._extract_i18n_guid(command)
+                guid, line_zero = Translator.__extract_i18n_guid(command)
                 if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
@@ -221,17 +235,9 @@ class Translator:
                                                   notebook_path=target_notebook_path,
                                                   content=new_source,
                                                   overwrite=True)
-        print("All done!")
 
-    @staticmethod
-    def _extract_i18n_guid(command):
-        line_zero = command.strip().split("\n")[0]
+        html = f"""<html><body style="font-size:16px">
+                     <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
+                   </body></html>"""
 
-        prefix = "<i18n value=\""
-        pos_a = line_zero.find(prefix)
-        if pos_a == -1:
-            return None, line_zero
-
-        pos_b = line_zero.find("/>")
-        guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
-        return guid, line_zero
+        dbgems.display_html(html)
