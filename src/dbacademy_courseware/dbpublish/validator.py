@@ -1,3 +1,4 @@
+from dbacademy_gems import dbgems
 from dbacademy_courseware import validate_type
 
 class Validator:
@@ -18,7 +19,7 @@ class Validator:
         self.temp_work_dir = publisher.temp_work_dir
         self.username = publisher.username
 
-    @deprecated(reason="Use Validator.validate_distribution_dbcs() instead")
+    @dbgems.deprecated(reason="Use Validator.validate_distribution_dbcs() instead")
     def validate_distribution_dbc(self):
         return self.validate_distribution_dbcs()
 

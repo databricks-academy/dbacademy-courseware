@@ -1,5 +1,3 @@
-from deprecated.classic import deprecated
-
 from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
