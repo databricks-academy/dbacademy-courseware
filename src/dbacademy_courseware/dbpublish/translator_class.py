@@ -35,6 +35,7 @@ class Translator:
 
     def _select_i18n_language(self, source_repo: str):
         from dbacademy_gems import dbgems
+        print(f"DEBUGGING: _select_i18n_language")
 
         self.resources_folder = f"{source_repo}/Resources"
 
@@ -42,6 +43,8 @@ class Translator:
         self.language_options = [r.get("path").split("/")[-1] for r in resources]
         self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
+
+        print(f"DEBUGGING: {self.language_options}")
 
         dbgems.dbutils.widgets.dropdown("i18n_language",
                                         self.language_options[0],
@@ -65,7 +68,7 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def _reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
+    def __reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.source_branch = source_branch or f"published-v{self.core_version}"
@@ -74,7 +77,7 @@ class Translator:
 
         Publisher.reset_git_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
 
-    def _reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
+    def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
 
         self.target_branch = target_branch or "published"
@@ -84,8 +87,8 @@ class Translator:
         Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
 
     def validate(self):
-        self._reset_source_repo()
-        self._reset_target_repo()
+        self.__reset_source_repo()
+        self.__reset_target_repo()
         print(f"version:          {self.version}")
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
