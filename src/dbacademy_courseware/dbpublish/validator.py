@@ -29,8 +29,6 @@ class Validator:
 
         print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/notebooks.dbc\".")
 
-        dbgems.display_html(f"""<html><body style="font-size:16px"><div><span style="text-decoration: line-through underline;">Download DBC</span></div></body></html>""")
-
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
 
