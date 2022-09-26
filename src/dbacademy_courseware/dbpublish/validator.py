@@ -38,7 +38,7 @@ class Validator:
         from dbacademy_gems import dbgems
 
         label = "vLatest" if as_latest else self.version
-        file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}.dbc"
+        file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
         print(f"\nValidating the DBC in DBAcademy's distribution system ({label})\n")
 
@@ -59,7 +59,7 @@ class Validator:
         core_version = version.split("-")[0]
 
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
-        dbc_url = f"{base_url}/releases/download/v{core_version}/{self.build_name}-v{self.version}.dbc"
+        dbc_url = f"{base_url}/releases/download/v{core_version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
         return self.__validate_dbc(version=version,
                                    dbc_url=dbc_url)

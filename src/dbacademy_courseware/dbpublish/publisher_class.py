@@ -360,7 +360,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.write_file(data=data,
                         overwrite=False,
                         target_name="Distributions system (versioned)",
-                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}.dbc")
+                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         self.write_file(data=data,
                         overwrite=False,
@@ -370,9 +370,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.write_file(data=data,
                         overwrite=True,
                         target_name="workspace-local FileStore",
-                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}.dbc")
+                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
-        url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/notebooks.dbc"
+        url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     @staticmethod
