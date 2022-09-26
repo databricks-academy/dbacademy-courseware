@@ -76,7 +76,11 @@ class Translator:
         self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
-        Publisher.reset_git_repo(self.client, self.source_dir, self.source_repo_url, self.source_branch)
+        Publisher.reset_git_repo(client=self.client,
+                                 directory=self.source_dir,
+                                 repo_url=self.source_repo_url,
+                                 branch=self.source_branch,
+                                 which="source")
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
         from dbacademy_courseware.dbpublish import Publisher
@@ -85,7 +89,11 @@ class Translator:
         self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
+        Publisher.reset_git_repo(client=self.client,
+                                 directory=self.target_dir,
+                                 repo_url=self.target_repo_url,
+                                 branch=self.target_branch,
+                                 which="target")
 
     def validate(self):
         self.__reset_source_repo()

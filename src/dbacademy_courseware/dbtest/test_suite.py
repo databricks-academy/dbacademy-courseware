@@ -20,7 +20,6 @@ class TestInstance:
 
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
-    from deprecated.classic import deprecated
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"

@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Union
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
 from dbacademy_courseware import validate_type, print_deprecated_msg
 
 
 class Publisher:
+    from dbacademy.dbrest import DBAcademyRestClient
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -266,28 +267,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.target_dir = validate_type(target_dir, "target_dir", str)
         self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
-        print(f"Resetting git repo:")
-        print(f" - Branch: \"{branch}\"")
-        print(f" - Target: {self.target_dir}")
-        print(f" - Source: {self.target_repo_url}")
-
-        status = self.client.workspace().get_status(self.target_dir)
-
-        if status is not None:
-            target_repo_id = status["object_id"]
-            self.client.repos().delete(target_repo_id)
-
-        # Re-create the repo to progress in testing
-        response = self.client.repos.create(path=self.target_dir, url=target_repo_url)
-        repo_id = response.get("id")
-
-        if response.get("branch") != branch:
-            self.client.repos.update(repo_id=repo_id, branch=branch)
-
-        results = self.client.repos.get(repo_id)
-        current_branch = results.get("branch")
-
-        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
+        self.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
 
         self.__validated_repo_reset = True
 
@@ -403,10 +383,12 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         return Validator(self)
 
     @staticmethod
-    def reset_git_repo(client, directory, repo_url, branch):
+    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None]):
 
-        print(f"Resetting git repo:")
-        print(f" - Branch:  \"{branch}\"")
+        which = "" if which is None else f" ({which})"
+
+        print(f"Resetting git repo{which}:")
+        print(f" - Branch:   \"{branch}\"")
         print(f" - Directory: {directory}")
         print(f" - Repo URL:  {repo_url}")
         print()
@@ -421,7 +403,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         response = client.repos.create(path=directory, url=repo_url)
         repo_id = response.get("id")
 
-        if response.get("branch") != branch:
+        actual_branch = response.get("branch")
+        if actual_branch != branch:
+            print(f"\n*** Unexpected branch: {actual_branch} ***\n")
             client.repos.update(repo_id=repo_id, branch=branch)
 
         results = client.repos.get(repo_id)

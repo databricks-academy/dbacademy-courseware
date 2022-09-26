@@ -1,5 +1,5 @@
 from dbacademy_gems import dbgems
-from dbacademy_courseware import validate_type
+from typing import Union
 
 class Validator:
     from .publisher_class import Publisher
@@ -26,9 +26,9 @@ class Validator:
         print("-" * 80)
         self.__validate_git_releases_dbc()
         print("-" * 80)
-        self.__validate_git_branch("published")
+        self.__validate_git_branch(branch="published", version=None)
         print("-" * 80)
-        self.__validate_git_branch(f"published-v{self.core_version}")
+        self.__validate_git_branch(branch=f"published-v{self.core_version}", version=None)
 
     @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_distribution_dbc(self, as_latest: bool):
@@ -80,9 +80,9 @@ class Validator:
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
         print()
-        self.__validate_version_info(version, dbc_target_dir)
+        self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
 
-    def __validate_version_info(self, version, dbc_dir):
+    def __validate_version_info(self, *, version: str, dbc_dir: str):
         version = version or self.version
 
         version_info_path = f"{dbc_dir}/Version Info"
@@ -92,42 +92,18 @@ class Validator:
 
     @dbgems.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_branch(self, branch="published", version=None):
-        self.__validate_git_branch(branch, version)
+        self.__validate_git_branch(branch=branch, version=version)
 
-    def __validate_git_branch(self, branch="published", version=None):
+    def __validate_git_branch(self, *, branch: str, version: Union[str, None]):
+        from .publisher_class import Publisher
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
-        self.__reset_repo(branch=branch,
-                          target_dir=target_dir,
-                          target_repo_url=f"https://github.com/databricks-academy/{self.build_name}.git")
+        Publisher.reset_git_repo(client=self.client,
+                                 directory=target_dir,
+                                 repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
+                                 branch=branch,
+                                 which=None)
         print()
-        self.__validate_version_info(version, target_dir)
-
-    def __reset_repo(self, *, target_dir: str, target_repo_url: str, branch: str = "published"):
-        target_dir = validate_type(target_dir, "target_dir", str)
-        target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
-
-        print(f"Resetting git repo:")
-        print(f" - Branch: \"{branch}\"")
-        print(f" - Source: {target_repo_url}")
-        print(f" - Target: {target_dir}")
-
-        status = self.client.workspace().get_status(target_dir)
-
-        if status is not None:
-            target_repo_id = status["object_id"]
-            self.client.repos().delete(target_repo_id)
-
-        # Re-create the repo to progress in testing
-        response = self.client.repos.create(path=target_dir, url=target_repo_url)
-        repo_id = response.get("id")
-
-        if response.get("branch") != branch:
-            self.client.repos.update(repo_id=repo_id, branch=branch)
-
-        results = self.client.repos.get(repo_id)
-        current_branch = results.get("branch")
-
-        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
+        self.__validate_version_info(version=version, dbc_dir=target_dir)
