@@ -30,7 +30,7 @@ class Validator:
         print("-" * 80)
         self.validate_git_branch(f"published-v{self.core_version}")
 
-    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes()() instead")
+    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_distribution_dbc(self, as_latest: bool):
         from dbacademy_gems import dbgems
 
@@ -45,7 +45,7 @@ class Validator:
 
         print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
-    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes()() instead")
+    @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
 
@@ -83,7 +83,7 @@ class Validator:
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
         print(f"PASSED: v{version} found in \"{version_info_path}\"")
 
-    @dbgems.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing_processes()() instead")
+    @dbgems.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_branch(self, branch="published", version=None):
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
