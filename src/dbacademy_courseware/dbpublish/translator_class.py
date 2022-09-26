@@ -171,73 +171,74 @@ class Translator:
         # We have to first create the directory before writing to it.
         # Processing them first, once and only once, avoids duplicate REST calls.
         print(f"...Pre-creating directory structures")
-        processed_directory = []
-        for file in source_files:
-            target_notebook_path = f"{self.target_dir}/{file}"
-            if target_notebook_path not in processed_directory:
-                processed_directory.append(target_notebook_path)
-                target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
-                self.client.workspace.mkdirs(target_notebook_dir)
-
-        for file in source_files:
-            print(f"   /{file}")
-            source = self._load_i18n_source(file)
-            i18n_guid_map = self._load_i18n_guid_map(file, source)
-
-            # Compute the source and target directories
-            source_notebook_path = f"{self.source_dir}/{file}"
-            target_notebook_path = f"{self.target_dir}/{file}"
-
-            source_info = self.client.workspace().get_status(source_notebook_path)
-            language = source_info["language"].lower()
-            cmd_delim = NotebookDef.get_cmd_delim(language)
-            cm = NotebookDef.get_comment_marker(language)
-
-            raw_source = self.client.workspace().export_notebook(source_notebook_path)
-            raw_lines = raw_source.split("\n")
-            header = raw_lines.pop(0)
-            source = "\n".join(raw_lines)
-
-            if file.startswith("Includes/"):
-                # Write the original notebook to the target directory
-                self.client.workspace.import_notebook(language=language.upper(),
-                                                      notebook_path=target_notebook_path,
-                                                      content=raw_source,
-                                                      overwrite=True)
-                continue
-
-            commands = source.split(cmd_delim)
-            new_commands = [commands.pop(0)]
-
-            for i, command in enumerate(commands):
-                command = command.strip()
-                guid, line_zero = Translator.__extract_i18n_guid(command)
-                if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
-                else:
-                    assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
-                    lines = [line_zero]                                   # The first line doesn't exist in the guid map
-                    replacement = i18n_guid_map[guid].strip()             # Get the replacement text for the specified GUID
-                    lines.extend(replacement.split("\n"))                 # Convert to a set of lines and append
-                    cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
-                    new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
-                    new_commands.append(new_command.strip())              # Append the new command to set of commands
-
-            new_source = f"{header}\n"                           # Add the Databricks Notebook Header
-            new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
-
-            # Update the built_on and version_number - typically only found in the Version Info notebook.
-            built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-            new_source = new_source.replace("{{built_on}}", built_on)
-            new_source = new_source.replace("{{version_number}}", self.version)
-
-            # Write the new notebook to the target directory
-            self.client.workspace.import_notebook(language=language.upper(),
-                                                  notebook_path=target_notebook_path,
-                                                  content=new_source,
-                                                  overwrite=True)
-
+        # processed_directory = []
+        # for file in source_files:
+        #     target_notebook_path = f"{self.target_dir}/{file}"
+        #     if target_notebook_path not in processed_directory:
+        #         processed_directory.append(target_notebook_path)
+        #         target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
+        #         self.client.workspace.mkdirs(target_notebook_dir)
+        #
+        # for file in source_files:
+        #     print(f"   /{file}")
+        #     source = self._load_i18n_source(file)
+        #     i18n_guid_map = self._load_i18n_guid_map(file, source)
+        #
+        #     # Compute the source and target directories
+        #     source_notebook_path = f"{self.source_dir}/{file}"
+        #     target_notebook_path = f"{self.target_dir}/{file}"
+        #
+        #     source_info = self.client.workspace().get_status(source_notebook_path)
+        #     language = source_info["language"].lower()
+        #     cmd_delim = NotebookDef.get_cmd_delim(language)
+        #     cm = NotebookDef.get_comment_marker(language)
+        #
+        #     raw_source = self.client.workspace().export_notebook(source_notebook_path)
+        #     raw_lines = raw_source.split("\n")
+        #     header = raw_lines.pop(0)
+        #     source = "\n".join(raw_lines)
+        #
+        #     if file.startswith("Includes/"):
+        #         # Write the original notebook to the target directory
+        #         self.client.workspace.import_notebook(language=language.upper(),
+        #                                               notebook_path=target_notebook_path,
+        #                                               content=raw_source,
+        #                                               overwrite=True)
+        #         continue
+        #
+        #     commands = source.split(cmd_delim)
+        #     new_commands = [commands.pop(0)]
+        #
+        #     for i, command in enumerate(commands):
+        #         command = command.strip()
+        #         guid, line_zero = Translator.__extract_i18n_guid(command)
+        #         if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
+        #         else:
+        #             assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
+        #             lines = [line_zero]                                   # The first line doesn't exist in the guid map
+        #             replacement = i18n_guid_map[guid].strip()             # Get the replacement text for the specified GUID
+        #             lines.extend(replacement.split("\n"))                 # Convert to a set of lines and append
+        #             cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
+        #             new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
+        #             new_commands.append(new_command.strip())              # Append the new command to set of commands
+        #
+        #     new_source = f"{header}\n"                           # Add the Databricks Notebook Header
+        #     new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
+        #
+        #     # Update the built_on and version_number - typically only found in the Version Info notebook.
+        #     built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+        #     new_source = new_source.replace("{{built_on}}", built_on)
+        #     new_source = new_source.replace("{{version_number}}", self.version)
+        #
+        #     # Write the new notebook to the target directory
+        #     self.client.workspace.import_notebook(language=language.upper(),
+        #                                           notebook_path=target_notebook_path,
+        #                                           content=new_source,
+        #                                           overwrite=True)
+        print("DEBUGGING: links")
         html = f"""<html><body style="font-size:16px">
                      <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
                    </body></html>"""
 
         dbgems.display_html(html)
+        print("DEBUGGING: links-end")
