@@ -40,7 +40,7 @@ class Validator:
         label = "vLatest" if as_latest else self.version
         file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
-        print(f"\nValidating the DBC in DBAcademy's distribution system ({label})\n")
+        print(f"Validating the DBC in DBAcademy's distribution system ({label})\n")
 
         target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/{file_name}"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
