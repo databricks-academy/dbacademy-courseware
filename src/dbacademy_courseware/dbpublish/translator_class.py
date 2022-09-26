@@ -221,20 +221,20 @@ class Translator:
                     cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
                     new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
                     new_commands.append(new_command.strip())              # Append the new command to set of commands
-        #
-        #     new_source = f"{header}\n"                           # Add the Databricks Notebook Header
-        #     new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
-        #
-        #     # Update the built_on and version_number - typically only found in the Version Info notebook.
-        #     built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-        #     new_source = new_source.replace("{{built_on}}", built_on)
-        #     new_source = new_source.replace("{{version_number}}", self.version)
-        #
-        #     # Write the new notebook to the target directory
-        #     self.client.workspace.import_notebook(language=language.upper(),
-        #                                           notebook_path=target_notebook_path,
-        #                                           content=new_source,
-        #                                           overwrite=True)
+
+            new_source = f"{header}\n"                           # Add the Databricks Notebook Header
+            new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
+
+            # Update the built_on and version_number - typically only found in the Version Info notebook.
+            built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+            new_source = new_source.replace("{{built_on}}", built_on)
+            new_source = new_source.replace("{{version_number}}", self.version)
+
+            # # Write the new notebook to the target directory
+            # self.client.workspace.import_notebook(language=language.upper(),
+            #                                       notebook_path=target_notebook_path,
+            #                                       content=new_source,
+            #                                       overwrite=True)
         print("DEBUGGING: links")
         html = f"""<html><body style="font-size:16px">
                      <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
