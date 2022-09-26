@@ -230,15 +230,14 @@ class Translator:
             new_source = new_source.replace("{{built_on}}", built_on)
             new_source = new_source.replace("{{version_number}}", self.version)
 
-            # # Write the new notebook to the target directory
-            # self.client.workspace.import_notebook(language=language.upper(),
-            #                                       notebook_path=target_notebook_path,
-            #                                       content=new_source,
-            #                                       overwrite=True)
-        print("DEBUGGING: links")
+            # Write the new notebook to the target directory
+            self.client.workspace.import_notebook(language=language.upper(),
+                                                  notebook_path=target_notebook_path,
+                                                  content=new_source,
+                                                  overwrite=True)
+
         html = f"""<html><body style="font-size:16px">
                      <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
                    </body></html>"""
 
         dbgems.display_html(html)
-        print("DEBUGGING: links-end")
