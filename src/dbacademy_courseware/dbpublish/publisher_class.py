@@ -251,7 +251,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
 
-        new_target_dir = f"/Repos/Temp/{self.username}-{self.build_name}-{self.common_language}"
+        new_target_dir = f"/Repos/Temp/{self.build_name}-{self.common_language}"
         if target_dir == new_target_dir: print_deprecated_msg(f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
