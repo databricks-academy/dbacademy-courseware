@@ -179,33 +179,33 @@ class Translator:
                 target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
                 self.client.workspace.mkdirs(target_notebook_dir)
 
-        # for file in source_files:
-        #     print(f"   /{file}")
-        #     source = self._load_i18n_source(file)
-        #     i18n_guid_map = self._load_i18n_guid_map(file, source)
-        #
-        #     # Compute the source and target directories
-        #     source_notebook_path = f"{self.source_dir}/{file}"
-        #     target_notebook_path = f"{self.target_dir}/{file}"
-        #
-        #     source_info = self.client.workspace().get_status(source_notebook_path)
-        #     language = source_info["language"].lower()
-        #     cmd_delim = NotebookDef.get_cmd_delim(language)
-        #     cm = NotebookDef.get_comment_marker(language)
-        #
-        #     raw_source = self.client.workspace().export_notebook(source_notebook_path)
-        #     raw_lines = raw_source.split("\n")
-        #     header = raw_lines.pop(0)
-        #     source = "\n".join(raw_lines)
-        #
-        #     if file.startswith("Includes/"):
-        #         # Write the original notebook to the target directory
-        #         self.client.workspace.import_notebook(language=language.upper(),
-        #                                               notebook_path=target_notebook_path,
-        #                                               content=raw_source,
-        #                                               overwrite=True)
-        #         continue
-        #
+        for file in source_files:
+            print(f"   /{file}")
+            source = self._load_i18n_source(file)
+            i18n_guid_map = self._load_i18n_guid_map(file, source)
+
+            # Compute the source and target directories
+            source_notebook_path = f"{self.source_dir}/{file}"
+            target_notebook_path = f"{self.target_dir}/{file}"
+
+            source_info = self.client.workspace().get_status(source_notebook_path)
+            language = source_info["language"].lower()
+            cmd_delim = NotebookDef.get_cmd_delim(language)
+            cm = NotebookDef.get_comment_marker(language)
+
+            raw_source = self.client.workspace().export_notebook(source_notebook_path)
+            raw_lines = raw_source.split("\n")
+            header = raw_lines.pop(0)
+            source = "\n".join(raw_lines)
+
+            if file.startswith("Includes/"):
+                # Write the original notebook to the target directory
+                self.client.workspace.import_notebook(language=language.upper(),
+                                                      notebook_path=target_notebook_path,
+                                                      content=raw_source,
+                                                      overwrite=True)
+                continue
+
         #     commands = source.split(cmd_delim)
         #     new_commands = [commands.pop(0)]
         #
