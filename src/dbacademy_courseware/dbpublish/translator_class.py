@@ -188,6 +188,7 @@ class Translator:
                 target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
                 self.client.workspace.mkdirs(target_notebook_dir)
 
+        print("\nProcessing notebooks:")
         for file in source_files:
             print(f"   /{file}")
             source = self._load_i18n_source(file)
