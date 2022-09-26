@@ -35,6 +35,8 @@ class Validator:
         print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}.dbc\".")
 
         #########################################################
+        print(print("-"*80))
+        #########################################################
 
         print(f"\nValidating the DBC in DBAcademy's distribution system (vLATEST)\n")
 
