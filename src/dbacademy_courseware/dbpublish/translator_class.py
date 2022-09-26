@@ -7,6 +7,8 @@ class Translator:
     def __init__(self, build_config: BuildConfig):
         from dbacademy_courseware.dbbuild import BuildConfig
 
+        self.__validated = False  # By default, we are not validated
+
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
         # Copied from build_config
         self.username = build_config.username
@@ -90,6 +92,10 @@ class Translator:
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
+
+        assert self.i18n_language in self.language_options, f"The selected version ({self.i18n_language}) must be one of [{self.language_options}]"
+
+        self.__validated = True
 
     def _load_i18n_source(self, path):
         import os
