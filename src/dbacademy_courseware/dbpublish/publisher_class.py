@@ -354,7 +354,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def create_dbcs(self):
         from dbacademy_gems import dbgems
 
-        assert self.validated, f"Cannot create DBC until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
+        assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
@@ -384,10 +384,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             # print(f"Removing existing file: {target_file}")
             os.remove(target_file)
 
-        target_dir = "/".join(target_file.split("/")[:-1])
-        if not os.path.exists(target_dir):
-            # print(f"Creating missing target directory: {target_dir}")
-            os.mkdir(target_dir)
+        course_dir = "/".join(target_file.split("/")[:-1])
+        if not os.path.exists(course_dir): os.mkdir(course_dir)
+
+        version_dir = "/".join(target_file.split("/")[:-1])
+        if not os.path.exists(version_dir): os.mkdir(version_dir)
 
         with open(target_file, "wb") as f:
             # print(f"Writing data: {target_file}")
