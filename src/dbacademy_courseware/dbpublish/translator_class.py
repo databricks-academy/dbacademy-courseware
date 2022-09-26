@@ -137,9 +137,15 @@ class Translator:
 
         return i18n_guid_map
 
+    @property
+    def validated(self):
+        return self.__validated
+
     def publish(self):
         from datetime import datetime
         from dbacademy_courseware.dbpublish import Publisher, NotebookDef
+
+        assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
         print(f"Publishing translated version of {self.build_name}, {self.version}")
         print(f"...Removing files from target directories")
