@@ -259,6 +259,8 @@ class NotebookDef:
 
         import re
 
+        # TODO Fix this error after a proper unit tests is created.
+        # noinspection RegExpRedundantEscape
         for link in re.findall(r"(?<!!)\[.*?\]\(.*?\)", command):
 
             # If this is a relative link, we can ignore it.
@@ -769,6 +771,8 @@ class NotebookDef:
             new_value = self.replacements[key]
             contents = contents.replace(old_value, new_value)
 
+        # TODO Fix this error after a proper unit tests is created.
+        # noinspection RegExpDuplicateCharacterInClass
         mustache_pattern = re.compile(r"{{[a-zA-Z\-\\_\\#\\/]*}}")
         result = mustache_pattern.search(contents)
         if result is not None:
