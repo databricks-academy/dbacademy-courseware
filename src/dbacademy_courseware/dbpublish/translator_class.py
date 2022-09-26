@@ -93,6 +93,8 @@ class Translator:
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
 
+        print(f"DEBUGGING: self.i18n_language={self.i18n_language}")
+        print(f"DEBUGGING: self.language_options={self.language_options}")
         assert self.i18n_language in self.language_options, f"The selected version ({self.i18n_language}) must be one of [{self.language_options}]"
 
         self.__validated = True
