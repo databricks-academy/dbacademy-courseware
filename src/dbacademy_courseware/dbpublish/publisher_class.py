@@ -253,6 +253,14 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
 
+        new_target_dir = f"/Repos/Temp/{self.username}-{self.build_name}-{self.common_language}"
+        if target_dir == new_target_dir: print_deprecated_msg(f"The parameter value for \"target_dir\" is the same as the default value. Consider removing the parameter.")
+        target_dir = target_dir or new_target_dir
+
+        new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
+        if target_repo_url == new_target_repo_url: print_deprecated_msg(f"The parameter value for \"new_target_repo_url\" is the same as the default value. Consider removing the parameter.")
+        target_repo_url = target_repo_url or new_target_repo_url
+
         if "target_url" in kwargs:
             print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
