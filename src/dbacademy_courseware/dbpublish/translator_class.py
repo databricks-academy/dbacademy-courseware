@@ -82,7 +82,7 @@ class Translator:
         from dbacademy_courseware.dbpublish import Publisher
 
         self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}-{self.common_language}"
+        self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         Publisher.reset_git_repo(self.client, self.target_dir, self.target_repo_url, self.target_branch)
