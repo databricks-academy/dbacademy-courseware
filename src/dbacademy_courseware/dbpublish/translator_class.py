@@ -35,7 +35,6 @@ class Translator:
 
     def _select_i18n_language(self, source_repo: str):
         from dbacademy_gems import dbgems
-        print(f"DEBUGGING: _select_i18n_language")
 
         self.resources_folder = f"{source_repo}/Resources"
 
@@ -43,8 +42,6 @@ class Translator:
         self.language_options = [r.get("path").split("/")[-1] for r in resources]
         self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
-
-        print(f"DEBUGGING: {self.language_options}")
 
         dbgems.dbutils.widgets.dropdown("i18n_language",
                                         self.language_options[0],
