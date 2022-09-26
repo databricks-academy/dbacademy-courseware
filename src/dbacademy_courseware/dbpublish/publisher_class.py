@@ -326,7 +326,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         start = int(time.time())
 
         path = f"../Source/{notebook.path}"
-        dbgems.get_dbutils().notebook.run(path, timeout_seconds=60 * 5, arguments={
+        dbgems.dbutils.notebook.run(path, timeout_seconds=60 * 5, arguments={
             "version": self.build_config.version,
             "generating_docs": True
         })

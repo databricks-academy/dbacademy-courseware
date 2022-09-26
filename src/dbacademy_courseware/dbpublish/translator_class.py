@@ -42,10 +42,10 @@ class Translator:
         self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
 
-        dbgems.get_dbutils().widgets.dropdown("i18n_language",
-                                              self.language_options[0],
-                                              self.language_options,
-                                              "i18n Language")
+        dbgems.dbutils.widgets.dropdown("i18n_language",
+                                        self.language_options[0],
+                                        self.language_options,
+                                        "i18n Language")
 
         self.i18n_language = dbgems.get_parameter("i18n_language", None)
         assert self.i18n_language is not None, f"The i18n language must be specified."
