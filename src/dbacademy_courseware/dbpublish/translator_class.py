@@ -17,6 +17,7 @@ class Translator:
         self.build_name = build_config.build_name
 
         # Defined in select_language
+        self.lang_code = None
         self.version = None
         self.core_version = None
         self.common_language = None
@@ -59,10 +60,10 @@ class Translator:
 
         # Include the i18n code in the version.
         # This hack just happens to work for japanese and korean
-        code = self.i18n_language[0:2].upper()
+        self.lang_code = self.i18n_language[0:2].upper()
         self.common_language, self.core_version = self.i18n_language.split("-")
         self.core_version = self.core_version[1:]
-        self.version = f"{self.core_version}-{code}"
+        self.version = f"{self.core_version}-{self.lang_code}"
 
         # Include the i18n code in the version.
         # This hack just happens to work for japanese and korean
@@ -259,7 +260,7 @@ class Translator:
         Publisher.write_file(data=data,
                              overwrite=False,
                              target_name="Distributions system (latest)",
-                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc")
+                             target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST-{self.lang_code}/notebooks.dbc")
 
         Publisher.write_file(data=data,
                              overwrite=True,
