@@ -20,18 +20,21 @@ class Validator:
         self.username = publisher.username
 
     def validate_publishing_processes(self):
-        self.validate_distribution_dbc(as_latest=True)
+        self.__validate_distribution_dbc(as_latest=True)
         print("-" * 80)
-        self.validate_distribution_dbc(as_latest=False)
+        self.__validate_distribution_dbc(as_latest=False)
         print("-" * 80)
-        self.validate_git_releases_dbc()
+        self.__validate_git_releases_dbc()
         print("-" * 80)
-        self.validate_git_branch("published")
+        self.__validate_git_branch("published")
         print("-" * 80)
-        self.validate_git_branch(f"published-v{self.core_version}")
+        self.__validate_git_branch(f"published-v{self.core_version}")
 
     @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_distribution_dbc(self, as_latest: bool):
+        return self.__validate_distribution_dbc(as_latest)
+
+    def __validate_distribution_dbc(self, as_latest: bool):
         from dbacademy_gems import dbgems
 
         label = "vLatest" if as_latest else self.version
@@ -47,6 +50,9 @@ class Validator:
 
     @dbgems.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_releases_dbc(self, version=None):
+        return self.__validate_git_releases_dbc(version)
+
+    def __validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
 
         version = version or self.version
@@ -85,6 +91,10 @@ class Validator:
 
     @dbgems.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_branch(self, branch="published", version=None):
+        self.__validate_git_branch(branch, version)
+
+    def __validate_git_branch(self, branch="published", version=None):
+
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         if self.i18n:
