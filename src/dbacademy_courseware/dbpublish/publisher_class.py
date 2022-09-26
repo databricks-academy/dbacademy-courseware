@@ -384,7 +384,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             # print(f"Removing existing file: {target_file}")
             os.remove(target_file)
 
-        course_dir = "/".join(target_file.split("/")[:-1])
+        course_dir = "/".join(target_file.split("/")[:-2])
         if not os.path.exists(course_dir): os.mkdir(course_dir)
 
         version_dir = "/".join(target_file.split("/")[:-1])
