@@ -405,7 +405,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         actual_branch = response.get("branch")
         if actual_branch != branch:
-            print(f"\n*** Unexpected branch: {actual_branch}, expected {branch} ***\n")
+            if actual_branch != "published": print(f"\n*** Unexpected branch: {actual_branch}, expected {branch} ***\n")
             client.repos.update(repo_id=repo_id, branch=branch)
 
         results = client.repos.get(repo_id)
