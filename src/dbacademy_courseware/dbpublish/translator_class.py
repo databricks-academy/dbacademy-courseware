@@ -52,6 +52,7 @@ class Translator:
 
         self.i18n_language = dbgems.get_parameter("i18n_language", None)
         assert self.i18n_language is not None, f"The i18n language must be specified."
+        assert self.i18n_language in self.language_options, f"The selected version ({self.i18n_language}) must be one of [{self.language_options}]"
 
         for notebook in self.notebooks.values():
             notebook.i18n_language = self.i18n_language
@@ -92,10 +93,6 @@ class Translator:
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
-
-        print(f"DEBUGGING: self.i18n_language={self.i18n_language}")
-        print(f"DEBUGGING: self.language_options={self.language_options}")
-        assert self.i18n_language in self.language_options, f"The selected version ({self.i18n_language}) must be one of [{self.language_options}]"
 
         self.__validated = True
 
