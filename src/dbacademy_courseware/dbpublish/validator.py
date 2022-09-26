@@ -36,7 +36,7 @@ class Validator:
 
         #########################################################
 
-        print(f"Validating the DBC in DBAcademy's distribution system (vLATEST)\n")
+        print(f"\nValidating the DBC in DBAcademy's distribution system (vLATEST)\n")
 
         target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST/notebooks.dbc"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
