@@ -80,8 +80,8 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
                    branch="published",
                    which="clean")
 
-    index_a = index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
-    index_b = index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
+    index_a: Dict[str, Dict[str, str]] = index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
+    index_b: Dict[str, Dict[str, str]] = index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
 
     return compare_results(index_a, index_b)
 
@@ -147,31 +147,27 @@ def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, st
     return results
 
 
-def compare_results(index_a: Dict[str, str], index_b: Dict[str, str]):
+def compare_results(index_a: Dict[str, Dict[str, str]], index_b: Dict[str, Dict[str, str]]):
     results = []
 
     index_b_notebooks = list(index_b.keys())
 
-    for path_a in index_a:
-        if path_a not in index_b_notebooks:
-            results.append(f"Notebook deleted: `{path_a}`")
+    for relative_path_a in index_a:
+        if relative_path_a not in index_b_notebooks:
+            results.append(f"Notebook deleted: `{relative_path_a}`")
 
-    for path_b in index_b_notebooks:
-        if path_b not in index_a:
-            results.append(f"Notebook added: `{path_b}`")
+    for relative_path_b in index_b_notebooks:
+        if relative_path_b not in index_a:
+            results.append(f"Notebook added: `{relative_path_b}`")
 
-    def load_file(file_path):
-        with open(file_path) as f:
-            return f.read()
-
-    for path_a in index_a:
-        if path in index_b:
-            source_a = load_file(path_a)
-            source_b = index_b[path]["source"]
+    for relative_path in index_a:
+        if relative_path in index_b:
+            source_a = index_a[relative_path]["contents"]
+            source_b = index_b[relative_path]["contents"]
 
             len_a = len(source_a)
             len_b = len(source_b)
             if source_a != source_b:
-                results.append(f"Differences: ({len_a} vs {len_b})\n`{path}`")
+                results.append(f"Differences: ({len_a} vs {len_b})\n`{relative_path}`")
 
     return results
