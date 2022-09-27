@@ -387,3 +387,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             print()
             for result in results:
                 print(result)
+        else:
+            print(f"PASSED: No changes were found!")
+
