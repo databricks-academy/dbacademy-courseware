@@ -1,5 +1,5 @@
 import typing
-from dbacademy_courseware.dbbuild import common
+from dbacademy_gems import dbgems
 
 class ResultsEvaluator:
     def __init__(self, results: typing.List[dict], keep_success):
@@ -21,7 +21,7 @@ class ResultsEvaluator:
 
     def to_html(self, **kwargs) -> str:
         if "print_success_links" in kwargs:
-            common.print_deprecated_msg("The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
+            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
 
         html = "</body>"
         html += self.add_section("Failed", self.failed_set)

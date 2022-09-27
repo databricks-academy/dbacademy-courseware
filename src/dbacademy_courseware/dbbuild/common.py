@@ -171,12 +171,3 @@ def compare_results(index_a: Dict[str, Dict[str, str]], index_b: Dict[str, Dict[
                 results.append(f"Differences: {label:>20} {relative_path}")
 
     return results
-
-def print_deprecated_msg(msg):
-    title = "DEPRECATION WARNING"
-    print()
-    print(f"*** {title} " + ("*"*(80-len(title)-5)))
-    for line in msg.split("\n"):
-        print(f"* {line}")
-    print("*" * 80)
-    print()

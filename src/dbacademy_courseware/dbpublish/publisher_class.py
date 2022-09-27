@@ -117,7 +117,7 @@ class Publisher:
         from dbacademy_courseware import get_workspace_url
 
         if "mode" in kwargs:
-            common.print_deprecated_msg("The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
+            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
 
         found_version_info = False
         main_notebooks: List[NotebookDef] = []
@@ -245,16 +245,16 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         new_target_dir = f"/Repos/Temp/{self.build_name}"
         if target_dir == new_target_dir:
-            common.print_deprecated_msg(f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
+            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
         new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
         if target_repo_url == new_target_repo_url:
-            common.print_deprecated_msg(f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
+            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
         if "target_url" in kwargs:
-            common.print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
+            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
 
         self.target_dir = validate_type(target_dir, "target_dir", str)
