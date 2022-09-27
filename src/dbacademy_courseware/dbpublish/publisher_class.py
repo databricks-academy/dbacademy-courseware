@@ -364,16 +364,14 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
                                                   repo_url=f"https://github.com/databricks-academy/{self.build_name}-source.git",
                                                   target_dir=self.source_repo,
                                                   ignored=["/Published/"])
-        if len(results) == 0:
-            self.__changes_in_source = False
-        else:
+
+        self.__changes_in_source = len(results)
+        if len(results) != 0:
             print()
             for result in results:
                 print(result)
 
-            self.__changes_in_source = True
-
         self.assert_no_changes_in_source()
-        
+
     # def validate_no_changes_in_target(self):
     #     self.__changes_in_target = None  # Will be set once we test for changes
