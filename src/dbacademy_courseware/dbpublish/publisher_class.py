@@ -168,13 +168,14 @@ class Publisher:
         print("-"*80)
         print("All done!")
 
-        html = f"""<html><body style="font-size:16px"><div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
+        html = f"""<html><body style="font-size:16px">
+                         <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
             if len(notebook.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
                 for warning in notebook.warnings:
                     html += f"""<div style="white-space: pre-wrap">{warning.message}</div>"""
-        html += """</table></body></html>"""
+        html += """</body></html>"""
 
         dbgems.display_html(html)
 
@@ -281,7 +282,9 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         for file in os.listdir(f"/Workspace/{target_docs_path}"):
             print(file)
 
-        html = f"""<html><body><p><a href="{get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">Published Version</a></p></body></html>"""
+        html = f"""<html><body style="font-size:16px">
+                         <div><a href="{get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
+                   </body></html>"""
         dbgems.display_html(html)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
