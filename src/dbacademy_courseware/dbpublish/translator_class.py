@@ -227,13 +227,11 @@ class Translator:
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
                     lines = [line_zero]                                   # The first line doesn't exist in the guid map
+                    print(f"Line Zero: {line_zero}")
                     replacement = i18n_guid_map[guid].strip()             # Get the replacement text for the specified GUID
                     lines.extend(replacement.split("\n"))                 # Convert to a set of lines and append
                     cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
                     new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
-                    print("-"*80)
-                    print(new_command)
-                    print("-"*80)
                     new_commands.append(new_command.strip())              # Append the new command to set of commands
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
