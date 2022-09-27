@@ -67,10 +67,10 @@ def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str
 
     assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
 
-def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, target_dir: str, ignored: List[str]):
+def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str, ignored: List[str]):
     repo_dir = f"/Repos/Temp/{build_name}-diff"
 
-    print(f"Comparing {target_dir}")
+    print(f"Comparing {directory}")
     print(f"to        {repo_dir}")
     print()
 
@@ -81,7 +81,7 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
                    which="clean")
 
     index_a = index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
-    index_b = index_repo_dir(client=client, repo_dir=target_dir, ignored=ignored)
+    index_b = index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
 
     return compare_results(index_a, index_b)
 

@@ -13,10 +13,10 @@ class Publisher:
 
     def __init__(self, build_config: BuildConfig):
 
-        self.__validated = False             # By default, we are not validated
-        self.__validated_repo_reset = True   # By default repo is valid (unless invoked)
-        self.__changes_in_source = None      # Will be set once we test for changes
-        self.__changes_in_target = None      # Will be set once we test for changes
+        self.__validated = False              # By default, we are not validated
+        self.__validated_repo_reset = True    # By default repo is valid (unless invoked)
+        self.__changes_in_source_repo = None  # Will be set once we test for changes
+        self.__changes_in_target_repo = None  # Will be set once we test for changes
 
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
 
@@ -352,26 +352,38 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         from .validator import Validator
         return Validator(self)
 
-    def assert_no_changes_in_source(self):
-        method = "Publisher.validate_no_changes_in_source()"
-        assert self.__changes_in_source is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
-        assert self.__changes_in_source == 0, f"Found {self.__changes_in_source} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
+    def assert_no_changes_in_source_repo(self):
+        method = "Publisher.validate_no_changes_in_source_repo()"
+        assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_source(self):
+    def validate_no_changes_in_source_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
+        repo_name = repo_name or f"{self.build_name}-source.git"
+        self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
+                                           directory=directory or self.source_repo)
+        self.assert_no_changes_in_source_repo()
+
+    def assert_no_changes_in_target_repo(self):
+        method = "Publisher.validate_no_changes_in_target_repo()"
+        assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
+
+    def validate_no_changes_in_target_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
+        repo_name = repo_name or f"{self.build_name}.git"
+        self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
+                                           directory=directory or self.target_dir)
+        self.assert_no_changes_in_target_repo()
+
+    def __validate_no_changes_in_repo(self, repo_url: str, directory: str):
         from dbacademy_courseware.dbbuild import common
         results = common.validate_not_uncommitted(client=self.client,
                                                   build_name=self.build_name,
-                                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}-source.git",
-                                                  target_dir=self.source_repo,
+                                                  repo_url=repo_url,
+                                                  directory=directory,
                                                   ignored=["/Published/", "/Build-Scripts/"])
 
-        self.__changes_in_source = len(results)
+        self.__changes_in_source_repo = len(results)
         if len(results) != 0:
             print()
             for result in results:
                 print(result)
-
-        self.assert_no_changes_in_source()
-
-    # def validate_no_changes_in_target(self):
-    #     self.__changes_in_target = None  # Will be set once we test for changes
