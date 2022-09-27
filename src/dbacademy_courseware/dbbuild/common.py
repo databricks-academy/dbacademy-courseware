@@ -168,6 +168,7 @@ def compare_results(index_a: Dict[str, Dict[str, str]], index_b: Dict[str, Dict[
             len_a = len(source_a)
             len_b = len(source_b)
             if source_a != source_b:
-                results.append(f"Differences: ({len_a} vs {len_b})\n`{relative_path}`")
+                label = f"{len_a:,} vs {len_b:,}:"
+                results.append(f"Differences: {label:>20} {relative_path}")
 
     return results
