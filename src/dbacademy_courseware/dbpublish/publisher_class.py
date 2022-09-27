@@ -373,5 +373,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
             self.__changes_in_source = True
 
+        self.assert_no_changes_in_source()
+        
     # def validate_no_changes_in_target(self):
     #     self.__changes_in_target = None  # Will be set once we test for changes
