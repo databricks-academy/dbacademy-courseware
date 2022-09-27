@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from dbacademy.dbrest import DBAcademyRestClient
 
 def print_if(condition, text):
@@ -67,7 +67,7 @@ def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str
 
     assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
 
-def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, target_dir: str):
+def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, target_dir: str, ignored: List[str]):
     repo_dir = f"/Repos/Temp/{build_name}-diff"
 
     print(f"Comparing {target_dir}")
@@ -80,20 +80,28 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
                    branch="published",
                    which="clean")
 
-    index_a = index_repo_dir(client=client, repo_dir=repo_dir)
-    index_b = index_repo_dir(client=client, repo_dir=target_dir)
+    index_a = index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
+    index_b = index_repo_dir(client=client, repo_dir=target_dir, ignored=ignored)
 
     return compare_results(index_a, index_b)
 
-def index_repo_dir(*, client: DBAcademyRestClient, repo_dir):
+def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]):
     results = {}
 
     print(f"...indexing \"{repo_dir}\"")
     notebooks = client.workspace().ls(repo_dir, recursive=True)
     assert notebooks is not None, f"No notebooks found for the path {repo_dir}"
 
+    def is_ignored(test_path: str):
+        for ignore in ignored:
+            if test_path.startswith(ignore):
+                return True
+        return False
+
     for notebook in notebooks:
         path = notebook.get("path")
+        if is_ignored(path): continue
+
         object_type = notebook.get("object_type")
         source = "" if object_type != "NOTEBOOK" else client.workspace().export_notebook(path)
 
