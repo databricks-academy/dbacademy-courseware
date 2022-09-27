@@ -1,4 +1,5 @@
-from dbacademy_courseware import print_deprecated_msg
+from dbacademy_courseware.dbbuild import common
+from dbacademy_gems import dbgems
 
 class TestInstance:
     def __init__(self, build_config, notebook, test_dir, test_type):
@@ -72,8 +73,8 @@ class TestSuite:
 
         return job_names
 
+    @dbgems.deprecated(reason="This method has been deprecated, please use TestSuite.reset() instead.")
     def reset_test_suite(self):
-        print_deprecated_msg("Use TestSuite.reset() instead")
         self.reset()
 
     def reset(self):

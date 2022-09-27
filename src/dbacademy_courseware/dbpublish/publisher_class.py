@@ -1,7 +1,8 @@
 from typing import List
-from .notebook_def_class import NotebookDef
+from dbacademy_gems import dbgems
+from dbacademy_courseware import validate_type
+from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
-from dbacademy_courseware import validate_type, print_deprecated_msg
 from dbacademy_courseware.dbbuild import common
 
 
@@ -116,7 +117,7 @@ class Publisher:
         from dbacademy_courseware import get_workspace_url
 
         if "mode" in kwargs:
-            print_deprecated_msg("The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
+            common.print_deprecated_msg("The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
 
         found_version_info = False
         main_notebooks: List[NotebookDef] = []
@@ -232,8 +233,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
+    @dbgems.deprecated()
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
-        print_deprecated_msg("Use Publisher.configure_target_repo() instead")
 
         return self.configure_target_repo(target_dir, target_repo_url, branch, **kwargs)
 
@@ -243,15 +244,17 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.__validated_repo_reset = False
 
         new_target_dir = f"/Repos/Temp/{self.build_name}"
-        if target_dir == new_target_dir: print_deprecated_msg(f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
+        if target_dir == new_target_dir:
+            common.print_deprecated_msg(f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
         new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
-        if target_repo_url == new_target_repo_url: print_deprecated_msg(f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
+        if target_repo_url == new_target_repo_url:
+            common.print_deprecated_msg(f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
         if "target_url" in kwargs:
-            print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
+            common.print_deprecated_msg("The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
 
         self.target_dir = validate_type(target_dir, "target_dir", str)
@@ -321,8 +324,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             for notebook in self.build_config.notebooks.values():
                 self._generate_html(notebook)
 
+    @dbgems.deprecated(reason="This method as been deprecated, please use Publisher.create_dbcs() instead.")
     def create_dbc(self):
-        print_deprecated_msg("Use Publisher.create_dbcs() instead")
         return self.create_dbcs()
 
     def create_dbcs(self):
