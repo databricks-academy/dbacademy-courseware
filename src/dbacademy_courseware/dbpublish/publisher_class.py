@@ -359,8 +359,10 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def validate_no_changes_in_source_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
         repo_name = repo_name or f"{self.build_name}-source.git"
-        self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
-                                           directory=directory or self.source_repo)
+        results = self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
+                                                     directory=directory or self.source_repo)
+
+        self.__changes_in_source_repo = len(results)
         self.assert_no_changes_in_source_repo()
 
     def assert_no_changes_in_target_repo(self):
@@ -370,23 +372,24 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def validate_no_changes_in_target_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
         repo_name = repo_name or f"{self.build_name}.git"
-        self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
-                                           directory=directory or self.target_dir)
+        results = self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
+                                                     directory=directory or self.target_dir)
+
+        self.__changes_in_target_repo = len(results)
         self.assert_no_changes_in_target_repo()
 
-    def __validate_no_changes_in_repo(self, repo_url: str, directory: str):
+    def __validate_no_changes_in_repo(self, repo_url: str, directory: str) -> List[str]:
         from dbacademy_courseware.dbbuild import common
         results = common.validate_not_uncommitted(client=self.client,
                                                   build_name=self.build_name,
                                                   repo_url=repo_url,
                                                   directory=directory,
                                                   ignored=["/Published/", "/Build-Scripts/"])
-
-        self.__changes_in_source_repo = len(results)
         if len(results) != 0:
             print()
             for result in results:
                 print(result)
         else:
-            print(f"PASSED: No changes were found!")
+            print(f"\nPASSED: No changes were found!")
 
+        return results
