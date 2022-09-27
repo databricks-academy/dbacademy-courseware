@@ -229,17 +229,15 @@ class Translator:
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
-                    print(f"Zero A: {line_zero}")
-                    print(f"Zero B: {cmd_lines[0]}")
-                    print()
-
                     lines = [line_zero]                                     # The first line doesn't exist in the guid map
                     lines.extend(cmd_lines)                                 # Convert to a set of lines and append
 
                     new_command = "\n".join(cmd_lines)                      # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
 
-                print("-"*80)
+                    print("-"*80)
+                    print(new_command)
+                    print("-"*80)
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
