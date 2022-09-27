@@ -223,16 +223,17 @@ class Translator:
                 command = command.strip()
                 guid, line_zero = Translator.__extract_i18n_guid(command)
                 if guid is None:
-                    new_commands.append(command)                          # No GUID, it's %python or other type of command, not MD
+                    new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
-                    lines = [line_zero]                                   # The first line doesn't exist in the guid map
-                    print(f"Line Zero: {line_zero}")
-                    replacement = i18n_guid_map[guid].strip()             # Get the replacement text for the specified GUID
-                    lines.extend(replacement.split("\n"))                 # Convert to a set of lines and append
-                    cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
-                    new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
-                    new_commands.append(new_command.strip())              # Append the new command to set of commands
+                    replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
+                    cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
+
+                    lines = [line_zero]                                     # The first line doesn't exist in the guid map
+                    lines.extend(cmd_lines)                                 # Convert to a set of lines and append
+
+                    new_command = "\n".join(cmd_lines)                      # Combine all the lines into a new command
+                    new_commands.append(new_command.strip())                # Append the new command to set of commands
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
