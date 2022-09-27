@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
 
 def print_if(condition, text):
@@ -85,53 +85,88 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
 
     return compare_results(index_a, index_b)
 
-def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]):
-    results = {}
+def __ends_with(test_path: str, values: List[str]):
+    for ext in values:
+        if test_path.endswith(ext): return True
+    return False
+
+def __starts_with(test_path: str, values: List[str]):
+    for ext in values:
+        if test_path.startswith(ext): return True
+    return False
+
+def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]) -> Dict[str, Dict[str, str]]:
+    import os
 
     print(f"...indexing \"{repo_dir}\"")
     notebooks = client.workspace().ls(repo_dir, recursive=True)
     assert notebooks is not None, f"No notebooks found for the path {repo_dir}"
 
-    def is_ignored(test_path: str):
-        for ignore in ignored:
-            if test_path.startswith(ignore):
-                return True
-        return False
+    results: Dict[str, Dict[str, str]] = {}
+    base_path = f"/Workspace/{repo_dir}"
 
-    for notebook in notebooks:
-        path = notebook.get("path")
+    for path, dirs, files in os.walk(base_path):
+        for file in files:
+            full_path = f"{path}/{file}"
+            relative_path = full_path[len(base_path):]
+            if not __starts_with(relative_path, ignored):
+                results[relative_path] = {
+                    "full_path": full_path,
+                    "contents": None
+                }
 
-        object_type = notebook.get("object_type")
-        source = "" if object_type != "NOTEBOOK" else client.workspace().export_notebook(path)
+    return load_sources(client=client, results=results)
 
-        relative_path = path[len(repo_dir):]
-        if is_ignored(relative_path): continue
+def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+    for path in results:
+        full_path = results.get(path).get("full_path")
 
-        results[relative_path] = {
-            "path": relative_path,
-            "object_type": object_type,
-            "source": source.strip(),
-        }
+        if __ends_with(full_path, [".ico"]):
+            # These are binary files
+            contents = ""
+        elif __ends_with(full_path, [".html", ".md", ".gitignore", "LICENSE"]):
+            # These are text files
+            with open(full_path) as f:
+                contents = f.read()
+        else:
+            # These are notebooks
+            try:
+                notebook_path = full_path[10:] if full_path.startswith("/Workspace/") else full_path
+                contents = client.workspace.export_notebook(notebook_path)
+            except Exception as e:
+                contents = ""
+                print("*" * 80)
+                print("* Failed to export notebook ***")
+                print(f"* {full_path}")
+                for line in str(e).split("\n"):
+                    print(f"* {line}")
+                print("*" * 80)
+
+        results[path]["contents"] = contents
 
     return results
 
-def compare_results(index_a, index_b):
+
+def compare_results(index_a: Dict[str, str], index_b: Dict[str, str]):
     results = []
 
-    index_a_notebooks = list(index_a.keys())
     index_b_notebooks = list(index_b.keys())
 
-    for path_a in index_a_notebooks:
+    for path_a in index_a:
         if path_a not in index_b_notebooks:
             results.append(f"Notebook deleted: `{path_a}`")
 
     for path_b in index_b_notebooks:
-        if path_b not in index_a_notebooks:
+        if path_b not in index_a:
             results.append(f"Notebook added: `{path_b}`")
 
-    for path in index_a_notebooks:
+    def load_file(file_path):
+        with open(file_path) as f:
+            return f.read()
+
+    for path_a in index_a:
         if path in index_b:
-            source_a = index_a[path]["source"]
+            source_a = load_file(path_a)
             source_b = index_b[path]["source"]
 
             len_a = len(source_a)
