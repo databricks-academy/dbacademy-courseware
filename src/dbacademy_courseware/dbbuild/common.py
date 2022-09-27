@@ -124,7 +124,7 @@ def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, st
         if __ends_with(full_path, [".ico"]):
             # These are binary files
             contents = ""
-        elif __ends_with(full_path, [".html", ".md", ".gitignore", "LICENSE"]):
+        elif __ends_with(full_path, [".txt", ".html", ".md", ".gitignore", "LICENSE"]):
             # These are text files
             with open(full_path) as f:
                 contents = f.read()
