@@ -319,11 +319,15 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
         print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
 
-    def generate_docs(self):
+    def generate_docs(self, synchronous: bool = True):
         from multiprocessing.pool import ThreadPool
 
-        with ThreadPool(len(self.build_config.notebooks)) as pool:
-            pool.map(self._generate_html, self.build_config.notebooks.values())
+        if synchronous:
+            for notebook in self.build_config.notebooks:
+                self._generate_html(notebook)
+        else:
+            with ThreadPool(len(self.build_config.notebooks)) as pool:
+                pool.map(self._generate_html, self.build_config.notebooks.values())
 
     def create_dbc(self):
         print_deprecated_msg("Use Publisher.create_dbcs() instead")
