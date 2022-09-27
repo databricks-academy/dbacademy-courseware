@@ -100,12 +100,12 @@ def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[
 
     for notebook in notebooks:
         path = notebook.get("path")
-        if is_ignored(path): continue
 
         object_type = notebook.get("object_type")
         source = "" if object_type != "NOTEBOOK" else client.workspace().export_notebook(path)
 
         relative_path = path[len(repo_dir):]
+        if is_ignored(relative_path): continue
 
         results[relative_path] = {
             "path": relative_path,
