@@ -355,7 +355,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def assert_no_changes_in_source(self):
         method = "Publisher.validate_no_changes_in_source()"
         assert self.__changes_in_source is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
-        assert len(self.__changes_in_source) == 0, f"Found {len(self.__changes_in_source)} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
+        assert self.__changes_in_source == 0, f"Found {len(self.__changes_in_source)} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_source(self):
         from dbacademy_courseware.dbbuild import common
