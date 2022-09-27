@@ -1,5 +1,6 @@
 from dbacademy_gems import dbgems
 from typing import Union
+from dbacademy_courseware.dbbuild import common
 
 class Validator:
     from .publisher_class import Publisher
@@ -95,15 +96,15 @@ class Validator:
         self.__validate_git_branch(branch=branch, version=version)
 
     def __validate_git_branch(self, *, branch: str, version: Union[str, None]):
-        from .publisher_class import Publisher
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
-        Publisher.reset_git_repo(client=self.client,
-                                 directory=target_dir,
-                                 repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
-                                 branch=branch,
-                                 which=None)
+        common.reset_git_repo(client=self.client,
+                              directory=target_dir,
+                              repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
+                              branch=branch,
+                              which=None)
         print()
         self.__validate_version_info(version=version, dbc_dir=target_dir)
+

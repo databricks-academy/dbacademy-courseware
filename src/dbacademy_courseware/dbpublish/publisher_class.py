@@ -1,11 +1,11 @@
-from typing import List, Union
+from typing import List
 from .notebook_def_class import NotebookDef
 from dbacademy_courseware.dbbuild import BuildConfig
 from dbacademy_courseware import validate_type, print_deprecated_msg
+from dbacademy_courseware.dbbuild import common
 
 
 class Publisher:
-    from dbacademy.dbrest import DBAcademyRestClient
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -149,8 +149,8 @@ class Publisher:
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
         if target_status is not None:
-            self.print_if(verbose, "-" * 80)
-            Publisher.clean_target_dir(self.client, self.target_dir, verbose)
+            common.print_if(verbose, "-" * 80)
+            common.clean_target_dir(self.client, self.target_dir, verbose)
 
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
@@ -172,16 +172,6 @@ class Publisher:
         html += """</table></body></html>"""
 
         dbgems.display_html(html)
-
-    @staticmethod
-    def clean_target_dir(client, target_dir: str, verbose):
-        if verbose: print(f"Cleaning {target_dir}...")
-
-        keepers = [f"{target_dir}/{k}" for k in Publisher.KEEPERS]
-
-        for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
-            if verbose: print(f"...{path}")
-            client.workspace().delete_path(path)
 
     def create_published_message(self):
         import urllib.parse
@@ -220,11 +210,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             <textarea style="width:100%; padding:1em" rows={rows}>{slack_message}</textarea>
         </body>"""
         dbgems.display_html(html)
-
-    @staticmethod
-    def print_if(condition, text):
-        if condition:
-            print(text)
 
     def validate(self):
         print(f"Source: {self.source_dir}")
@@ -267,7 +252,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.target_dir = validate_type(target_dir, "target_dir", str)
         self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
 
-        self.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
+        common.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
 
         self.__validated_repo_reset = True
 
@@ -341,78 +326,24 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
-        self.write_file(data=data,
-                        overwrite=False,
-                        target_name="Distributions system (versioned)",
-                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+        common.write_file(data=data,
+                          overwrite=False,
+                          target_name="Distributions system (versioned)",
+                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
-        self.write_file(data=data,
-                        overwrite=False,
-                        target_name="Distributions system (latest)",
-                        target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
+        common.write_file(data=data,
+                          overwrite=False,
+                          target_name="Distributions system (latest)",
+                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
 
-        self.write_file(data=data,
-                        overwrite=True,
-                        target_name="workspace-local FileStore",
-                        target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+        common.write_file(data=data,
+                          overwrite=True,
+                          target_name="workspace-local FileStore",
+                          target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
-    # noinspection PyUnusedLocal
-    @staticmethod
-    def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
-        import os
-        print(f"\nWriting DBC to {target_name}:\n   {target_file}")
-
-        target_file = target_file.replace("dbfs:/", "/dbfs/")
-
-        if os.path.exists(target_file):
-            # assert overwrite, f"Cannot overwrite existing file: {target_file}"
-            # print(f"Removing existing file: {target_file}")
-            os.remove(target_file)
-
-        course_dir = "/".join(target_file.split("/")[:-2])
-        if not os.path.exists(course_dir): os.mkdir(course_dir)
-
-        version_dir = "/".join(target_file.split("/")[:-1])
-        if not os.path.exists(version_dir): os.mkdir(version_dir)
-
-        with open(target_file, "wb") as f:
-            # print(f"Writing data: {target_file}")
-            f.write(data)
-
     def get_validator(self):
         from .validator import Validator
         return Validator(self)
-
-    @staticmethod
-    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None]):
-
-        which = "" if which is None else f" ({which})"
-
-        print(f"Resetting git repo{which}:")
-        print(f" - Branch:   \"{branch}\"")
-        print(f" - Directory: {directory}")
-        print(f" - Repo URL:  {repo_url}")
-        print()
-
-        status = client.workspace().get_status(directory)
-
-        if status is not None:
-            target_repo_id = status["object_id"]
-            client.repos().delete(target_repo_id)
-
-        # Re-create the repo to progress in testing
-        response = client.repos.create(path=directory, url=repo_url)
-        repo_id = response.get("id")
-
-        actual_branch = response.get("branch")
-        if actual_branch != branch:
-            if actual_branch != "published": print(f"\n*** Unexpected branch: {actual_branch}, expected {branch} ***\n")
-            client.repos.update(repo_id=repo_id, branch=branch)
-
-        results = client.repos.get(repo_id)
-        current_branch = results.get("branch")
-
-        assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"

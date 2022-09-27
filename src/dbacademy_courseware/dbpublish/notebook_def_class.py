@@ -1,4 +1,5 @@
 from typing import Callable, Union, List
+from dbacademy_courseware.dbbuild import common
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -649,15 +650,15 @@ class NotebookDef:
 
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
-        self.print_if(verbose, students_notebook_path)
-        self.print_if(verbose, f"...publishing {len(students_commands)} commands")
+        common.print_if(verbose, students_notebook_path)
+        common.print_if(verbose, f"...publishing {len(students_commands)} commands")
         self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{target_dir}/Solutions/{self.path}"
-            self.print_if(verbose, solutions_notebook_path)
-            self.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
+            common.print_if(verbose, solutions_notebook_path)
+            common.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
     def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:
@@ -938,8 +939,3 @@ class NotebookDef:
     {m} MAGIC <br/>
     {m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
     """.strip()
-
-    @staticmethod
-    def print_if(condition, text):
-        if condition:
-            print(text)
