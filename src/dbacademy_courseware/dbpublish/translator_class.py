@@ -229,7 +229,7 @@ class Translator:
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
-                    lines = [line_zero, "", ""]                             # The first line doesn't exist in the guid map
+                    lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
                     lines.extend(cmd_lines)                                 # Convert to a set of lines and append
 
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
