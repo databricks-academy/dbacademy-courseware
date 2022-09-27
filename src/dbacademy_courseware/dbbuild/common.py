@@ -70,6 +70,10 @@ def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str
 def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, target_dir: str):
     repo_dir = f"/Repos/Temp/{build_name}-diff"
 
+    print(f"Comparing {target_dir}")
+    print(f"to        {repo_dir}")
+    print()
+
     reset_git_repo(client=client,
                    directory=repo_dir,
                    repo_url=repo_url,
