@@ -323,7 +323,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         from multiprocessing.pool import ThreadPool
 
         if synchronous:
-            for notebook in self.build_config.notebooks:
+            for notebook in self.build_config.notebooks.values():
                 self._generate_html(notebook)
         else:
             with ThreadPool(len(self.build_config.notebooks)) as pool:
