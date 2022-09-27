@@ -15,6 +15,8 @@ class Publisher:
 
         self.__validated = False             # By default, we are not validated
         self.__validated_repo_reset = True   # By default repo is valid (unless invoked)
+        self.__changes_in_source = None      # Will be set once we test for changes
+        self.__changes_in_target = None      # Will be set once we test for changes
 
         self.build_config = validate_type(build_config, "build_config", BuildConfig)
 
@@ -24,14 +26,17 @@ class Publisher:
         self.build_name = build_config.build_name
 
         self.source_dir = build_config.source_dir
-        self.target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
+        self.source_repo = build_config.source_repo
+
+        self.target_dir = f"{self.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
         self.target_repo_url = None
+
         self.temp_repo_dir = f"/Repos/Temp"
         self.temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
         self.username = build_config.username
 
         self.i18n = build_config.i18n
-        self.i18n_resources_dir = f"{build_config.source_repo}/Resources/{build_config.i18n_language}"
+        self.i18n_resources_dir = f"{self.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
 
         if build_config.i18n_language is None:
@@ -93,7 +98,7 @@ class Publisher:
             return False
 
         folder_name = folder_name or f"english-v{self.build_config.version}"
-        target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
+        target_dir = target_dir or f"{self.source_repo}/Resources"
 
         for notebook in self.notebooks:
             notebook.create_resource_bundle(folder_name, self.source_dir, target_dir)
@@ -179,14 +184,13 @@ class Publisher:
 
         name = self.build_config.name
         version = self.build_config.version
-        source_repo = self.build_config.source_repo
 
         core_message = f"Change Log:\n"
         for entry in self.build_config.change_log:
             core_message += entry
             core_message += "\n"
         core_message += f"""
-Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.source_repo.split("/")[-1]}
 
 Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions."""
 
@@ -261,7 +265,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         from dbacademy_gems import dbgems
         from dbacademy_courseware import get_workspace_url
 
-        source_docs_path = f"{self.build_config.source_repo}/docs"
+        source_docs_path = f"{self.source_repo}/docs"
         target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
 
         print(f"Source: {source_docs_path}")
@@ -347,3 +351,27 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
     def get_validator(self):
         from .validator import Validator
         return Validator(self)
+
+    def assert_no_changes_in_source(self):
+        method = "Publisher.validate_no_changes_in_source()"
+        assert self.__changes_in_source is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert len(self.__changes_in_source) == 0, f"Found {len(self.__changes_in_source)} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
+
+    def validate_no_changes_in_source(self):
+        from dbacademy_courseware.dbbuild import common
+        results = common.validate_not_uncommitted(client=self.client,
+                                                  build_name=self.build_name,
+                                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}-source.git",
+                                                  target_dir=self.source_repo,
+                                                  ignored=["/Published/"])
+        if len(results) == 0:
+            self.__changes_in_source = False
+        else:
+            print()
+            for result in results:
+                print(result)
+
+            self.__changes_in_source = True
+
+    # def validate_no_changes_in_target(self):
+    #     self.__changes_in_target = None  # Will be set once we test for changes
