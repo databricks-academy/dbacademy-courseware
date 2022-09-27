@@ -363,7 +363,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
                                                   build_name=self.build_name,
                                                   repo_url=f"https://github.com/databricks-academy/{self.build_name}-source.git",
                                                   target_dir=self.source_repo,
-                                                  ignored=["/Published/"])
+                                                  ignored=["/Published/", "/Build-Scripts/"])
 
         self.__changes_in_source = len(results)
         if len(results) != 0:
