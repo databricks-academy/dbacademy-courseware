@@ -78,7 +78,7 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
                    directory=repo_dir,
                    repo_url=repo_url,
                    branch="published",
-                   which="clean")
+                   which="fresh")
 
     index_a: Dict[str, Dict[str, str]] = index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
     index_b: Dict[str, Dict[str, str]] = index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
@@ -125,9 +125,8 @@ def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, st
             # These are binary files
             contents = ""
         elif __ends_with(full_path, [".json", ".txt", ".html", ".md", ".gitignore", "LICENSE"]):
-            # These are text files
-            with open(full_path) as f:
-                contents = f.read()
+            # These are text files that we can just read in
+            with open(full_path) as f: contents = f.read()
         else:
             # These are notebooks
             try:
@@ -136,7 +135,7 @@ def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, st
             except Exception as e:
                 contents = ""
                 print("*" * 80)
-                print("* Failed to export notebook ***")
+                print("* Failed to export notebook, possibly unanticipated file type ***")
                 print(f"* {full_path}")
                 for line in str(e).split("\n"):
                     print(f"* {line}")
