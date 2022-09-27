@@ -256,7 +256,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         if target_dir == new_target_dir: print_deprecated_msg(f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
-        new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
+        new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
         if target_repo_url == new_target_repo_url: print_deprecated_msg(f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
