@@ -222,7 +222,8 @@ class Translator:
             for i, command in enumerate(commands):
                 command = command.strip()
                 guid, line_zero = Translator.__extract_i18n_guid(command)
-                if guid is None: new_commands.append(command)             # No GUID, it's %python or other type of command, not MD
+                if guid is None:
+                    new_commands.append(command)                          # No GUID, it's %python or other type of command, not MD
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
                     lines = [line_zero]                                   # The first line doesn't exist in the guid map
@@ -230,6 +231,9 @@ class Translator:
                     lines.extend(replacement.split("\n"))                 # Convert to a set of lines and append
                     cmd_lines = [f"{cm} MAGIC {line}" for line in lines]  # Prefix the magic command to each line
                     new_command = "\n".join(cmd_lines)                    # Combine all the lines into a new command
+                    print("-"*80)
+                    print(new_command)
+                    print("-"*80)
                     new_commands.append(new_command.strip())              # Append the new command to set of commands
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
