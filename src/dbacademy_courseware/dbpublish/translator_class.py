@@ -236,6 +236,7 @@ class Translator:
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
 
                     print("-"*80)
+                    print(line_zero)
                     print(new_command)
                     print("-"*80)
 
