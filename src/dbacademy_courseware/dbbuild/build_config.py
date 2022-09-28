@@ -230,6 +230,7 @@ class BuildConfig:
                 has_wip = True
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
+                required_dbrs = required_dbrs or []
                 replacements = {"required_dbrs": ", ".join(required_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
@@ -244,7 +245,6 @@ class BuildConfig:
                                                    i18n_language=self.i18n_language,
                                                    ignoring=self.ignoring,
                                                    version=self.version)
-
         if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
@@ -264,6 +264,7 @@ class BuildConfig:
         print(f"libraries:         {self.libraries}")
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
+        print(f"required_dbrs:     {required_dbrs}")
         print(f"i18n:              {self.i18n}")
         print(f"i18n_language:     " + (self.i18n_language if self.i18n_language else "None (English)"))
 
