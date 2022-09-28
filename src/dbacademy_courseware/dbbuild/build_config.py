@@ -92,6 +92,7 @@ class BuildConfig:
                  *,
                  name: str,
                  version: str = 0,
+                 required_dbrs: List[str],
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool: str = None,
