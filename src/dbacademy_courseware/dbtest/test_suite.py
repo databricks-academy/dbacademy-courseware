@@ -282,28 +282,25 @@ class TestSuite:
             "test_type": self.test_type
         })
 
-        if dbgems.spark.conf.get("dbacademy.training-engine.endpoint", "enabled") == "disabled":
-            dbgems.print_warning(title="Notifications Disabled", message=f"Test results logging is disabled.", length=100)
-        else:
-            try:
-                response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
-                    "suite_id": self.build_config.suite_id,
-                    "test_id": test_id,
-                    "name": self.build_config.name,
-                    "result_state": result_state,
-                    "execution_duration": execution_duration,
-                    "cloud": self.build_config.cloud,
-                    "job_name": test.job_name,
-                    "job_id": job_id,
-                    "run_id": run_id,
-                    "notebook_path": notebook_path,
-                    "spark_version": self.build_config.spark_version,
-                    "test_type": self.test_type,
-                }))
-                assert response.status_code == 200, f"({response.status_code}): {response.text}"
-                self.slack_thread_ts = response.json()["data"]["thread_ts"]
-            except Exception as e:
-                dbgems.print_warning(title="Smoke Test Logging Failure", message=str(e), length=100)
+        try:
+            response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
+                "suite_id": self.build_config.suite_id,
+                "test_id": test_id,
+                "name": self.build_config.name,
+                "result_state": result_state,
+                "execution_duration": execution_duration,
+                "cloud": self.build_config.cloud,
+                "job_name": test.job_name,
+                "job_id": job_id,
+                "run_id": run_id,
+                "notebook_path": notebook_path,
+                "spark_version": self.build_config.spark_version,
+                "test_type": self.test_type,
+            }))
+            assert response.status_code == 200, f"({response.status_code}): {response.text}"
+            self.slack_thread_ts = response.json()["data"]["thread_ts"]
+        except Exception as e:
+            dbgems.print_warning(title="Smoke Test Logging Failure", message=str(e), length=100)
 
         if result_state == "FAILED":
             message_type = "error"
@@ -321,22 +318,19 @@ class TestSuite:
     def send_status_update(self, message_type, message):
         import requests, json
 
-        if dbgems.spark.conf.get("dbacademy.training-engine.endpoint", "enabled") == "disabled":
-            dbgems.print_warning(title="Slack Notifications Disabled", message=f"{message_type}: {message}", length=100)
-        else:
-            if self.slack_first_message is None: self.slack_first_message = message
+        if self.slack_first_message is None: self.slack_first_message = message
 
-            payload = {
-                "channel": "curr-smoke-tests",
-                "message": message,
-                "message_type": message_type,
-                "first_message": self.slack_first_message,
-                "thread_ts": self.slack_thread_ts
-            }
+        payload = {
+            "channel": "curr-smoke-tests",
+            "message": message,
+            "message_type": message_type,
+            "first_message": self.slack_first_message,
+            "thread_ts": self.slack_thread_ts
+        }
 
-            try:
-                response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
-                assert response.status_code == 200, f"({response.status_code}): {response.text}"
-                self.slack_thread_ts = response.json()["data"]["thread_ts"]
-            except Exception as e:
-                dbgems.print_warning(title="Slack Notification Failure", message=str(e), length=100)
+        try:
+            response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
+            assert response.status_code == 200, f"({response.status_code}): {response.text}"
+            self.slack_thread_ts = response.json()["data"]["thread_ts"]
+        except Exception as e:
+            dbgems.print_warning(title="Slack Notification Failure", message=str(e), length=100)
