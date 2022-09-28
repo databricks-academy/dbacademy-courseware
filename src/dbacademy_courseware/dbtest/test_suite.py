@@ -300,7 +300,7 @@ class TestSuite:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
             self.slack_thread_ts = response.json()["data"]["thread_ts"]
         except Exception as e:
-            dbgems.print_warning(title="Smoke Test Failure", message=str(e), length=100)
+            dbgems.print_warning(title="Smoke Test Logging Failure", message=str(e), length=100)
 
         if result_state == "FAILED":
             message_type = "error"
