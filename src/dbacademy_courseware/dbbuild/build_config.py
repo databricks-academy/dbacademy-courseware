@@ -262,7 +262,7 @@ class BuildConfig:
         print(f"libraries:         {self.libraries}")
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
-        print(f"required_dbrs:     {self.required_dbrs}")
+        print(f"required_dbrs:     " + ", ".join(self.required_dbrs))
         print(f"i18n:              {self.i18n}")
         print(f"i18n_language:     " + (self.i18n_language if self.i18n_language else "None (English)"))
 
