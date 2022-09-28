@@ -16,19 +16,17 @@ class BuildConfig:
     CHANGE_LOG_VERSION = "### Version "
 
     @staticmethod
-    def load(file: str, *, version: str, required_dbrs: List[str] = None):
+    def load(file: str, *, version: str):
         import json
 
         validate_type(file, "file", str)
         validate_type(version, "version", str)
 
         with open(file) as f:
-            return BuildConfig.load_config(config=json.load(f),
-                                           version=version,
-                                           required_dbrs=required_dbrs)
+            return BuildConfig.load_config(config=json.load(f), version=version)
 
     @staticmethod
-    def load_config(config: dict, version: str, required_dbrs: List[str]):
+    def load_config(config: dict, version: str):
 
         assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
@@ -39,7 +37,7 @@ class BuildConfig:
         publish_only = config.get("publish_only", None)
         if "publish_only" in config: del config["publish_only"]
 
-        build_config = BuildConfig(version=version, required_dbrs=required_dbrs, **config)
+        build_config = BuildConfig(version=version, **config)
 
         def validate_code_type(key: str, expected_type: Type, actual_value):
             if expected_type == List[str]:
@@ -94,7 +92,6 @@ class BuildConfig:
                  *,
                  name: str,
                  version: str = 0,
-                 required_dbrs: List[str] = None,
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool: str = None,
@@ -178,8 +175,7 @@ class BuildConfig:
         # We don't want the following function to fail if we are using the "default" path which
         # may or may not exist. The implication being that this will fail if called explicitly
         self.include_solutions = include_solutions
-        self.create_notebooks(required_dbrs=required_dbrs,
-                              include_solutions=include_solutions,
+        self.create_notebooks(include_solutions=include_solutions,
                               fail_fast=source_dir is not None)
 
         self.white_list = None
@@ -192,7 +188,7 @@ class BuildConfig:
     #     distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
     #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
-    def create_notebooks(self, *, include_solutions, fail_fast, required_dbrs: List[str]):
+    def create_notebooks(self, *, include_solutions, fail_fast):
         from ..dbpublish.notebook_def_class import NotebookDef
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
@@ -232,7 +228,7 @@ class BuildConfig:
                 has_wip = True
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
-                replacements = {"required_dbrs": ", ".join(required_dbrs)}
+                # replacements = {"required_dbrs": ", ".join(required_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(build_config=self,
@@ -240,7 +236,7 @@ class BuildConfig:
                                                    path=path,
                                                    ignored=False,
                                                    include_solution=include_solution,
-                                                   replacements=replacements,
+                                                   replacements={},
                                                    order=order,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
