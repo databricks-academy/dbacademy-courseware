@@ -1,4 +1,3 @@
-from dbacademy_courseware.dbbuild import common
 from dbacademy_gems import dbgems
 
 class TestInstance:
@@ -325,6 +324,9 @@ class TestSuite:
             "thread_ts": self.slack_thread_ts
         }
 
-        response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        self.slack_thread_ts = response.json()["data"]["thread_ts"]
+        try:
+            response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
+            assert response.status_code == 200, f"({response.status_code}): {response.text}"
+            self.slack_thread_ts = response.json()["data"]["thread_ts"]
+        except Exception as e:
+            dbgems.print_warning(title="Slack Notification Failure", message=str(e), length=100)
