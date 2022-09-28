@@ -52,7 +52,7 @@ class NotebookDef:
         self.build_config = build_config
         self.client = build_config.client
         self.path = path
-        self.replacements = dict() if replacements is None else replacements
+        self.replacements = replacements or dict()
 
         self.include_solution = include_solution
         self.errors: List[NotebookError] = list()
