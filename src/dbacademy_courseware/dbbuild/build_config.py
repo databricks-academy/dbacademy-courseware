@@ -176,7 +176,8 @@ class BuildConfig:
         # We don't want the following function to fail if we are using the "default" path which
         # may or may not exist. The implication being that this will fail if called explicitly
         self.include_solutions = include_solutions
-        self.create_notebooks(include_solutions=include_solutions,
+        self.create_notebooks(required_dbrs=required_dbrs,
+                              include_solutions=include_solutions,
                               fail_fast=source_dir is not None)
 
         self.white_list = None
@@ -189,7 +190,7 @@ class BuildConfig:
     #     distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
     #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
-    def create_notebooks(self, *, include_solutions, fail_fast):
+    def create_notebooks(self, *, required_dbrs: List[str], include_solutions: bool, fail_fast: bool):
         from ..dbpublish.notebook_def_class import NotebookDef
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
@@ -229,7 +230,7 @@ class BuildConfig:
                 has_wip = True
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
-                # replacements = {"required_dbrs": ", ".join(required_dbrs)}
+                replacements = {"required_dbrs": ", ".join(required_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(build_config=self,
@@ -237,7 +238,7 @@ class BuildConfig:
                                                    path=path,
                                                    ignored=False,
                                                    include_solution=include_solution,
-                                                   replacements={},
+                                                   replacements=replacements,
                                                    order=order,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
