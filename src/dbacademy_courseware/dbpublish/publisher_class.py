@@ -175,7 +175,7 @@ class Publisher:
             if len(notebook.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
                 for warning in notebook.warnings:
-                    html += f"""<div style="white-space: pre-wrap">{warning.message}</div>"""
+                    html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
 
         dbgems.display_html(html)
