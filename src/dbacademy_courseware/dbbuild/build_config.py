@@ -117,9 +117,8 @@ class BuildConfig:
 
         self.__validated = False
 
-        result = dbgems.sql("SELECT current_user()")
-        first = result.first()
-        self.username = first[0]
+        try: self.username = dbgems.sql("SELECT current_user()").first()[0]
+        except: self.username = "mickey.mouse@disney.com"  # When unit testing
 
         self.required_dbrs = required_dbrs or []
 
