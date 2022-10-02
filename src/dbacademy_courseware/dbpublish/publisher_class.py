@@ -166,17 +166,25 @@ class Publisher:
                              debugging=debugging,
                              other_notebooks=self.notebooks)
 
-        print("-"*80)
-        print("All done!")
+        warnings = 0
+        errors = 0
 
         html = f"""<html><body style="font-size:16px">
                          <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
+            errors += notebook.errors
+            warnings += notebook.warnings
+
             if len(notebook.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
                 for warning in notebook.warnings:
                     html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
+
+        print("-"*80)
+        print(f"All done!")
+        print(f"Found {len(warnings)} warnings")
+        print(f"Found {len(errors)} errors")
 
         dbgems.display_html(html)
 
