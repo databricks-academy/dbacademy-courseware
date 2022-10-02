@@ -193,10 +193,12 @@ class NotebookDef:
                 # This is a pinned comment and generally not allowed.
                 version = self.parse_version(command, f"{url}@")
                 if self.version in BuildConfig.VERSIONS_LIST:
+                    print(f"Publishing w/version @{version} for {url}")
                     self.warn(lambda: True, f"Building with named branch or commit id ({version}), not released a version, not head - this will prevent publishing.")
                     return command  # Don't update, run with it as-is
                 else:
                     # Fail the build here because we cannot publish this way.
+                    print(f"Failing publishing w/version @{version} for {url}")
                     self.test(lambda: True, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
             else:
                 # We are building from the head, so we need to lock in the version number.
