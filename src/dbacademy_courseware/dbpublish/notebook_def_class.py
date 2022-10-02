@@ -203,7 +203,7 @@ class NotebookDef:
                 name = url.split("/")[-1]
                 commit_id = NotebookDef.get_latest_commit_id(name)
                 new_url = f"{url}@{commit_id}"
-                print(f"Publishing w/{commit_id} for {url}")
+                print(f"Publishing w/commit \"{commit_id}\" for {url}")
                 return command.replace(url, new_url)
 
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
