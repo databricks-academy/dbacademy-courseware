@@ -183,8 +183,8 @@ class Publisher:
 
         print("-"*80)
         print(f"All done!")
-        print(f"Found {len(warnings)} warnings")
-        print(f"Found {len(errors)} errors")
+        print(f"Found {warnings} warnings")
+        print(f"Found {errors} errors")
 
         dbgems.display_html(html)
 
