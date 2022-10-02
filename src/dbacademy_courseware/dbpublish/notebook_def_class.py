@@ -186,7 +186,7 @@ class NotebookDef:
         else:
             if f"{url}@v" in command:
                 version = self.parse_version(command, f"{url}@v")
-                print(f"Publishing w/{version} for {url}")
+                print(f"Publishing w/version v{version} for {url}")
                 return "v"+command  # This is a specific version and should be OK as-is
 
             elif f"{url}@" in command:
