@@ -52,6 +52,48 @@ class MyTestCase(unittest.TestCase):
     def test_dummy(self):
         self.dummy("apples", "blue", "red", happy=True)
 
+    def test_parse_version_no_version(self):
+        command = r"""
+        # MAGIC %pip install \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper \
+        # MAGIC --quiet --disable-pip-version-check""".strip()
+
+        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest")
+        self.assertEqual("", version)
+
+    def test_parse_version_with_commit_hash(self):
+        command = r"""
+        # MAGIC %pip install \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@123 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@123 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@123 \
+        # MAGIC --quiet --disable-pip-version-check""".strip()
+
+        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+        self.assertEqual("123", version)
+
+    def test_parse_version_with_tagged_version(self):
+        command = r"""
+        # MAGIC %pip install \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@v7.8.9 \
+        # MAGIC --quiet --disable-pip-version-check""".strip()
+
+        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+        self.assertEqual("v4.5.6", version)
+
+    def test_parse_version_with_eof(self):
+        command = r"""
+        # MAGIC %pip install \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6""".strip()
+
+        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+        self.assertEqual("v4.5.6", version)
+
     def test_test_pip_cells_pinned(self):
         command = r"""
 # MAGIC %pip install \

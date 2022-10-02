@@ -160,21 +160,51 @@ class NotebookDef:
 
         return response.json().get("sha")
 
+    @staticmethod
+    def parse_version(command, url):
+        import sys
+        pos_a = command.find(url)
+        assert pos_a >= 0, f"Unable to find \"{url}\" in command string:\n{command}"
+        pos_a += len(url)
+
+        pos_x = command.find(" ", pos_a)
+        if pos_x < 0: pos_x = sys.maxsize
+
+        pos_y = command.find("\n", pos_a)
+        if pos_y < 0: pos_y = sys.maxsize
+
+        end = len(command)+1
+
+        pos_b = min(min(pos_x, pos_y), end)
+
+        version = command[pos_a:pos_b]
+        return version
+
     def update_git_commit(self, command: str, url: str) -> str:
         from dbacademy_courseware.dbbuild import BuildConfig
-        if url in command:
-            if self.version in BuildConfig.VERSIONS_LIST:
-                self.warn(lambda: f"{url}@" not in command, f"Building with named branch, not head - this will prevent publishing: {url}\n{command}")
-            else:
-                self.test(lambda: f"{url}@" not in command, f"Cannot publish with libraries that specify a specific branch or version {url}:\n{command}")
+        if url not in command: return command
+        else:
+            if f"{url}@v" in command:
+                version = self.parse_version(command, f"{url}@v")
+                print(f"Publishing w/{version} for {url}")
+                return command  # This is a specific version and should be OK as-is
 
-            if f"{url}@" not in command:
+            elif f"{url}@" in command:
+                # This is a pinned comment and generally not allowed.
+                version = self.parse_version(command, f"{url}@")
+                if self.version in BuildConfig.VERSIONS_LIST:
+                    self.warn(lambda: True, f"Building with named branch or commit id ({version}), not released a version, not head - this will prevent publishing.")
+                    return command  # Don't update, run with it as-is
+                else:
+                    # Fail the build here because we cannot publish this way.
+                    self.test(lambda: True, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
+            else:
+                # We are building from the head, so we need to lock in the version number.
                 name = url.split("/")[-1]
                 commit_id = NotebookDef.get_latest_commit_id(name)
                 new_url = f"{url}@{commit_id}"
-                command = command.replace(url, new_url)
-
-        return command
+                print(f"Publishing w/{commit_id} for {url}")
+                return command.replace(url, new_url)
 
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
