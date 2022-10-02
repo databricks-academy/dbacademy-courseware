@@ -2,7 +2,7 @@ def check_for_latest_version():
     from dbacademy_gems import dbgems
     dbgems.check_for_latest_version("dbacademy-gems")
     dbgems.check_for_latest_version("dbacademy-rest")
-    dbgems.check_for_latest_version("dbacademy-helper")
+    # dbgems.check_for_latest_version("dbacademy-helper")
 
 def help_html():
     from dbacademy_courseware.dbpublish.notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
