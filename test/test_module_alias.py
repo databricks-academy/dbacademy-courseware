@@ -13,7 +13,9 @@ class MyTestCase(unittest.TestCase):
 
     def test_dbpublish(self):
         from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
-        notebook = NotebookDef(path="Agenda",
+        notebook = NotebookDef(build_config=None,
+                               version="Unknown",
+                               path="Agenda",
                                replacements={},
                                include_solution=False,
                                test_round=2,

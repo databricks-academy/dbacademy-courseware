@@ -1,9 +1,9 @@
 import unittest
 import typing
 from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef, NotebookError
-from deprecated.classic import deprecated
 
 class MyTestCase(unittest.TestCase):
+    from dbacademy_gems import dbgems
 
     def __init__(self, method_name):
         super().__init__(method_name)
@@ -45,7 +45,7 @@ class MyTestCase(unittest.TestCase):
                            ignoring=[],
                            version=version)
 
-    @deprecated(reason="Just because")
+    @dbgems.deprecated(reason="Just because")
     def dummy(self, arg_1, arg_2, *args, **kwargs):
         pass
 
@@ -353,7 +353,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
-    def test_resolve_latest_git(self):
+    def test_get_latest_commit_id(self):
         commit_id = NotebookDef.get_latest_commit_id("dbacademy-gems")
         self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-gems")
 
