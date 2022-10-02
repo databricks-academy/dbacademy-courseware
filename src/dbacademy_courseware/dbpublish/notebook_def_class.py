@@ -198,8 +198,9 @@ class NotebookDef:
                     return command  # Don't update, run with it as-is
                 else:
                     # Fail the build here because we cannot publish this way.
-                    print(f"Failing publishing w/version @{version} for {url}")
+                    print(f"Failing publish of version @{version} for {url}")
                     self.test(lambda: False, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
+                    return command
             else:
                 # We are building from the head, so we need to lock in the version number.
                 name = url.split("/")[-1]
