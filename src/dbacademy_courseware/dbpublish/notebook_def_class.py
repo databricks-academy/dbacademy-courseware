@@ -187,7 +187,7 @@ class NotebookDef:
             if f"{url}@v" in command:
                 version = self.parse_version(command, f"{url}@v")
                 print(f"Publishing w/{version} for {url}")
-                return command  # This is a specific version and should be OK as-is
+                return "v"+command  # This is a specific version and should be OK as-is
 
             elif f"{url}@" in command:
                 # This is a pinned comment and generally not allowed.
