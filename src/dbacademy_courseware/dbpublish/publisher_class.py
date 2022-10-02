@@ -172,8 +172,8 @@ class Publisher:
         html = f"""<html><body style="font-size:16px">
                          <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
-            errors += notebook.errors
-            warnings += notebook.warnings
+            errors += len(notebook.errors)
+            warnings += len(notebook.warnings)
 
             if len(notebook.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
