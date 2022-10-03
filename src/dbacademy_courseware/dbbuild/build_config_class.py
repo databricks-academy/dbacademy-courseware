@@ -383,7 +383,7 @@ class BuildConfig:
                     ignored = str(notebook.ignored).ljust(5)
                     include_solution = str(notebook.include_solution).ljust(5)
 
-                    replacements = notebook.replacements[:]  # Take a deep copy to minimize noise
+                    replacements = notebook.replacements.copy()  # Take a deep copy to minimize noise
                     if "required_dbrs" in replacements: del replacements["required_dbrs"]
 
                     if len(replacements.keys()) == 0:
