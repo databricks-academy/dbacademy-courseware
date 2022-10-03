@@ -1,9 +1,9 @@
-def check_for_latest_version():
+def validate_dependencies():
     from dbacademy_gems import dbgems
-    dbgems.check_for_latest_version("dbacademy-gems")
-    dbgems.check_for_latest_version("dbacademy-rest")
-    # dbgems.check_for_latest_version("dbacademy-helper")
-    dbgems.check_for_latest_version("dbacademy-courseware")
+    dbgems.validate_dependencies("dbacademy-gems")
+    dbgems.validate_dependencies("dbacademy-rest")
+    # dbgems.validate_dependencies("dbacademy-helper")
+    dbgems.validate_dependencies("dbacademy-courseware")
 
 def help_html():
     from dbacademy_courseware.dbpublish.notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
@@ -63,4 +63,4 @@ def validate_type(actual_value, name, expected_type):
     return actual_value
 
 
-check_for_latest_version()
+validate_dependencies()
