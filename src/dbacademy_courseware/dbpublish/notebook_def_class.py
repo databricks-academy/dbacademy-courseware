@@ -194,7 +194,7 @@ class NotebookDef:
                 version = self.parse_version(command, f"{url}@")
                 if self.version in BuildConfig.VERSIONS_LIST:
                     print(f"Publishing w/version @{version} for {url}")
-                    self.warn(lambda: False, f"Building with named branch or commit id ({version}), not released a version, not head - this will prevent publishing.")
+                    self.warn(lambda: False, f"Building with named branch or commit id ({version}), not a released version, not head - this will prevent publishing.")
                     return command  # Don't update, run with it as-is
                 else:
                     # Fail the build here because we cannot publish this way.
