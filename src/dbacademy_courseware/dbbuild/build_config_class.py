@@ -382,15 +382,19 @@ class BuildConfig:
                     path = notebook.path.ljust(max_name_length)
                     ignored = str(notebook.ignored).ljust(5)
                     include_solution = str(notebook.include_solution).ljust(5)
-                    if len(notebook.replacements.keys()) == 0:
-                        print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={notebook.replacements}")
+
+                    replacements = notebook.replacements[:]  # Take a deep copy to minimize noise
+                    if "required_dbrs" in replacements: del replacements["required_dbrs"]
+
+                    if len(replacements.keys()) == 0:
+                        print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
                     else:
                         print(f"  {notebook.order: >2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
                         max_key_length = 0
-                        for key in notebook.replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+                        for key in replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
 
-                        for key in notebook.replacements:
-                            value = notebook.replacements[key]
+                        for key in replacements:
+                            value = replacements[key]
                             print(f"        {key}", end="")
                             print(" " * (max_key_length - len(key)), end="")
                             print(f": {value}")
