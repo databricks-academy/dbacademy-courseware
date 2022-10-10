@@ -1,9 +1,11 @@
+
 def validate_dependencies():
     from dbacademy_gems import dbgems
     dbgems.validate_dependencies("dbacademy-gems")
     dbgems.validate_dependencies("dbacademy-rest")
     # dbgems.validate_dependencies("dbacademy-helper")
     dbgems.validate_dependencies("dbacademy-courseware")
+
 
 def help_html():
     from dbacademy_courseware.dbpublish.notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
@@ -35,6 +37,7 @@ def help_html():
     html += "</body>"
     return html
 
+
 def get_workspace_url():
     from dbacademy_gems import dbgems
 
@@ -57,6 +60,7 @@ def get_workspace_url():
 def to_job_url(*, job_id: str, run_id: str):
     base_url = get_workspace_url()
     return f"{base_url}#job/{job_id}/run/{run_id}"
+
 
 def validate_type(actual_value, name, expected_type):
     assert type(actual_value) == expected_type, f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
