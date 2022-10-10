@@ -10,6 +10,8 @@ class Publisher:
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
+    GENERATING_DOCS = "generating_docs"
+
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig):
@@ -305,6 +307,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
                          test_type=test_type,
                          keep_success=keep_success)
 
+    @staticmethod
+    def generating_docs() -> bool:
+        value = dbgems.get_parameter(Publisher.GENERATING_DOCS, False)
+        return str(value).lower() == "true"
+
     def _generate_html(self, notebook):
         import time
         from dbacademy_gems import dbgems
@@ -317,7 +324,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         path = f"../Source/{notebook.path}"
         dbgems.dbutils.notebook.run(path, timeout_seconds=60 * 5, arguments={
             "version": self.build_config.version,
-            "generating_docs": True
+            Publisher.GENERATING_DOCS: "true"
         })
 
         print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
