@@ -67,7 +67,7 @@ class TestSuite:
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
-        url = f"https://dbgems.get_browser_host_name()/?o={dbgems.get_workspace_id()}#job/list/search/dbacademy.course:{build_config.build_name}?offset=0"
+        url = f"https://{dbgems.get_browser_host_name()}/?o={dbgems.get_workspace_id()}#job/list/search/dbacademy.course:{build_config.build_name}?offset=0"
         print(f"Test Suite: {url}")
 
     def get_all_job_names(self):
