@@ -1,5 +1,6 @@
 from dbacademy_gems import dbgems
 
+
 class TestInstance:
     def __init__(self, build_config, notebook, test_dir, test_type):
         import hashlib
@@ -17,6 +18,7 @@ class TestInstance:
         hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
         test_name = build_config.name.lower().replace(" ", "-")
         self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
+
 
 class TestSuite:
     from dbacademy_courseware.dbbuild import BuildConfig
@@ -64,6 +66,9 @@ class TestSuite:
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
+
+        url = f"https://dbgems.get_browser_host_name()/?o={dbgems.get_workspace_id()}#job/list/search/dbacademy.course:{build_config.build_name}?offset=0"
+        print(f"Test Suite: {url}")
 
     def get_all_job_names(self):
         job_names = list()
